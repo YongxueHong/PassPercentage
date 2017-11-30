@@ -1,0 +1,49 @@
+{% extends 'PassPercentage/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Colum Chart
+{% endblock %}
+
+{% block script_block %}
+window.onload = function() {
+	var dataPoints = [];
+	$.get("{% static dir_xml %}", function(data) {
+		$(data).find("point").each(function () {
+			var $dataPoint = $(this);
+			var x = $dataPoint.find("x").text();
+			var y = $dataPoint.find("y").text();
+			dataPoints.push({label: x, y: parseFloat(y),click: onClick});
+		});
+		var chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			theme: "theme1",
+			title: {
+				text: "Latest Pass Percentage : {{ platforms.platform_name }} ",
+			},
+			axisY: {
+				title: "Pass",
+				//prefix: " ",
+				suffix: "%"
+				},
+			data: [{
+				type: "column",
+				dataPoints: dataPoints,
+			  }]
+		});
+	chart.render();
+	function onClick(e){
+		//alert(  e.dataSeries.type+ ", dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
+		//alert('{{ xml_name}}');
+		//alert("{{ platforms.platform_name }}");
+	}
+	});
+}
+{% endblock %}
+
+{% block body_block %}
+
+<div id="chartContainer" style="height: 550px; width: 100%;"></div>
+<script src="{% static "js/canvasjs.min.js" %}"></script>
+<script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
+{% endblock %}

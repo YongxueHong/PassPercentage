@@ -1,0 +1,42 @@
+{% extends 'PassPercentage/base.html' %}
+{% load staticfiles %}
+{% block title_block %}
+    {{homepage_name}}
+{% endblock %}
+
+{% block style_block %}
+
+{% endblock %}
+
+{% block body_block %}
+ <h1 align="center">
+    Welcome to PassPercentage
+ </h1>
+<div>
+    <p style="background-color:rgb(255,100,0)" >
+        List
+    </p>
+    {% if platform_list %}
+        {% for platform in platform_list %}
+        <form id="chars" method="post" action="/PassPercentage/lines_charts/{{platform.platform_slug}}/" >
+            {% csrf_token %}
+            <a href="{% url 'show_testloops'  platform.platform_slug %}">{{platform.platform_name}}</a>
+            <a href="{% url 'show_column_chart' platform.platform_slug %}">Column Chart-{{platform.platform_name}}</a>
+            <a href="{% url 'show_line_charts' platform.platform_slug %}">Line Chart-{{platform.platform_name}}</a>
+            <a href="{% url 'show_area_chart' platform.platform_slug %}">Area Chart-{{platform.platform_name}}</a>
+            <select id="feature name" name="feature name">
+                <option value="virtual block device" label="virtual block device">virtual block device</option>
+                <option value="slof" label="slof">slof</option>
+                <option value="acceptance"  label="acceptance">acceptance</option>
+                <option value="kdump"  label="kdump">kdump</option>
+                <option value="timer device"  label="timer device">timer device</option>
+                <option value="qcow2"  label="qcow2">qcow2</option>
+            </select>
+            <button type="submit"> Display </button>
+        </form>
+        {% endfor %}
+    {% else %}
+        <strong>No available platform</strong>
+    {% endif %}
+</div>
+{% endblock %}

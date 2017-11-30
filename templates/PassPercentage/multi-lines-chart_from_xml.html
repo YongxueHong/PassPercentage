@@ -1,0 +1,72 @@
+{% extends 'PassPercentage/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Area Chart
+{% endblock %}
+
+{% block script_block %}
+window.onload = function() {
+	var dataPoints = [];
+	var data_list = []
+	var data_dict = {}
+    var versions = ('{{test_host_ver}}').split(",")
+
+    $.get("{% static dir_xml %}",function(data) {
+        for(i=0;i<versions.length;i++){
+            $(data).find(versions[i]).children().each(function () {
+                var $dataPoint = $(this);
+                var x = $dataPoint.find("x").text();
+                var y = $dataPoint.find("y").text();
+				//document.write(x+ ':'+y  + '<br/>')
+                dataPoints.push({label: x, y: parseFloat(y)});
+            });
+            data_dict = {
+                type: "line",
+                visible: true,
+                showInLegend: true,
+                legendMarkerType: "square",
+                markerSize: 0,
+                name:versions[i].replace('_', '.'),
+                dataPoints: dataPoints
+            }
+            data_list.push(data_dict)
+            dataPoints = []
+        }
+        var chart = new CanvasJS.Chart("chartContainer",{
+            animationEnabled: true,
+            title: {
+                text: "platform:{{ platforms.platform_name }}, loop: {{ test_loop_name }}",
+            },
+            toolTip: {
+                shared: true
+            },
+            legend:{
+                cursor:"pointer",
+                itemclick : toggleDataSeries,
+            },
+            axisY: {
+                title: "pass",
+				suffix: "%"
+                },
+            data: data_list
+        });
+        chart.render();
+        function toggleDataSeries(e) {
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
+                e.dataSeries.visible = false;
+            } else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+}
+{% endblock %}
+
+{% block body_block %}
+<h1>Multi lines chart:{{ test_loop_name }} - {{ platforms.platform_name }} </h1>
+<div id="chartContainer" style="height: 480px; width: 100%;"></div>
+<script src="{% static "js/canvasjs.min.js" %}"></script>
+<script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
+{% endblock %}

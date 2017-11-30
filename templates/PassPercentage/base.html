@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>
+        {% block title_block %}
+            Please input the title.
+        {% endblock %}
+    </title>
+    <script>
+        {% block script_block %}
+            Please input the script.
+        {% endblock %}
+    </script>
+</head>
+<body style="background-color:white">
+    {% block body_block %}
+        This is body_block's default content.
+    {% endblock %}
+    <hr/>
+        <p><a class="class_base" href="{% url 'about' %}">About</a></p>
+        <p><a class="class_base" href="{% url 'homepage' %}">Homepage</a></p>
+    <hr/>
+</body>
+</html>

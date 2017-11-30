@@ -1,0 +1,67 @@
+{% extends 'PassPercentage/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    TestLoop
+{% endblock %}
+{% block style_block %}
+    p {
+        //border-width:medium;
+        //border-style:outset;
+        border-color:black;
+    }
+    p {
+        //border-width:medium;
+        //border-style:outset;
+        border-color:black;
+    }
+    li {
+        //border-width:thin;
+        border-color:red;
+    }
+{% endblock %}
+{% block body_block %}
+    <div>
+        {% if platforms %}
+            <h1 style="background-color:red">Platform : {{ platforms.platform_name }}</h1>
+            {% if test_loops %}
+                {% for test_loop in test_loops %}
+                    <p>loop name : {{test_loop.loop_name}}</p>
+                    <p>feature name : {{test_loop.loop_feature_name}}</p>
+                    <p>feature owner : {{test_loop.loop_feature_owner}}</p>
+                    <p>qemu version : {{test_loop.loop_qemu_ver}}</p>
+                    <p>host kernel version : {{test_loop.loop_host_kernel_ver}}</p>
+                    <p>host version : {{test_loop.loop_host_ver}}</p>
+                    <p>guest kernel version : {{test_loop.loop_guest_kernel_ver}}</p>
+                    <p>guest version : {{test_loop.loop_guest_ver}}</p>
+                    <p>total cases : {{test_loop.loop_case_total_num}}</p>
+                    <p>passed cases : {{test_loop.loop_case_pass_num}}</p>
+                    <p>updated time : {{test_loop.loop_updated_time}}</p>
+                    <p>cmd : {{test_loop.loop_cmd}}</p>
+                    <hr/>
+                {% endfor %}
+            {% else %}
+                <strong>No test loops !!</strong>
+            {% endif %}
+        {% else %}
+            No platforms
+        {% endif %}
+    </div>
+    <div>
+        <form method="post" action="http://www.redhat.com">
+            <p><label for="host name"> host_name: <input placeholder="Input host name" id="host name" name="host_name"/></label</p>
+            <p><label for="guest name">host_name : <input placeholder="Input guest name" id="guest name" name="host_name"/></label</p>
+            <p><label for="host version">host version : <input placeholder="Input host version" id="host version" name="host version"/></label</p>
+            <p><label for="guest version">guest version : <input placeholder="Input guest version" id="guest version" name="guest version"/></label</p>
+            <p><label for="qemu version">qemu version : <input placeholder="Input guest name" id="qemu version" name="qemu version"/></label</p>
+            <p>
+                <button type="submit">Search</button>
+                <button type="reset">Reset</button>
+            </p>
+            <p>
+                <textarea cols="100" rows="5" wrap="hard" id="comment" name="comment">Your comments</textarea>
+                <button type="submit">Comment</button>
+            </p>
+        </form>
+    </div>
+{% endblock %}
