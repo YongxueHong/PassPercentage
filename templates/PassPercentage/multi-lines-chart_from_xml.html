@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    Area Chart
+    Line Chart
 {% endblock %}
 
 {% block script_block %}
@@ -22,11 +22,12 @@ window.onload = function() {
                 dataPoints.push({label: x, y: parseFloat(y)});
             });
             data_dict = {
-                type: "line",
+                type: "spline",
                 visible: true,
+                click: onClick,
                 showInLegend: true,
                 legendMarkerType: "square",
-                markerSize: 0,
+                //markerSize: 0,
                 name:versions[i].replace('_', '.'),
                 dataPoints: dataPoints
             }
@@ -36,7 +37,7 @@ window.onload = function() {
         var chart = new CanvasJS.Chart("chartContainer",{
             animationEnabled: true,
             title: {
-                text: "platform:{{ platforms.platform_name }}, loop: {{ test_loop_name }}",
+                text: "platform:{{ platforms.platform_name }}, loop: {{ loop_select_name }}",
             },
             toolTip: {
                 shared: true
@@ -60,13 +61,26 @@ window.onload = function() {
             }
             chart.render();
         }
+        function onClick(e) {
+            //alert(  e.dataSeries.name +" dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
+            var host_ver = e.dataSeries.name.replace('.', '_')
+            areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "areaColumn");
+        }
     });
 }
 {% endblock %}
 
 {% block body_block %}
-<h1>Multi lines chart:{{ test_loop_name }} - {{ platforms.platform_name }} </h1>
 <div id="chartContainer" style="height: 480px; width: 100%;"></div>
 <script src="{% static "js/canvasjs.min.js" %}"></script>
 <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
+<hr/>
+<form id="comment" method="post" action="/PassPercentage/comments/" >
+    {% csrf_token %}
+    <p>
+        <textarea cols="100" rows="5" wrap="hard" id="comment_context" name="comment_context">Your comments</textarea>
+        <button type="submit">Comment</button>
+    </p>
+</form>
+
 {% endblock %}

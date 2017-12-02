@@ -1,19 +1,19 @@
 <data>
     <point>
         <x>usb device</x>
-        <y>75.00</y>
-    </point>
-    <point>
-        <x>virtual block device</x>
-        <y>80.00</y>
-    </point>
-    <point>
-        <x>qcow2</x>
         <y>99.00</y>
     </point>
     <point>
+        <x>virtual block device</x>
+        <y>88.67</y>
+    </point>
+    <point>
+        <x>qcow2</x>
+        <y>78.00</y>
+    </point>
+    <point>
         <x>acceptance</x>
-        <y>87.00</y>
+        <y>89.19</y>
     </point>
     <point>
         <x>numa</x>
@@ -21,14 +21,14 @@
     </point>
     <point>
         <x>kdump</x>
-        <y>99.09</y>
+        <y>96.36</y>
     </point>
     <point>
         <x>virtual nic device</x>
-        <y>99.15</y>
+        <y>92.37</y>
     </point>
     <point>
         <x>timer device</x>
-        <y>80.00</y>
+        <y>96.67</y>
     </point>
 </data>

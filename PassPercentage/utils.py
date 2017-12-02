@@ -81,22 +81,26 @@ def create_datapoints_line(platform_name,test_loop_name, test_host_ver, file_xml
     context = ""
     context += "<data>\n"
     for ver in test_host_ver:
-        loop = TestLoop.objects.filter(loop_name=test_loop_name).filter(loop_host_ver=ver).order_by(
+        loop = TestLoop.objects.filter(platform=platform).filter(loop_name=test_loop_name) \
+                   .filter(loop_host_ver=ver).order_by(
             "loop_updated_time")[:]
-        for list in loop:
-            print '%s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
-                  % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num, list.loop_case_total_num,
-                     list.loop_host_ver)
-        context += "    <%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
-        versions += list.loop_host_ver.replace('.', '_').replace('-', '_') + ','
-        t = 0
-        for list in loop:
-            context += "        <point>\n" \
-                       "            <x>T%d</x>\n" \
-                       "            <y>%.2f</y>\n" \
-                       "        </point>\n" %(t, (float(list.loop_case_pass_num * 100)/list.loop_case_total_num))
-            t = t + 1
-        context += "    </%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
+        if loop:
+            for list in loop:
+                print 'Total %s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , ' \
+                      'pass percentage : %.2f, version: %s]' \
+                      % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
+                         list.loop_case_total_num, (float(list.loop_case_pass_num * 100) / list.loop_case_total_num),
+                         list.loop_host_ver)
+            context += "    <%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
+            versions += list.loop_host_ver.replace('.', '_').replace('-', '_') + ','
+            t = 0
+            for list in loop:
+                context += "        <point>\n" \
+                           "            <x>T%d</x>\n" \
+                           "            <y>%.2f</y>\n" \
+                           "        </point>\n" %(t, (float(list.loop_case_pass_num * 100)/list.loop_case_total_num))
+                t = t + 1
+            context += "    </%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
     context += "</data>"
 
     file_xml = os.path.join(XML_DIR, file_xml_name)
@@ -112,11 +116,12 @@ def create_datapoints_area(platform_name,test_loop_name, host_version, file_xml_
     context_dict['platforms'] = platform
     print 'Platform : %s' %(platform.platform_name)
 
-    loop = TestLoop.objects.filter(platform=platform).filter(loop_name=test_loop_name).filter(loop_host_ver=host_version).order_by("loop_updated_time")[:]
+    loop = TestLoop.objects.filter(platform=platform).filter(loop_name=test_loop_name) \
+               .filter(loop_host_ver=host_version).order_by("loop_updated_time")[:]
     for list in loop:
         print '%s loop area info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
-              % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num, list.loop_case_total_num,
-                 list.loop_host_ver)
+              % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
+                 list.loop_case_total_num, list.loop_host_ver)
     context = ""
     context += "<data>\n"
     context += "    <pass>\n"

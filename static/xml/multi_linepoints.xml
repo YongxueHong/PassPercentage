@@ -10,11 +10,43 @@
         </point>
         <point>
             <x>T2</x>
-            <y>91.67</y>
+            <y>99.23</y>
         </point>
         <point>
             <x>T3</x>
-            <y>99.23</y>
+            <y>84.62</y>
+        </point>
+    </RHEL7_5>
+    <RHEL7_4>
+        <point>
+            <x>T0</x>
+            <y>87.00</y>
+        </point>
+        <point>
+            <x>T1</x>
+            <y>91.67</y>
+        </point>
+        <point>
+            <x>T2</x>
+            <y>39.19</y>
+        </point>
+    </RHEL7_4>
+    <RHEL7_3>
+        <point>
+            <x>T0</x>
+            <y>82.50</y>
+        </point>
+        <point>
+            <x>T1</x>
+            <y>82.50</y>
+        </point>
+        <point>
+            <x>T2</x>
+            <y>92.50</y>
+        </point>
+        <point>
+            <x>T3</x>
+            <y>85.38</y>
         </point>
         <point>
             <x>T4</x>
@@ -22,29 +54,19 @@
         </point>
         <point>
             <x>T5</x>
-            <y>83.33</y>
+            <y>45.83</y>
         </point>
         <point>
             <x>T6</x>
-            <y>82.50</y>
+            <y>27.50</y>
         </point>
         <point>
             <x>T7</x>
-            <y>99.17</y>
+            <y>36.67</y>
         </point>
         <point>
             <x>T8</x>
-            <y>87.00</y>
+            <y>78.38</y>
         </point>
-    </RHEL7_5>
-    <RHEL7_4>
-        <point>
-            <x>T0</x>
-            <y>91.67</y>
-        </point>
-        <point>
-            <x>T1</x>
-            <y>87.00</y>
-        </point>
-    </RHEL7_4>
+    </RHEL7_3>
 </data>

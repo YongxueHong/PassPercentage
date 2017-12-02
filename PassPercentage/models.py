@@ -40,3 +40,14 @@ class TestLoop(models.Model):
 
     def __str__(self):
         return self.loop_name
+
+class Name(models.Model):
+    your_name = models.CharField(max_length=100, blank=True)
+    your_name_slug = models.SlugField()
+
+    def save(self, *args, **kwargs):
+        self.your_name_slug = slugify(self.your_name)
+        super(Name, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.your_name
