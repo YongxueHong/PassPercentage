@@ -24,3 +24,8 @@ class TestLoopForm(forms.ModelForm):
 
 class LoopSelectForm(forms.Form):
     loop_select_name = forms.CharField(label='Select loop name', max_length=100)
+
+class CommentForm(forms.Form):
+    comment_name = forms.CharField(label='comment name')
+    comment_context = forms.CharField(label='comment context', max_length=1000000)
+    comment_update_time = forms.DateTimeField(label='comment update time')
