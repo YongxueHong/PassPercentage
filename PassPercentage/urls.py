@@ -10,5 +10,9 @@ urlpatterns = [
     url(r'^column_charts/(?P<platform_slug_name>[\w\-]+)/$', views.show_column_chart, name='show_column_chart'),
     url(r'^area_charts/(?P<platform_slug_name>[\w\-]+)/$', views.show_area_chart, name='show_area_chart'),
     url(r'^select_area_charts/(?P<platform_slug_name>[\w\-]+)/(?P<loop_select_name>[\w\-]+)/(?P<host_ver>[\w\-]+)/$', views.display_area_chart, name='display_area_chart'),
-    url(r'^comments/$', views.show_comments, name='show_comments'),
+    url(r'^comments/(?P<platform_slug_name>[\w\-]+)/(?P<loop_select_name>[\w\-]+)/(?P<host_ver>[\w\-]+)/(?P<x_point>[\w\-]+)/$', views.comments, name='comments'),
+    #url(r'^comments/$', views.show_comments, name='show_comments'),
+    url(r'^register/$', views.register, name='register'),
+    url(r'^login/$', views.user_login, name='login'),
+    url(r'^logout/$', views.user_logout, name='logout')
 ]

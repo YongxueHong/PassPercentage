@@ -1,5 +1,5 @@
 from django.contrib import admin
-from PassPercentage.models import Platform, TestLoop
+from PassPercentage.models import Platform, TestLoop, Name, Comment
 
 # Register your models here.
 class PlatformAdmin(admin.ModelAdmin):
@@ -11,3 +11,5 @@ class TestLoopAdmin(admin.ModelAdmin):
 
 admin.site.register(Platform, PlatformAdmin)
 admin.site.register(TestLoop, TestLoopAdmin)
+admin.site.register(Name)
+admin.site.register(Comment)
