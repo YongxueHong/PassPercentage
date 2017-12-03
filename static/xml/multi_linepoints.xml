@@ -1,108 +1,132 @@
 <data>
-    <RHEL7_5>
-        <point>
-            <x>T0</x>
-            <y>91.67</y>
-        </point>
-        <point>
-            <x>T1</x>
-            <y>83.33</y>
-        </point>
-        <point>
-            <x>T2</x>
-            <y>82.50</y>
-        </point>
-        <point>
-            <x>T3</x>
-            <y>99.17</y>
-        </point>
-        <point>
-            <x>T4</x>
-            <y>87.00</y>
-        </point>
-    </RHEL7_5>
     <RHEL7_4>
         <point>
             <x>T0</x>
-            <y>91.67</y>
+            <y>99.00</y>
+            <pass_num>99</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>pingl</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.10.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.4</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.4</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:03:57.947692+00:00</updated_time>
         </point>
         <point>
             <x>T1</x>
-            <y>91.67</y>
+            <y>67.00</y>
+            <pass_num>67</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>yilzhang</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.8.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.4</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.4</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:06:14.652564+00:00</updated_time>
         </point>
         <point>
             <x>T2</x>
-            <y>39.19</y>
+            <y>78.00</y>
+            <pass_num>78</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>pingl</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.8.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.4</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.4</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:06:24.725432+00:00</updated_time>
         </point>
         <point>
             <x>T3</x>
-            <y>49.55</y>
+            <y>90.00</y>
+            <pass_num>90</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>yilzhang</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.8.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.4</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.4</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:11:27.149844+00:00</updated_time>
+        </point>
+        <point>
+            <x>T4</x>
+            <y>33.00</y>
+            <pass_num>33</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>pingl</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.8.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.4</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.4</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:11:45.227462+00:00</updated_time>
         </point>
     </RHEL7_4>
     <RHEL7_3>
         <point>
             <x>T0</x>
-            <y>82.50</y>
+            <y>34.00</y>
+            <pass_num>34</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>yilzhang</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.8.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.3</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.3</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:06:17.677625+00:00</updated_time>
         </point>
         <point>
             <x>T1</x>
-            <y>82.50</y>
+            <y>22.00</y>
+            <pass_num>22</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>yilzhang</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.8.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.3</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.3</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:06:19.701527+00:00</updated_time>
         </point>
         <point>
             <x>T2</x>
-            <y>92.50</y>
+            <y>80.00</y>
+            <pass_num>80</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>yilzhang</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.8.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.3</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.3</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:11:33.177940+00:00</updated_time>
         </point>
         <point>
             <x>T3</x>
-            <y>85.38</y>
-        </point>
-        <point>
-            <x>T4</x>
-            <y>84.62</y>
-        </point>
-        <point>
-            <x>T5</x>
-            <y>45.83</y>
-        </point>
-        <point>
-            <x>T6</x>
-            <y>27.50</y>
-        </point>
-        <point>
-            <x>T7</x>
-            <y>36.67</y>
-        </point>
-        <point>
-            <x>T8</x>
-            <y>78.38</y>
-        </point>
-        <point>
-            <x>T9</x>
-            <y>89.19</y>
-        </point>
-        <point>
-            <x>T10</x>
-            <y>91.67</y>
-        </point>
-        <point>
-            <x>T11</x>
-            <y>66.67</y>
-        </point>
-        <point>
-            <x>T12</x>
-            <y>92.31</y>
-        </point>
-        <point>
-            <x>T13</x>
-            <y>91.67</y>
-        </point>
-        <point>
-            <x>T14</x>
-            <y>64.17</y>
-        </point>
-        <point>
-            <x>T15</x>
-            <y>79.28</y>
+            <y>99.00</y>
+            <pass_num>99</pass_num>
+            <total_num>100</total_num>
+            <feature_owner>yilzhang</feature_owner>
+            <qemu_ver>qemu-kvm-rhev-2.8.0-8.el7</qemu_ver>
+            <host_kernel_ver>kernel-3.10.0-724.el7.x86</host_kernel_ver>
+            <host_ver>RHEL7.3</host_ver>
+            <guest_kernel_ver>kernel-3.10.0-724.el7.x86</guest_kernel_ver>
+            <guest_ver>RHEL7.3</guest_ver>
+            <cmd>python ConfigTest.py --category=qcow2 --driveformat=virtio_blk --imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no</cmd>
+            <updated_time>2017-12-03 14:11:39.204395+00:00</updated_time>
         </point>
     </RHEL7_3>
 </data>

@@ -7,9 +7,10 @@ from PassPercentage.models import Platform, TestLoop
 def populate():
     ppc_platform = add_platform('ppc')
     x86_platform = add_platform('x86')
-    s390_platform = add_platform('s390')
+    s390_platform = add_platform('s390x')
     arm_platform = add_platform('arm')
-    """
+    arm_platform = add_platform('virtio-win')
+    
     add_testloop(ppc_platform, 
                  name='acceptance', 
                  feature_name='acceptance', 
@@ -375,8 +376,8 @@ def populate():
                  case_pass_num=87,
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
-    """
-    """
+     
+     
     add_testloop(x86_platform,
                  name='numa',
                  feature_name='numa',
@@ -433,8 +434,7 @@ def populate():
                  cmd='python ConfigTest.py --category=kdump --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.5 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
     
-    """
-    """
+
     add_testloop(x86_platform,
                  name='acceptance',
                  feature_name='acceptance',
@@ -1166,7 +1166,6 @@ def populate():
                  case_pass_num=87,
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
-    """
 
     add_testloop(x86_platform,
                  name='acceptance',
@@ -1992,7 +1991,232 @@ def populate():
                  case_total_num=222,
                  case_pass_num=111,
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
-                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')    
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.8.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-340.el7.x86',
+                 host_ver='RHEL7.3',
+                 guest_kernel_ver='kernel-3.10.0-340.el7.x86',
+                 guest_ver='RHEL7.3',
+                 case_total_num=150,
+                 case_pass_num=100,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.8.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-340.el7.x86',
+                 host_ver='RHEL7.3',
+                 guest_kernel_ver='kernel-3.10.0-340.el7.x86',
+                 guest_ver='RHEL7.3',
+                 case_total_num=150,
+                 case_pass_num=110,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.8.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-344.el7.x86',
+                 host_ver='RHEL7.3',
+                 guest_kernel_ver='kernel-3.10.0-344.el7.x86',
+                 guest_ver='RHEL7.3',
+                 case_total_num=150,
+                 case_pass_num=122,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.8.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-350.el7.x86',
+                 host_ver='RHEL7.3',
+                 guest_kernel_ver='kernel-3.10.0-350.el7.x86',
+                 guest_ver='RHEL7.3',
+                 case_total_num=150,
+                 case_pass_num=134,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.8.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-350.el7.x86',
+                 host_ver='RHEL7.3',
+                 guest_kernel_ver='kernel-3.10.0-350.el7.x86',
+                 guest_ver='RHEL7.3',
+                 case_total_num=150,
+                 case_pass_num=140,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.8.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-360.el7.x86',
+                 host_ver='RHEL7.3',
+                 guest_kernel_ver='kernel-3.10.0-360.el7.x86',
+                 guest_ver='RHEL7.3',
+                 case_total_num=150,
+                 case_pass_num=148,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-663.el7.x86',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-663.el7.x86',
+                 guest_ver='RHEL7.4',
+                 case_total_num=180,
+                 case_pass_num=88,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-663.el7.x86',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-663.el7.x86',
+                 guest_ver='RHEL7.4',
+                 case_total_num=180,
+                 case_pass_num=120,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-663.el7.x86',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-663.el7.x86',
+                 guest_ver='RHEL7.4',
+                 case_total_num=180,
+                 case_pass_num=140,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='acceptance',
+                 feature_name='acceptance',
+                 feature_owner='pingl',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-665.el7.x86',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-665.el7.x86',
+                 guest_ver='RHEL7.4',
+                 case_total_num=180,
+                 case_pass_num=170,
+                 cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='seabios',
+                 feature_name='seabios',
+                 feature_owner='xuwei',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-665.el7.x86',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-665.el7.x86',
+                 guest_ver='RHEL7.4',
+                 case_total_num=90,
+                 case_pass_num=70,
+                 cmd='python ConfigTest.py --category=seabios --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='seabios',
+                 feature_name='seabios',
+                 feature_owner='xuwei',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-665.el7.x86',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-665.el7.x86',
+                 guest_ver='RHEL7.4',
+                 case_total_num=90,
+                 case_pass_num=79,
+                 cmd='python ConfigTest.py --category=seabios --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(x86_platform,
+                 name='seabios',
+                 feature_name='seabios',
+                 feature_owner='xuwei',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-665.el7.x86',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-665.el7.x86',
+                 guest_ver='RHEL7.4',
+                 case_total_num=90,
+                 case_pass_num=88,
+                 cmd='python ConfigTest.py --category=seabios --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(ppc_platform,
+                 name='slof',
+                 feature_name='slof',
+                 feature_owner='xianwang',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-665.el7.ppc64le',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-665.el7.ppc64le',
+                 guest_ver='RHEL7.4',
+                 case_total_num=100,
+                 case_pass_num=88,
+                 cmd='python ConfigTest.py --category=seabios --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(ppc_platform,
+                 name='slof',
+                 feature_name='slof',
+                 feature_owner='xianwang',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-665.el7.ppc64le',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-665.el7.ppc64le',
+                 guest_ver='RHEL7.4',
+                 case_total_num=100,
+                 case_pass_num=89,
+                 cmd='python ConfigTest.py --category=seabios --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
+
+    add_testloop(ppc_platform,
+                 name='slof',
+                 feature_name='slof',
+                 feature_owner='xianwang',
+                 qemu_ver='qemu-kvm-rhev-2.9.0-8.el7',
+                 host_kernel_ver='kernel-3.10.0-665.el7.ppc64le',
+                 host_ver='RHEL7.4',
+                 guest_kernel_ver='kernel-3.10.0-665.el7.ppc64le',
+                 guest_ver='RHEL7.4',
+                 case_total_num=100,
+                 case_pass_num=99,
+                 cmd='python ConfigTest.py --category=seabios --driveformat=virtio_blk '
+                     '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
+    
 
     # Print out
     for p in Platform.objects.all():
@@ -2022,15 +2246,13 @@ def add_testloop(platform,
                                        loop_case_total_num=case_total_num,
                                        loop_case_pass_num=case_pass_num, 
                                        loop_cmd=cmd)[0]
-    time.sleep(random.randrange(10, 120))
+    time.sleep(random.randrange(1, 10))
     return t
 
 def add_platform(name):
     p = Platform.objects.get_or_create(platform_name=name)[0]
-    time.sleep(random.randrange(3, 60))
+    #time.sleep(random.randrange(1, 2))
     return p
-
-
 
 # Start execution here!
 if __name__ == '__main__':

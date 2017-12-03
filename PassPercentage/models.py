@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from django.db import models
 from django.template.defaultfilters import slugify
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Platform(models.Model):
@@ -51,3 +52,25 @@ class Name(models.Model):
 
     def __str__(self):
         return self.your_name
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User)
+    #website = models.URLField(blank=True)
+    account_picture = models.ImageField(upload_to='profile_images', blank=True)
+
+    def __str__(self):
+        return self.user.username
+
+class Comment(models.Model):
+    comment_user = models.CharField(max_length=100,blank=True)
+    comment_email = models.EmailField(blank=True)
+    comment_title = models.CharField(max_length=10000,blank=True)
+    comment_context = models.CharField(max_length=10000000,blank=True)
+    comment_updated_time = models.DateTimeField('Comment published', auto_now=True)
+    comment_platform = models.CharField(max_length=200, blank=True)
+    comment_testloop = models.CharField(max_length=200, blank=True)
+    comment_version = models.CharField(max_length=200, blank=True)
+    comment_point = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        return self.comment_title

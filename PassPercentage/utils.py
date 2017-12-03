@@ -98,7 +98,29 @@ def create_datapoints_line(platform_name,test_loop_name, test_host_ver, file_xml
                 context += "        <point>\n" \
                            "            <x>T%d</x>\n" \
                            "            <y>%.2f</y>\n" \
-                           "        </point>\n" %(t, (float(list.loop_case_pass_num * 100)/list.loop_case_total_num))
+                           "            <pass_num>%d</pass_num>\n" \
+                           "            <total_num>%d</total_num>\n" \
+                           "            <feature_owner>%s</feature_owner>\n" \
+                           "            <qemu_ver>%s</qemu_ver>\n" \
+                           "            <host_kernel_ver>%s</host_kernel_ver>\n" \
+                           "            <host_ver>%s</host_ver>\n" \
+                           "            <guest_kernel_ver>%s</guest_kernel_ver>\n" \
+                           "            <guest_ver>%s</guest_ver>\n" \
+                           "            <cmd>%s</cmd>\n" \
+                           "            <updated_time>%s</updated_time>\n" \
+                           "        </point>\n" %(t,
+                                                  (float(list.loop_case_pass_num * 100)/list.loop_case_total_num),
+                                                  list.loop_case_pass_num,
+                                                  list.loop_case_total_num,
+                                                  list.loop_feature_owner,
+                                                  list.loop_qemu_ver,
+                                                  list.loop_host_kernel_ver,
+                                                  list.loop_host_ver,
+                                                  list.loop_guest_kernel_ver,
+                                                  list.loop_guest_ver,
+                                                  list.loop_cmd,
+                                                  list.loop_updated_time
+                                                  )
                 t = t + 1
             context += "    </%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
     context += "</data>"
@@ -144,3 +166,23 @@ def create_datapoints_area(platform_name,test_loop_name, host_version, file_xml_
     file = open(file_xml, "w")
     file.writelines(context)
     file.close()
+
+def get_all_loop(platform_name):
+    loop_name = []
+    total_loop = []
+    platform = Platform.objects.get(platform_name=platform_name)
+
+    testloop_list = TestLoop.objects.filter(platform=platform)
+    for testloop in testloop_list:
+        loop_name.append(testloop.loop_name)
+
+    for list in set(loop_name):
+        total_loop.append(list)
+
+    if not total_loop:
+        total_loop.append('No loops')
+        print '%s no loops'
+    else:
+        print 'total loop of %s: %s' %(platform_name, total_loop)
+    return total_loop
+

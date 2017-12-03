@@ -5,12 +5,19 @@
     Line Chart
 {% endblock %}
 
+{% block style_block %}
+a {
+    text-decoration:none
+}
+{% endblock %}
+
 {% block script_block %}
 window.onload = function() {
 	var dataPoints = [];
 	var data_list = []
 	var data_dict = {}
     var versions = ('{{test_host_ver}}').split(",")
+    var pass_num_list = []
 
     $.get("{% static dir_xml %}",function(data) {
         for(i=0;i<versions.length;i++){
@@ -18,13 +25,25 @@ window.onload = function() {
                 var $dataPoint = $(this);
                 var x = $dataPoint.find("x").text();
                 var y = $dataPoint.find("y").text();
-				//document.write(x+ ':'+y  + '<br/>')
-                dataPoints.push({label: x, y: parseFloat(y)});
+                var pass_num = $dataPoint.find("pass_num").text();
+                var total_num = $dataPoint.find("total_num").text();
+                var feature_owner = $dataPoint.find("feature_owner").text();
+                var qemu_ver = $dataPoint.find("qemu_ver").text();
+                var host_kernel_ver = $dataPoint.find("host_kernel_ver").text();
+                var host_ver = $dataPoint.find("host_ver").text();
+                var guest_kernel_ver = $dataPoint.find("guest_kernel_ver").text();
+                var guest_ver = $dataPoint.find("guest_ver").text();
+                var cmd = $dataPoint.find("cmd").text();
+                var updated_time = $dataPoint.find("updated_time").text();
+				//document.write(x+ ':'+y +'%' + '<br/>' + pass_num +'<br>' + total_num + '<br>');
+                pass_num_list.push(pass_num);
+                dataPoints.push({label: x, y: parseFloat(y), pass_num: pass_num, total_num, total_num, feature_owner, qemu_ver, host_kernel_ver, host_ver, guest_kernel_ver, guest_ver, cmd, updated_time});
             });
             data_dict = {
                 type: "spline",
                 visible: true,
                 click: onClick,
+                //reversed: true
                 showInLegend: true,
                 legendMarkerType: "square",
                 //markerSize: 0,
@@ -36,15 +55,41 @@ window.onload = function() {
         }
         var chart = new CanvasJS.Chart("chartContainer",{
             animationEnabled: true,
+            exportEnabled: true,
+            zoomEnabled: true,
+            zoomType: "x",
+            theme: "dark1",
             title: {
                 text: "platform:{{ platforms.platform_name }}, loop: {{ loop_select_name }}",
             },
             toolTip: {
-                shared: true
-            },
+                shared: false,
+                //content: "{name}: <br/> {y}%",
+                contentFormatter: function (e) {
+                                var content = " ";
+                                for (var i = 0; i < e.entries.length; i++) {
+                                    content += e.entries[i].dataSeries.name + "<hr/>";
+                                    content += "pass percentage :" + e.entries[i].dataPoint.y +"%" + "<br/>"
+                                    content += "pass number :" + e.entries[i].dataPoint.pass_num + "<br/>"
+                                    content += "total number :" + e.entries[i].dataPoint.total_num  + "<br/>"
+                                    content += "feature owner :" + e.entries[i].dataPoint.feature_owner  + "<br/>"
+                                    content += "qemu version :" + e.entries[i].dataPoint.qemu_ver  + "<br/>"
+                                    content += "host kernel version :" + e.entries[i].dataPoint.host_kernel_ver  + "<br/>"
+                                    content += "host version :" + e.entries[i].dataPoint.host_ver  + "<br/>"
+                                    content += "guest kernel version :" + e.entries[i].dataPoint.guest_kernel_ver  + "<br/>"
+                                    content += "guest version :" + e.entries[i].dataPoint.guest_ver  + "<br/>"
+                                    content += "command line :" + e.entries[i].dataPoint.cmd  + "<br/>"
+                                    content += "updated time :" + e.entries[i].dataPoint.updated_time  + "<br/>"
+                                    //content += "<a href=\"http://www.radhat.com\">RedHat</a>" + "<br/>"
+                                    content += "<br/>";
+                                }
+                                return content;
+                            }
+                        },
             legend:{
                 cursor:"pointer",
-                itemclick : toggleDataSeries,
+                //itemclick : toggleDataSeries,
+                itemclick : show_detail_area,
             },
             axisY: {
                 title: "pass",
@@ -53,6 +98,11 @@ window.onload = function() {
             data: data_list
         });
         chart.render();
+        function show_detail_area(e) {
+            var host_ver = e.dataSeries.name.replace('.', '_')
+            areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "areaColumn");
+        }
+        /*
         function toggleDataSeries(e) {
             if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
                 e.dataSeries.visible = false;
@@ -60,11 +110,13 @@ window.onload = function() {
                 e.dataSeries.visible = true;
             }
             chart.render();
-        }
+        }*/
+
         function onClick(e) {
-            //alert(  e.dataSeries.name +" dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
             var host_ver = e.dataSeries.name.replace('.', '_')
-            areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "areaColumn");
+            //alert(  e.dataSeries.name +" dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
+            //var host_ver = e.dataSeries.name.replace('.', '_')
+            areaWin = window.open("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "new win", "toolbar=yes, status=no, width=400, height=400");
         }
     });
 }
@@ -74,13 +126,7 @@ window.onload = function() {
 <div id="chartContainer" style="height: 480px; width: 100%;"></div>
 <script src="{% static "js/canvasjs.min.js" %}"></script>
 <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
-<hr/>
-<form id="comment" method="post" action="/PassPercentage/comments/" >
-    {% csrf_token %}
-    <p>
-        <textarea cols="100" rows="5" wrap="hard" id="comment_context" name="comment_context">Your comments</textarea>
-        <button type="submit">Comment</button>
-    </p>
-</form>
-
+<p>
+    <a href="http://www.baidu.com">Chart/Table<a>
+</p>
 {% endblock %}
