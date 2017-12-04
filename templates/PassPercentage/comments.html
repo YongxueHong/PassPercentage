@@ -7,7 +7,7 @@
 
 {% block body_block %}
 <h1>Comment here</h1>
-<h2>Platform:{{platforms.platform_name}} Loop: {{loop_name_no_underline}} Vesrion: {{ host_version }} Point: T{{ x_point }}</h2>
+<h2>Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</h2>
 
 <form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point %}"
       enctype="multipart/form-data">
@@ -26,9 +26,15 @@
 <hr/>
 <h3>History Comments</h3>
 {% for comment in comments %}
-<p>Title : {{comment.comment_title}}</p>
-<p>Content : {{comment.comment_context}}</p>
-<p>From: {{comment.comment_user}} ;Email: {{comment.comment_email}} ;Update time: {{comment.comment_updated_time}}</p>
-
+    {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline and comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
+        <!--<p>Version : {{comment.comment_version}}</p>
+        <p>Platform : {{comment.comment_platform}}</p>
+        <p>loop : {{comment.comment_testloop}}</p>
+        <p>Piont : {{comment.comment_point}}</p>-->
+        <p>Title : {{comment.comment_title}}</p>
+        <p>Content : {{comment.comment_context}}</p>
+        <p>From: {{comment.comment_user}} ; Email: {{comment.comment_email}} ; Update time: {{comment.comment_updated_time}}</p>
+        <hr/>
+    {% endif %}
 {% endfor %}
 {% endblock %}

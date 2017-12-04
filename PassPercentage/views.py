@@ -160,22 +160,34 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point):
         if comment_form.is_valid():
             print 'form is valid'
             comment_form.save(commit=True)
+            comment = Comment.objects.order_by("-comment_updated_time")[0]
+            print comment.comment_user, comment.comment_title, comment.comment_context
+            comment.comment_version = host_ver.replace('_','.')
+            comment.comment_platform = platform.platform_name
+            comment.comment_point = x_point
+            comment.comment_testloop = loop_select_name.replace('_',' ')
+            comment.save()
+            """
             comment_user = comment_form.cleaned_data['comment_user']
             print 'comment_user :', comment_user
             comment_title = comment_form.cleaned_data['comment_title']
             print 'comment_title :', comment_title
             comment_context = comment_form.cleaned_data['comment_context']
             print 'comment_context :', comment_context
+            """
 
     else:
         comment_form = CommentForm()
 
     context_dict['comment_form'] = comment_form
-    comment = Comment.objects.all()
+    comment = Comment.objects.all().order_by("-comment_updated_time")[:]
     context_dict['comments'] = comment
     #print  comment
     for list in comment:
-        print '%s; %s; %s; %s' %(list.comment_user, list.comment_title, list.comment_context, list.comment_updated_time)
+        print 'comment user: %s; title: %s; context: %s; updated time: %s' \
+              'version: %s; platform: %s; testloop: %s; point: %s' \
+              %(list.comment_user, list.comment_title, list.comment_context, list.comment_updated_time,
+                list.comment_version, list.comment_platform, list.comment_testloop, list.comment_point)
 
     return render(request, 'PassPercentage/comments.html', context_dict)
 
