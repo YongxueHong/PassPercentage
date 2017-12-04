@@ -17,7 +17,8 @@ window.onload = function() {
 		});
 		var chart = new CanvasJS.Chart("chartContainer", {
 			animationEnabled: true,
-			theme: "theme1",
+			exportEnabled: true,
+			theme: "theme",
 			title: {
 				text: "Latest Pass Percentage : {{ platforms.platform_name }} ",
 			},

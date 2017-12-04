@@ -31,13 +31,10 @@ class CommentForm(forms.ModelForm):
     comment_email = forms.CharField(widget=forms.EmailInput(attrs={'size':20, 'maxlength':20, 'required': True}))
     comment_title = forms.CharField(widget=forms.TextInput(attrs={'size':50, 'maxlength':200, 'required': True}))
     comment_context = forms.CharField(widget=forms.Textarea(attrs={'cols': 100, 'rows': 5, 'required': True}))
-    #comment_updated_time = forms.DateTimeField()
 
     class Meta:
         model = Comment
         fields = ('comment_user', 'comment_email', 'comment_title', 'comment_context',)
-        #exclude = ('comment_updated_time',)
-        #fields = '__all__'
 
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput())

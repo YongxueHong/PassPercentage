@@ -100,7 +100,7 @@ window.onload = function() {
         chart.render();
         function show_detail_area(e) {
             var host_ver = e.dataSeries.name.replace('.', '_')
-            areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "areaColumn");
+            areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaColumn");
         }
         /*
         function toggleDataSeries(e) {
