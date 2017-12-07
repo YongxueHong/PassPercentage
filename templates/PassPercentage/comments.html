@@ -5,36 +5,140 @@
     Comment
 {% endblock %}
 
-{% block body_block %}
-<h1>Comment here</h1>
-<h2>Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</h2>
+{% block style_block %}
+    * {
+        border: thin black none;
+        padding: 4px;
+        //background-color: lightgray;
+        //background-image: url();
+        //color: rgb(255,255,255);
+        margin: 10px 0px 10px 0px; //top, right, bottom, left
+        //font-size : 30px;
+    }
+    a {
+        text-decoration:none
+    }
+    #comment_form {
+        border: medium black ridge;
+        padding: 4px;
+    }
+    #history_comment {
+        border: 2px black dashed;
+        border-radius: 10px;
+        padding: 4px;
+    }
 
+    #each_comment {
+        background-color: rgb(240,240,240);
+        border-color:red;
+        border-radius: 10px;
+        border: 2px black ridge;
+        padding: 4px;
+    }
+    form {
+        border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: lightgray;
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.4em;
+    }
+    button {
+        border-width:3px;
+        border-style:outset;
+        border-color: rgb(128,0,0);
+        border-radius: 10px;
+        //background-color: yellow;
+        //outline: medium solid red
+        //box-shadow: 2px 2px 2px 2px red;
+        padding: 5px;
+        margin-left: 600px;
+        //left: 500px;
+        font-size: 16px;
+    }
+
+    label {
+        margin-left: 10px;
+        //left: 500px;
+    }
+
+    .class-comment {
+        margin-left: 10px;
+        //left: 500px;
+    }
+    h1 {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        font-size: 50px;
+        color: white;
+    }
+    #point_info
+    {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color:  	rgb(248,0,0);
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        font-size: 25px;
+        color: black;
+    }
+{% endblock %}
+
+{% block body_block %}
+<div>
+<h1>Comment here</h1>
+<!--</div>
+<div><h2>Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</h2>
+</div>-->
+<div>
 <form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point %}"
       enctype="multipart/form-data">
+    <p id="point_info">@ Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
     {% csrf_token %}
-    <label for="user ">User:</label>
+    <label for="user "><strong>User:</strong></label>
     {{ comment_form.comment_user }}
-    <p><label for="email ">Email:</label>
+    <p><label for="email "><strong>Email:</strong></label>
         {{ comment_form.comment_email }}
-    </p>
-    <p><label for="title ">Title:</label>
-        {{ comment_form.comment_title }}
     </p>
     {{ comment_form.comment_context }}
     <p><button type="submit">Comment</button></p>
 </form>
-<hr/>
-<h3>History Comments</h3>
+    </div>
+<div id="history_comment">
+    <h2 style="color : red">History Comments</h2>
 {% for comment in comments %}
+
     {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline and comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
+    <div id="each_comment">
         <!--<p>Version : {{comment.comment_version}}</p>
         <p>Platform : {{comment.comment_platform}}</p>
         <p>loop : {{comment.comment_testloop}}</p>
-        <p>Piont : {{comment.comment_point}}</p>-->
+        <p>Piont : {{comment.comment_point}}</p>
         <p>Title : {{comment.comment_title}}</p>
-        <p>Content : {{comment.comment_context}}</p>
-        <p>From: {{comment.comment_user}} ; Email: {{comment.comment_email}} ; Update time: {{comment.comment_updated_time}}</p>
+        <p>Index : {{comment.comment_index}}</p>-->
+        <p>{{comment.comment_context}}</p>
         <hr/>
+        <p>From: {{comment.comment_user}} ; Email: <a href="mailto:{{comment.comment_email}}"> {{comment.comment_email}} </a>; Update time: {{comment.comment_updated_time}}</p>
+        </div>
     {% endif %}
+
 {% endfor %}
+    </div>
 {% endblock %}

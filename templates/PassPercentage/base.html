@@ -12,6 +12,25 @@
         {% block style_block %}
             Please input the style.
         {% endblock %}
+        .class_base {
+            border: thin black none;
+            border-style:outset;
+            border-color:black;
+            border-radius: 10px;
+            background-color: rgb(104,104,104);
+            //background-size: 40px 50px;
+            //padding-top:5px;
+            padding-left:5px;
+            //padding-bottom:5px;
+            font-size: large;
+            //padding-right:0.8em;
+            //padding-left:0.6em;
+            //margin:4px 20px;
+        }
+
+        .class_base1 {
+            color: white;
+        }
     </style>
     <script>
         {% block script_block %}
@@ -19,13 +38,13 @@
         {% endblock %}
     </script>
 </head>
-<body style="background-color:white">
+<body>
     {% block body_block %}
         This is body_block's default content.
     {% endblock %}
-    <hr/>
-        <p><a class="class_base" href="{% url 'about' %}">About</a></p>
-        <p><a class="class_base" href="{% url 'homepage' %}">Homepage</a></p>
-    <hr/>
+    <div class="class_base">
+        <p><a class="class_base1" href="{% url 'about' %}">About</a></p>
+        <p><a class="class_base1" href="{% url 'homepage' %}">Homepage</a></p>
+    </div>
 </body>
 </html>

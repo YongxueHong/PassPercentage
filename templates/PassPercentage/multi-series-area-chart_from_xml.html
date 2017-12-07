@@ -5,6 +5,46 @@
     Area Chart
 {% endblock %}
 
+{% block style_block %}
+    a {
+        text-decoration:none
+    }
+    #line_head {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 10px 10px;
+        padding: 4px;
+        //margin:1px;
+        //padding-top:0.2em;
+        //padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        //font-size: 50px;
+        color: white;
+    }
+
+    #chartContainer {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 10px 10px;
+        //padding-top:0.2em;
+        //padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        margin:7px;
+        //font-size: 50px;
+        color: white;
+    }
+
+{% endblock %}
+
 {% block script_block %}
 window.onload = function() {
 	var dataPoints = [];
@@ -68,7 +108,7 @@ window.onload = function() {
             zoomType: "x",
             theme: "dark1",
             title: {
-                text: "platform:{{ platforms.platform_name }}, host version:{{host_version}}, loop name:{{test_loop_name}} ",
+                //text: "platform:{{ platforms.platform_name }}, host version:{{host_version}}, loop name:{{test_loop_name}} ",
                 //text: text,
             },
             toolTip: {
@@ -100,8 +140,10 @@ window.onload = function() {
 {% endblock %}
 
 {% block body_block %}
-
-<div id="chartContainer" style="height: 480px; width: 100%;"></div>
+<div id="line_head">
+    <h1>Platform:{{ platforms.platform_name }}, Loop: {{test_loop_name}}, Version:{{host_version}}</h1>
+</div>
+<div id="chartContainer" style="height: 480px; width: 99%;"></div>
 <script src="{% static "js/canvasjs.min.js" %}"></script>
 <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
 {% endblock %}

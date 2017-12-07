@@ -5,6 +5,46 @@
     Colum Chart
 {% endblock %}
 
+{% block style_block %}
+    a {
+        text-decoration:none
+    }
+    #line_head {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 10px 10px;
+        padding: 4px;
+        margin: 10px 0px 10px 0px;
+        //padding-top:0.2em;
+        //padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        //font-size: 50px;
+        color: white;
+    }
+
+    #chartContainer {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 10px 10px;
+        //padding-top:0.2em;
+        //padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        margin:7px;
+        //font-size: 50px;
+        color: white;
+    }
+
+{% endblock %}
+
 {% block script_block %}
 window.onload = function() {
 	var dataPoints = [];
@@ -13,15 +53,21 @@ window.onload = function() {
 			var $dataPoint = $(this);
 			var x = $dataPoint.find("x").text();
 			var y = $dataPoint.find("y").text();
-			dataPoints.push({label: x, y: parseFloat(y),click: onClick});
+			//dataPoints.push({label: x, y: parseFloat(y),click: show_multi_lines});
+            dataPoints.push({label: x, y: parseFloat(y)});
 		});
 		var chart = new CanvasJS.Chart("chartContainer", {
 			animationEnabled: true,
 			exportEnabled: true,
 			theme: "theme",
 			title: {
-				text: "Latest Pass Percentage : {{ platforms.platform_name }} ",
+				//text: "Latest Pass Percentage : {{ platforms.platform_name }} ",
 			},
+            legend:{
+                cursor:"pointer",
+                //itemclick : toggleDataSeries,
+                //itemclick : show_multi_lines,
+            },
 			axisY: {
 				title: "Pass",
 				//prefix: " ",
@@ -30,24 +76,40 @@ window.onload = function() {
 			data: [{
 				type: "column",
                 indexLabel: "{y}%",
+                //visible: true,
+                click: show_multi_lines,
                 indexLabelPlacement: "auto",
                 indexLabelOrientation: "horizontal",
 				dataPoints: dataPoints,
+                //showInLegend: true,
+                //legendMarkerType: "square",
 			  }]
 		});
 	chart.render();
+    /*
 	function onClick(e){
-		//alert(  e.dataSeries.type+ ", dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
+		//alert(  e.dataSeries.type+ ", dataPoint { x:" + e.dataPoint.x + ";" + e.entries[i].dataPoint.host_ver + ", y: "+ e.dataPoint.y + " }" );
 		//alert('{{ xml_name}}');
 		//alert("{{ platforms.platform_name }}");
-	}
+	}*/
+    function show_multi_lines(e) {
+        loop_select_name_underline = e.dataPoint.label.replace(' ', '_').replace(' ', '_').replace(' ', '_');
+        //alert(  e.dataSeries.type+ ", dataPoint { x:" + e.dataPoint.label + ", y: "+ e.dataPoint.y + " }" );
+        //alert(  loop_select_name_nospace+ ", dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
+        //var host_ver = e.dataSeries.name.replace('.', '_')
+        //areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaWin");
+        areaWin = window.location.assign("/PassPercentage/lines_charts/{{ platforms.platform_name }}/" + loop_select_name_underline + "/","_self","areaWin");
+        //window.location.href = "/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/";
+    }
 	});
 }
 {% endblock %}
 
 {% block body_block %}
-
-<div id="chartContainer" style="height: 550px; width: 100%;"></div>
+<div id="line_head">
+    <h1>Latest Pass Percentage : {{ platforms.platform_name }}</h1>
+</div>
+<div id="chartContainer" style="height: 550px; width: 99%;"></div>
 <script src="{% static "js/canvasjs.min.js" %}"></script>
 <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
 {% endblock %}
