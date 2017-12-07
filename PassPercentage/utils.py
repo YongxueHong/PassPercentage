@@ -181,7 +181,7 @@ def get_all_loop(platform_name):
 
     if not total_loop:
         total_loop.append('No loops')
-        print '%s no loops'
+        print '%s no loops' % platform_name
     else:
         print 'total loop of %s: %s' %(platform_name, total_loop)
     return total_loop

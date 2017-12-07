@@ -6,9 +6,41 @@
 {% endblock %}
 
 {% block style_block %}
-a {
-    text-decoration:none
-}
+    a {
+        text-decoration:none
+    }
+    #line_head {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 10px 10px;
+        padding: 4px;
+        margin: 10px 0px 10px 0px;
+        //padding-top:0.2em;
+        //padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        //font-size: 50px;
+        color: white;
+    }
+    #chartContainer {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 10px 10px;
+        //padding-top:0.2em;
+        //padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        margin:4px;
+        //font-size: 50px;
+        color: white;
+    }
 {% endblock %}
 
 {% block script_block %}
@@ -60,7 +92,7 @@ window.onload = function() {
             zoomType: "x",
             theme: "dark1",
             title: {
-                text: "platform:{{ platforms.platform_name }}, loop: {{ loop_select_name }}",
+                //text: "platform:{{ platforms.platform_name }}, loop: {{ loop_select_name }}",
             },
             toolTip: {
                 shared: false,
@@ -78,7 +110,7 @@ window.onload = function() {
                                     content += "host version :" + e.entries[i].dataPoint.host_ver  + "<br/>"
                                     content += "guest kernel version :" + e.entries[i].dataPoint.guest_kernel_ver  + "<br/>"
                                     content += "guest version :" + e.entries[i].dataPoint.guest_ver  + "<br/>"
-                                    content += "command line :" + e.entries[i].dataPoint.cmd  + "<br/>"
+                                    //content += "command line :" + e.entries[i].dataPoint.cmd  + "<br/>"
                                     content += "updated time :" + e.entries[i].dataPoint.updated_time  + "<br/>"
                                     //content += "<a href=\"http://www.radhat.com\">RedHat</a>" + "<br/>"
                                     content += "<br/>";
@@ -100,7 +132,9 @@ window.onload = function() {
         chart.render();
         function show_detail_area(e) {
             var host_ver = e.dataSeries.name.replace('.', '_')
-            areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaColumn");
+            //areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaWin");
+            areaWin = window.location.assign("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaWin");
+            //window.location.href = "/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/";
         }
         /*
         function toggleDataSeries(e) {
@@ -116,17 +150,19 @@ window.onload = function() {
             var host_ver = e.dataSeries.name.replace('.', '_')
             //alert(  e.dataSeries.name +" dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
             //var host_ver = e.dataSeries.name.replace('.', '_')
-            areaWin = window.open("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "new win", "toolbar=yes, status=no, width=400, height=400");
+            //commentWin = window.open("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "commentWin");
+           commentWin = window.location.assign("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "commentWin");
+            //window.location.href = "/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/"；
         }
     });
 }
 {% endblock %}
 
 {% block body_block %}
-<div id="chartContainer" style="height: 480px; width: 100%;"></div>
+<div id="line_head">
+    <h1>Platform:{{ platforms.platform_name }}, Loop: {{ loop_select_name }}</h1>
+</div>
+<div id="chartContainer" style="height: 480px; width: 99%;"></div>
 <script src="{% static "js/canvasjs.min.js" %}"></script>
 <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
-<p>
-    <a href="http://www.baidu.com">Chart/Table<a>
-</p>
 {% endblock %}

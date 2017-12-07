@@ -59,6 +59,30 @@ def show_column_chart(request, platform_slug_name):
 
     return render(request, 'PassPercentage/column_chart_from_xml.html', context_dict)
 
+
+def display_lines_charts_from_column(request, platform_slug_name, loop_select_name_underline):
+    context_dict = {}
+    platform = Platform.objects.get(platform_slug=platform_slug_name)
+    context_dict['platforms'] = platform
+    context_dict['xml_name'] = 'multi_linepoints.xml'
+    context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
+
+    loop_select_name = loop_select_name_underline.replace('_', ' ')
+
+    #Need to update by auto get the host version here##
+    total_host_ver = ['RHEL7.5', 'RHEL7.4', 'RHEL7.3']
+    #=================================================#
+
+    context_dict['loop_select_name'] = loop_select_name_underline.replace('_', ' ')
+    context_dict['loop_select_name_nospace'] = loop_select_name_underline
+    versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
+
+    print '+++',versions
+    context_dict['test_host_ver'] = versions
+    print '---', context_dict['test_host_ver']
+
+    return render(request, 'PassPercentage/multi-lines-chart_from_xml.html',  context_dict)
+
 def show_line_charts(request, platform_slug_name):
     platform = Platform.objects.get(platform_slug=platform_slug_name)
     context_dict = {}
@@ -96,7 +120,9 @@ def display_lines_charts(request, platform_slug_name):
     loop_select_name_nospace = loop_select_name.replace(' ', '_')
     print 'loop select name no space :', loop_select_name_nospace
 
+    #Need to update by auto get the host version here##
     total_host_ver = ['RHEL7.5', 'RHEL7.4', 'RHEL7.3']
+    #=================================================#
     context_dict['loop_select_name'] = loop_select_name
     context_dict['loop_select_name_nospace'] = loop_select_name_nospace
     versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
@@ -161,7 +187,7 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point):
             print 'form is valid'
             comment_form.save(commit=True)
             comment = Comment.objects.order_by("-comment_updated_time")[0]
-            print comment.comment_user, comment.comment_title, comment.comment_context
+            print comment.comment_user, comment.comment_context
             comment.comment_version = host_ver.replace('_','.')
             comment.comment_platform = platform.platform_name
             comment.comment_point = x_point
@@ -184,9 +210,9 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point):
     context_dict['comments'] = comment
     #print  comment
     for list in comment:
-        print 'comment user: %s; title: %s; context: %s; updated time: %s' \
+        print 'comment user: %s; context: %s; updated time: %s' \
               'version: %s; platform: %s; testloop: %s; point: %s' \
-              %(list.comment_user, list.comment_title, list.comment_context, list.comment_updated_time,
+              %(list.comment_user, list.comment_context, list.comment_updated_time,
                 list.comment_version, list.comment_platform, list.comment_testloop, list.comment_point)
 
     return render(request, 'PassPercentage/comments.html', context_dict)

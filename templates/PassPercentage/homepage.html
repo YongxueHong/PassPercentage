@@ -5,37 +5,135 @@
 {% endblock %}
 
 {% block style_block %}
-a {
-    text-decoration:none
-}
+    * {
+        border: thin black none;
+        padding: 4px;
+        //background-color: lightgray;
+        //background-image: url();
+        //color: rgb(255,255,255);
+        margin: 10px 0px 10px 0px; //top, right, bottom, left
+        font-size : 30px;
+    }
+    a {
+        text-decoration:none
+    }
+
+    .class_plafrom {
+        //border-width:medium;
+        //border-style:outset;
+        //border-color:black;
+        //border-radius: 10px;
+        //background-color: red;
+        //background-size: 40px 50px;
+        color: black;
+        font-size: 25px;
+        //width: ;
+        //padding-top:0.5em;
+        //padding-bottom:0.4em;
+        padding-right:2em;
+        padding-left:0.6em;
+        //margin:4px 20px;
+    }
+    #welcome {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        font-size: 50px;
+        color: white;
+    }
+
+    #memu {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: lightgray;
+        //background-size: 10px 10px;
+        padding-top:0.5em;
+        padding-bottom:0.4em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        //width: 80%;
+    }
+    #login {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(96,96,96);
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.4em;
+        font-size: 20px;
+        //color: rgb(255,255,255);
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+    }
+    .class_login {
+        color: rgb(255,255,255);
+    }
+    #display {
+        border-style:outset;
+        border-width:medium;
+        border-color:rgb(224,0,0);
+        //border-radius: 10px;
+        background-color: lightgray;
+        //background-size: 100px 50px;
+        padding-top:5px;
+        padding-bottom:5px;
+        font-size : 25px;
+    }
+    #loop_select_name {
+        font-size : 25px;
+    }
+    #list {
+        //border-style:outset;
+        //border-width:medium;
+        //border-color:rgb(224,0,0);
+        //border-radius: 10px;
+        //background-color: lightgray;
+        //background-size: 100px 50px;
+        //padding-top:5px;
+        //padding-bottom:5px;
+        font-size : 25px;
+    }
+    #lable_testloop {
+        padding-left:10em;
+        //margin-left:20px;
+    }
 {% endblock %}
 
 {% block body_block %}
-<h1 align="center">
+<h1 id="welcome" align="center">
 Welcome to PassPercentage
 </h1>
-<div>
+<div id="login">
     {% if user.is_authenticated %}
     <h1>Hello {{ user.username }}!</h1>
-        <p><a href="{% url 'logout' %}">Log out</a></p>
+        <p><a class='class_login', href="{% url 'logout' %}">Log out</a></p>
     {% else %}
-        <p><a href="{% url 'login' %}">Log in</a></p>
-        <p><a href="{% url 'register' %}">Sign up</a></p>
+        <p><a class='class_login', href="{% url 'login' %}">Log in</a></p>
+        <p><a class='class_login', href="{% url 'register' %}">Sign up</a></p>
     {% endif %}
 </div>
-<hr/>
-<div>
-    <p style="background-color:rgb(255,100,0)" >
-        List
-    </p>
+<div id="memu">
+    <div id="list"><label id="lable_platform"><strong>Platform :</strong></label><!--<label id="lable_testloop">Test Loop</label></div>-->
     {% if platform_list %}
         {% for platform in platform_list %}
-        <form id="chars" method="post" action="/PassPercentage/lines_charts/{{platform.platform_slug}}/" >
+        <a class='class_plafrom', id='platform' href="{% url 'show_column_chart'  platform.platform_slug %}">{{platform.platform_name}}</a>
+        <!--<form id="chars" method="post" action="/PassPercentage/lines_charts/{{platform.platform_slug}}/" >
             {% csrf_token %}
-            <a href="{% url 'show_testloops'  platform.platform_slug %}">{{platform.platform_name}}</a>
-            <a href="{% url 'show_column_chart' platform.platform_slug %}">Column Chart-{{platform.platform_name}}</a>
-            <!--<a href="{% url 'show_line_charts' platform.platform_slug %}">Line Chart-{{platform.platform_name}}</a>
-            <a href="{% url 'show_area_chart' platform.platform_slug %}">Area Chart-{{platform.platform_name}}</a>-->
+            <a class='class_plafrom', id='platform' href="{% url 'show_column_chart'  platform.platform_slug %}">{{platform.platform_name}}</a>
             <select id="loop_select_name" name="loop_select_name">
                 {% if platform.platform_name == "ppc" %}
                     {% for loop_name in ppc_loop_lists %}
@@ -59,8 +157,8 @@ Welcome to PassPercentage
                     {% endfor %}
                 {%  endif %}
             </select>
-            <button type="submit"> Display </button>
-        </form>
+            <button id='display', type="submit"> Display </button>
+        </form>-->
         {% endfor %}
     {% else %}
         <strong>No available platform</strong>
