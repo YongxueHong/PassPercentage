@@ -129,7 +129,7 @@ def create_datapoints_line(platform_name,test_loop_name, test_host_ver, file_xml
     file = open(file_xml, "w")
     file.writelines(context)
     file.close()
-    print 'list of versions :',versions
+    #print 'List of versions form utils :',versions
     return versions
 
 def create_datapoints_area(platform_name,test_loop_name, host_version, file_xml_name):
