@@ -1,0 +1,55 @@
+scp -r /home/yhong/Project/Web_Project/Dashboard/* 10.66.10.20:/home/yhong/Project/Web_Project/Dashboard/
+
+=================================================================================
+#!/usr/bin/env python
+import json
+import requests
+
+with open("/root/avocado/job-results/latest/passpercentage") as json_data:
+    pp_dict = json_result = json.load(json_data)
+r = requests.post("http://fileshare.englab.nay.redhat.com/pub/logs/", data=pp_dict)
+print(r.status_code, r.reason)
+======================================================================================
+#!/usr/bin/env python
+import json
+import requests
+
+with open("/root/avocado/job-results/latest/passpercentage") as json_data:
+    pp_dict = json_result = json.load(json_data)
+r = requests.post("http://fileshare.englab.nay.redhat.com/pub/logs/", data=pp_dict)
+print(r.status_code, r.reason)
+=====================================================================================
+I have developed one patch to collect information for pass percentage[1] and one
+patch for you to test pass percentage[2] easily.
+
+[1] http://fileshare.englab.nay.redhat.com/pub/logs/pingl/0001-Staf-kvm-support-to-collect-information-of-test-resu_v2.patch
+
+[2] http://fileshare.englab.nay.redhat.com/pub/logs/pingl/0002-patch-used-for-integration-testing.patch
+
+I dropped the installation case from below test loops, then you can get the
+test results quickly when you try to do a integration testing. You can use
+below staf cml directly.
+#python ConfigTest.py --category=acceptance_test_rhel7_pc --clone=no
+--pp_url=http://fileshare.englab.nay.redhat.com/pub/logs/
+
+#python ConfigTest.py --guestname=RHEL.7.5 --driveformat=virtio_blk,virtio_scsi
+--nicmodel=virtio_net --category=tree_signoff --display=spice --imageformat=qcow2
+--clone=no --pp_url=http://fileshare.englab.nay.redhat.com/pub/logs/
+
+#python ConfigTest.py --category=virtio_win_acceptance --guestname=Win10,Win2016
+--platform=all --clone=no --rng_type=no_virtio_rng,virtio_rng
+--customsparams="cdrom_virtio = isos/windows/virtio-win-1.9.3-1.el7.iso"
+--pp_url=http://fileshare.englab.nay.redhat.com/pub/logs/
+
+#python ConfigTest.py --category=qcow2 --nicmodel=virtio_net --driveformat=virtio_scsi
+--image_backend=filesystem --platform=x86_64 --guestname=RHEL.7.5 --vcpu=4 --imageformat=qcow2
+--mem=8192 --clone=no --pp_url=http://fileshare.englab.nay.redhat.com/pub/logs/
+
+#python ConfigTest.py --category=qcow2 --nicmodel=virtio_net --driveformat=virtio_scsi
+--image_backend=filesystem --platform=x86_64 --guestname=Win2016 --vcpu=4 --imageformat=qcow2
+--mem=8192 --clone=no --pp_url=http://fileshare.englab.nay.redhat.com/pub/logs/
+
+you can use below host for test:
+hostname: amd-9600b-8-1.englab.nay.redhat.com
+password: kvmautotest
+

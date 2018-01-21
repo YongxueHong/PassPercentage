@@ -4,10 +4,6 @@
         <y>49.50</y>
     </point>
     <point>
-        <x>acceptance</x>
-        <y>94.44</y>
-    </point>
-    <point>
         <x>virtual block device</x>
         <y>74.00</y>
     </point>
@@ -16,8 +12,12 @@
         <y>99.00</y>
     </point>
     <point>
-        <x>seabios</x>
-        <y>97.78</y>
+        <x>acceptance</x>
+        <y>94.44</y>
+    </point>
+    <point>
+        <x>slof</x>
+        <y>99.00</y>
     </point>
     <point>
         <x>numa</x>

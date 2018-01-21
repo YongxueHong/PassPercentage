@@ -18,21 +18,21 @@
         text-decoration:none
     }
 
-    .class_plafrom {
+    .class_plafrom:hover {
         //border-width:medium;
         //border-style:outset;
         //border-color:black;
         //border-radius: 10px;
-        //background-color: red;
+        background-color: rgb(80,0,0);
         //background-size: 40px 50px;
-        color: black;
-        font-size: 25px;
+        color: white;
+        //font-size: 25px;
         //width: ;
         //padding-top:0.5em;
         //padding-bottom:0.4em;
-        padding-right:2em;
-        padding-left:0.6em;
-        //margin:4px 20px;
+        //padding-right:2em;
+        //padding-left:0.6em;
+        //margin:5px 5px;
     }
     #welcome {
         //border-width:medium;
@@ -130,38 +130,11 @@ Welcome to PassPercentage
     <div id="list"><label id="lable_platform"><strong>Platform :</strong></label><!--<label id="lable_testloop">Test Loop</label></div>-->
     {% if platform_list %}
         {% for platform in platform_list %}
-        <a class='class_plafrom', id='platform' href="{% url 'show_column_chart'  platform.platform_slug %}">{{platform.platform_name}}</a>
-        <!--<form id="chars" method="post" action="/PassPercentage/lines_charts/{{platform.platform_slug}}/" >
-            {% csrf_token %}
             <a class='class_plafrom', id='platform' href="{% url 'show_column_chart'  platform.platform_slug %}">{{platform.platform_name}}</a>
-            <select id="loop_select_name" name="loop_select_name">
-                {% if platform.platform_name == "ppc" %}
-                    {% for loop_name in ppc_loop_lists %}
-                        <option value="{{ loop_name }}" label="{{ loop_name }}">{{ loop_name }}</option>
-                    {% endfor %}
-                {% elif platform.platform_name == "x86" %}
-                    {% for loop_name in x86_loop_lists %}
-                        <option value="{{ loop_name }}" label="{{ loop_name }}">{{ loop_name }}</option>
-                    {% endfor %}
-                {% elif platform.platform_name == "s390x" %}
-                    {% for loop_name in s390x_loop_lists %}
-                        <option value="{{ loop_name }}" label="{{ loop_name }}">{{ loop_name }}</option>
-                    {% endfor %}
-                {% elif platform.platform_name == "arm" %}
-                    {% for loop_name in arm_loop_lists %}
-                        <option value="{{ loop_name }}" label="{{ loop_name }}">{{ loop_name }}</option>
-                    {% endfor %}
-                {% elif platform.platform_name == "virtio-win" %}
-                    {% for loop_name in virtio_win_loop_lists %}
-                        <option value="{{ loop_name }}" label="{{ loop_name }}">{{ loop_name }}</option>
-                    {% endfor %}
-                {%  endif %}
-            </select>
-            <button id='display', type="submit"> Display </button>
-        </form>-->
         {% endfor %}
     {% else %}
         <strong>No available platform</strong>
     {% endif %}
+    </div>
 </div>
 {% endblock %}
