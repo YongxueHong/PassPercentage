@@ -1,6 +1,7 @@
 from django.shortcuts import render
 import os, sys
 import re
+import json
 # Create your views here.
 import django
 from django.contrib.auth.models import User
@@ -11,6 +12,7 @@ from utils import create_datapoints_column,create_datapoints_area, create_datapo
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from PassPercentage import populate_data
+import time, datetime
 
 def homepage(request):
     print 'The host info :',request.get_host()
@@ -20,11 +22,9 @@ def homepage(request):
     context_dict['platform_list'] = platform
     print context_dict['platform_list']
 
-    context_dict['ppc_loop_lists'] = get_all_loop('ppc')
-    context_dict['x86_loop_lists'] = get_all_loop('x86')
-    context_dict['arm_loop_lists'] = get_all_loop('arm')
-    context_dict['s390x_loop_lists'] = get_all_loop('s390x')
-    context_dict['virtio_win_loop_lists'] = get_all_loop('virtio-win')
+    for plat in platform:
+        if plat:
+            context_dict['ppc_loop_lists'], _ = get_all_loop(plat.platform_name)
 
     return render(request, 'PassPercentage/homepage.html', context_dict)
 
@@ -60,23 +60,28 @@ def show_column_chart(request, platform_slug_name):
 
     return render(request, 'PassPercentage/column_chart_from_xml.html', context_dict)
 
-
 def display_lines_charts_from_column(request, platform_slug_name, loop_select_name_underline):
     context_dict = {}
+    total_host_ver = set('')
     platform = Platform.objects.get(platform_slug=platform_slug_name)
     context_dict['platforms'] = platform
     context_dict['xml_name'] = 'multi_linepoints.xml'
     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
 
-    loop_select_name = loop_select_name_underline.replace('_', ' ')
+    #loop_select_name = loop_select_name_underline.replace('_', ' ')
 
-    #Need to update by auto get the host version here##
-    total_host_ver = ['RHEL7.5', 'RHEL7.4', 'RHEL7.3']
-    #=================================================#
+    _, test_loops = get_all_loop(platform.platform_name)
+    for loop in test_loops:
+        total_host_ver.add(loop.loop_host_ver)
+
+    total_host_ver = list(total_host_ver)
+    print 'the set of total_host_ver : ', total_host_ver
 
     context_dict['loop_select_name'] = loop_select_name_underline.replace('_', ' ')
     context_dict['loop_select_name_nospace'] = loop_select_name_underline
-    versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
+    #versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
+    versions = create_datapoints_line(platform.platform_name, loop_select_name_underline, total_host_ver,
+                                      context_dict['xml_name'])
 
     context_dict['test_host_ver'] = versions
     print 'List of host version :', context_dict['test_host_ver']
@@ -216,79 +221,95 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point):
 
     return render(request, 'PassPercentage/comments.html', context_dict)
 
+def display_meta(request):
+    values = request.META.items()
+    values.sort()
+    html = []
+    for key, val in values:
+        print ('key: %s, val: %s' % (key, val))
+
+
 def server_api(request):
     name = 'unknown'
+    tests = 'unknown'
     feature_name = 'unknown'
     feature_owner = 'unknown'
+    image_backend = 'unknown'
     qemu_ver = 'unknown'
     host_kernel_ver = 'unknown'
     host_ver = 'unknown'
     guest_kernel_ver = 'unknown'
     guest_ver = 'unknown'
+    virtio_win_ver = 'unknown'
     case_total_num = 'unknown'
     case_pass_num = 'unknown'
     cmd = 'unknown'
 
     context_dict = {}
-    #print request.method
     datas = request.POST
-    for (key, val) in datas.items():
+    print 'Beijing %s : Received data from client.' % (time.ctime())
+    for key, val in datas.items():
         if key == 'host_arch':
             platform = val
-            print ('key: %s, val: %s' %(key, val))
+            print ('key: %s, val: %s' %(key, platform))
         elif key == 'feature':
             feature_name = val
-            print ('key: %s, val: %s' % (key, val))
+            print ('key: %s, val: %s' % (key, feature_name))
         elif key == 'qemu_version':
             qemu_ver = val
-            print ('key: %s, val: %s' % (key, val))
+            print ('key: %s, val: %s' % (key, qemu_ver))
         elif key == 'owner':
             feature_owner = val
-            print ('key: %s, val: %s' % (key, val))
+            print ('key: %s, val: %s' % (key, feature_owner))
+        elif key == 'image_backend':
+            image_backend = val
+            print ('key: %s, val: %s' % (key, image_backend))
         elif key == 'host_version':
             host_ver = val
-            print ('key: %s, val: %s' % (key, val))
+            print ('key: %s, val: %s' % (key, host_ver))
         elif key == 'guest_version':
             guest_ver = val
-            print ('key: %s, val: %s' % (key, val))
+            print ('key: %s, val: %s' % (key, guest_ver))
+        elif key == 'virtio_win_version':
+            virtio_win_ver = val
+            print ('key: %s, val: %s' % (key, virtio_win_ver))
         elif key == 'total':
             case_total_num = val
-            print ('key: %s, val: %s' % (key, val))
+            print ('key: %s, val: %s' % (key, case_total_num))
         elif key == 'pass':
             case_pass_num = val
-            print ('key: %s, val: %s' % (key, val))
+            print ('key: %s, val: %s' % (key, case_pass_num))
         elif key == 'staf_cml':
             cmd = val
-            print ('key: %s, val: %s' % (key, val))
+            print ('key: %s, val: %s' % (key, cmd))
         elif key == 'tests':
             tests = val
-            print ('key: %s, val: %s' % (key, val))
+            for key, val in datas.iterlists():
+                if key == 'tests':
+                    tests = val
+                    print ('key: %s, val: %s' % (key, tests))
 
-    platforms = Platform.objects.order_by('-platform_name')[:]
-    platform_list = []
-
-    for platform_exsited in platforms:
-        #print 'Platform exsited :', platform_exsited.platform_name
-        platform_list.append(platform_exsited.platform_name)
-    platform_string = '; '.join(platform_list)
-    #print 'List of platform :', platform_string
-    if not re.findall(platform, platform_string):
-        populate_data.add_platform(platform)
-
-    platform = Platform.objects.get_or_create(platform_name=platform)[0]
+    populate_data.add_platform(platform)
+    platform = Platform.objects.get(platform_name=platform)
+    # Replace the name of loop with loop_feature_name if the attribute of loop_name is 'unknown
+    if name == 'unknown':
+        name = feature_name
 
     populate_data.add_testloop(platform=platform,
-                 name=name,
-                 feature_name=feature_name,
-                 feature_owner=feature_owner,
-                 qemu_ver=qemu_ver,
-                 host_kernel_ver=host_kernel_ver,
-                 host_ver=host_ver,
-                 guest_kernel_ver=guest_kernel_ver,
-                 guest_ver=guest_ver,
-                 case_total_num=case_total_num,
-                 case_pass_num=case_pass_num,
-                 cmd=cmd)
+                             name=name,
+                             test_details=tests,
+                             feature_name=feature_name,
+                             feature_owner=feature_owner,
+                             image_backend=image_backend,
+                             qemu_ver=qemu_ver,
+                             host_kernel_ver=host_kernel_ver,
+                             host_ver=host_ver,
+                             guest_kernel_ver=guest_kernel_ver,
+                             guest_ver=guest_ver,
+                             virtio_win_ver=virtio_win_ver,
+                             case_total_num=case_total_num,
+                             case_pass_num=case_pass_num,
+                             cmd=cmd)
 
     return render(request, 'PassPercentage/homepage.html', context_dict)
 
