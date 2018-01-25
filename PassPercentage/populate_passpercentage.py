@@ -6,10 +6,10 @@ from PassPercentage.models import Platform, TestLoop
 
 def populate():
     ppc_platform = add_platform('ppc')
-    x86_platform = add_platform('x86')
+    x86_64_platform = add_platform('x86_64')
     s390_platform = add_platform('s390x')
     arm_platform = add_platform('arm')
-    arm_platform = add_platform('virtio-win')
+    virtio_win_platform = add_platform('virtio_win')
     
     add_testloop(ppc_platform, 
                  name='acceptance', 
@@ -67,7 +67,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.5 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -123,7 +123,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.5 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -137,7 +137,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.5 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -151,7 +151,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.5 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -235,7 +235,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -335,7 +335,7 @@ def populate():
                  cmd='python ConfigTest.py --category=qcow2 --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.5 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='pingl',
@@ -349,7 +349,7 @@ def populate():
                  cmd='python ConfigTest.py --category=qcow2 --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -378,7 +378,7 @@ def populate():
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
      
      
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='xuma',
@@ -392,7 +392,7 @@ def populate():
                  cmd='python ConfigTest.py --category=numa --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='xuma',
@@ -406,7 +406,7 @@ def populate():
                  cmd='python ConfigTest.py --category=numa --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='kdump',
                  feature_name='kdump',
                  feature_owner='xuma',
@@ -420,7 +420,7 @@ def populate():
                  cmd='python ConfigTest.py --category=kdump --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.5 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='kdump',
                  feature_name='kdump',
                  feature_owner='xuma',
@@ -435,7 +435,7 @@ def populate():
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.5 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
     
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -449,7 +449,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='mdeng',
@@ -463,7 +463,7 @@ def populate():
                  cmd='python ConfigTest.py --category=numa --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual block device',
                  feature_name='virtual block device',
                  feature_owner='yhong',
@@ -477,7 +477,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_block_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual nic device',
                  feature_name='virtual nic device',
                  feature_owner='zhengtli',
@@ -491,7 +491,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -505,7 +505,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -519,7 +519,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -533,7 +533,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -547,7 +547,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -561,7 +561,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -575,7 +575,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -589,7 +589,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='usb device',
                  feature_name='usb device',
                  feature_owner='xuma',
@@ -603,7 +603,7 @@ def populate():
                  cmd='python ConfigTest.py --category=usb_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='mdeng',
@@ -617,7 +617,7 @@ def populate():
                  cmd='python ConfigTest.py --category=numa --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual block device',
                  feature_name='virtual block device',
                  feature_owner='yhong',
@@ -631,7 +631,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_block_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual block device',
                  feature_name='virtual block device',
                  feature_owner='yhong',
@@ -645,7 +645,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_block_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual nic device',
                  feature_name='virtual nic device',
                  feature_owner='zhengtli',
@@ -659,7 +659,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -673,7 +673,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='timer device',
                  feature_name='timer device',
                  feature_owner='yhong',
@@ -687,7 +687,7 @@ def populate():
                  cmd='python ConfigTest.py --category=timer_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='kdump',
                  feature_name='kdump',
                  feature_owner='yilzhang',
@@ -701,7 +701,7 @@ def populate():
                  cmd='python ConfigTest.py --category=kdump --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='mdeng',
@@ -715,7 +715,7 @@ def populate():
                  cmd='python ConfigTest.py --category=kdump --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='yilzhang',
@@ -730,7 +730,7 @@ def populate():
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='yilzhang',
@@ -745,7 +745,7 @@ def populate():
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='yilzhang',
@@ -759,7 +759,7 @@ def populate():
                  cmd='python ConfigTest.py --category=qcow2 --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='pingl',
@@ -773,7 +773,7 @@ def populate():
                  cmd='python ConfigTest.py --category=qcow2 --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -787,7 +787,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -1167,7 +1167,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -1181,7 +1181,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='mdeng',
@@ -1195,7 +1195,7 @@ def populate():
                  cmd='python ConfigTest.py --category=numa --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='mdeng',
@@ -1209,7 +1209,7 @@ def populate():
                  cmd='python ConfigTest.py --category=numa --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual block device',
                  feature_name='virtual block device',
                  feature_owner='yhong',
@@ -1223,7 +1223,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_block_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual block device',
                  feature_name='virtual block device',
                  feature_owner='yhong',
@@ -1237,7 +1237,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_block_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual nic device',
                  feature_name='virtual nic device',
                  feature_owner='zhengtli',
@@ -1251,7 +1251,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual nic device',
                  feature_name='virtual nic device',
                  feature_owner='zhengtli',
@@ -1265,7 +1265,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -1279,7 +1279,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -1293,7 +1293,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -1307,7 +1307,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -1321,7 +1321,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -1335,7 +1335,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -1349,7 +1349,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -1363,7 +1363,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='usb device',
                  feature_name='usb device',
                  feature_owner='xuma',
@@ -1377,7 +1377,7 @@ def populate():
                  cmd='python ConfigTest.py --category=usb_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='usb device',
                  feature_name='usb device',
                  feature_owner='xuma',
@@ -1391,7 +1391,7 @@ def populate():
                  cmd='python ConfigTest.py --category=usb_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='usb device',
                  feature_name='usb device',
                  feature_owner='xuma',
@@ -1405,7 +1405,7 @@ def populate():
                  cmd='python ConfigTest.py --category=usb_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='mdeng',
@@ -1419,7 +1419,7 @@ def populate():
                  cmd='python ConfigTest.py --category=numa --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual block device',
                  feature_name='virtual block device',
                  feature_owner='yhong',
@@ -1433,7 +1433,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_block_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual block device',
                  feature_name='virtual block device',
                  feature_owner='yhong',
@@ -1447,7 +1447,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_block_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual nic device',
                  feature_name='virtual nic device',
                  feature_owner='zhengtli',
@@ -1461,7 +1461,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual nic device',
                  feature_name='virtual nic device',
                  feature_owner='zhengtli',
@@ -1475,7 +1475,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='virtual nic device',
                  feature_name='virtual nic device',
                  feature_owner='zhengtli',
@@ -1489,7 +1489,7 @@ def populate():
                  cmd='python ConfigTest.py --category=virtual_nic_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingli',
@@ -1503,7 +1503,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='timer device',
                  feature_name='timer device',
                  feature_owner='yhong',
@@ -1517,7 +1517,7 @@ def populate():
                  cmd='python ConfigTest.py --category=timer_device --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='kdump',
                  feature_name='kdump',
                  feature_owner='yilzhang',
@@ -1531,7 +1531,7 @@ def populate():
                  cmd='python ConfigTest.py --category=kdump --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='numa',
                  feature_name='numa',
                  feature_owner='mdeng',
@@ -1545,7 +1545,7 @@ def populate():
                  cmd='python ConfigTest.py --category=kdump --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='yilzhang',
@@ -1559,7 +1559,7 @@ def populate():
                  cmd='python ConfigTest.py --category=qcow2 --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='yilzhang',
@@ -1573,7 +1573,7 @@ def populate():
                  cmd='python ConfigTest.py --category=qcow2 --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='yilzhang',
@@ -1587,7 +1587,7 @@ def populate():
                  cmd='python ConfigTest.py --category=qcow2 --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='qcow2',
                  feature_name='qcow2',
                  feature_owner='pingl',
@@ -1601,7 +1601,7 @@ def populate():
                  cmd='python ConfigTest.py --category=qcow2 --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -1615,7 +1615,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='xuma',
@@ -1905,7 +1905,7 @@ def populate():
                  guest_kernel_ver='kernel-3.10.0-723.el7.ppc64le',
                  guest_ver='RHEL7.3',
                  case_total_num=200,
-                 case_pass_num=111,
+                 case_pass_num=199,
                  cmd='python ConfigTest.py --category=kdump --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')
 
@@ -1993,7 +1993,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=ppc64le --mem=8192 --vcpu=8 --verbose=no')    
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2007,7 +2007,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2021,7 +2021,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2035,7 +2035,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2049,7 +2049,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2063,7 +2063,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2077,7 +2077,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.3 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2091,7 +2091,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2105,7 +2105,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2119,7 +2119,7 @@ def populate():
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='acceptance',
                  feature_name='acceptance',
                  feature_owner='pingl',
@@ -2129,11 +2129,11 @@ def populate():
                  guest_kernel_ver='kernel-3.10.0-665.el7.x86',
                  guest_ver='RHEL7.4',
                  case_total_num=180,
-                 case_pass_num=170,
+                 case_pass_num=120,
                  cmd='python ConfigTest.py --category=acceptance --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='seabios',
                  feature_name='seabios',
                  feature_owner='xuwei',
@@ -2147,7 +2147,7 @@ def populate():
                  cmd='python ConfigTest.py --category=seabios --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='seabios',
                  feature_name='seabios',
                  feature_owner='xuwei',
@@ -2161,7 +2161,7 @@ def populate():
                  cmd='python ConfigTest.py --category=seabios --driveformat=virtio_blk '
                      '--imageformat=qcow2 --nicmodel=virtio_net --guestname=RHEL.7.4 --platform=x86_64 --mem=8192 --vcpu=8 --verbose=no')
 
-    add_testloop(x86_platform,
+    add_testloop(x86_64_platform,
                  name='seabios',
                  feature_name='seabios',
                  feature_owner='xuwei',
@@ -2246,7 +2246,7 @@ def add_testloop(platform,
                                        loop_case_total_num=case_total_num,
                                        loop_case_pass_num=case_pass_num, 
                                        loop_cmd=cmd)[0]
-    time.sleep(random.randrange(1, 10))
+    time.sleep(random.randrange(1, 5))
     return t
 
 def add_platform(name):

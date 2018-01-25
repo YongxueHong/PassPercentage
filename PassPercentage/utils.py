@@ -1,4 +1,4 @@
-import sys,os
+import sys,os,re
 from PassPercentage.models import Platform, TestLoop
 from django.db.models import Count
 import datetime
@@ -15,38 +15,22 @@ print XML_DIR
 
 def query_latest_loop(platform_name):
     test_loop = TestLoop.objects.filter(platform=platform_name)
-    names = []
+    names = set('')
     loop_list = []
     latest_dict = {}
 
     for list in test_loop:
-        names.append(list.loop_name)
+        names.add(list.loop_name)
 
-    for list in set(names):
+    for list in names:
         loop = TestLoop.objects.filter(loop_name=list).order_by("-loop_updated_time")[0]
         print 'Latest %s loop column info : [update time : %s, case pass nums : %s, case total nums : %s , pass percentage: %.2f]'\
               %(loop, loop.loop_updated_time, loop.loop_case_pass_num, loop.loop_case_total_num,
                 float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num)
+        #print 'Test details: %s' % (str(loop.loop_test_details))
         loop_list.append(loop)
         latest_dict[loop.loop_name] = float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num
-        """
-        print list
-        index = 0
-        for name in names:
-            if (list == name):
-                tmp_times.append(times[index])
-            index = index + 1
-            tmp_times.sort()
-        print 'new times', tmp_times
-        pos = 0
-        for time in times:
-            if (tmp_times[-1] == time):
-                latest_dict[list] = percentages[pos]
-                print 'pos', pos
-                break
-            pos = pos + 1
-        tmp_times = []
-        """
+
     return latest_dict, loop_list
 
 def create_datapoints_column(platform_name, file_xml_name):
@@ -71,7 +55,7 @@ def create_datapoints_column(platform_name, file_xml_name):
 
     return platform, test_loop
 
-def create_datapoints_line(platform_name,test_loop_name, test_host_ver, file_xml_name):
+def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xml_name):
     context_dict = {}
     platform = Platform.objects.get(platform_slug=platform_name)
     context_dict['platforms'] = platform
@@ -91,6 +75,7 @@ def create_datapoints_line(platform_name,test_loop_name, test_host_ver, file_xml
                       % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
                          list.loop_case_total_num, (float(list.loop_case_pass_num * 100) / list.loop_case_total_num),
                          list.loop_host_ver)
+                #print 'Test details <%s>: %s' % (type(str(list.loop_test_details)), str(list.loop_test_details))
             context += "    <%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
             versions += list.loop_host_ver.replace('.', '_').replace('-', '_') + ','
             t = 0
@@ -106,6 +91,7 @@ def create_datapoints_line(platform_name,test_loop_name, test_host_ver, file_xml
                            "            <host_ver>%s</host_ver>\n" \
                            "            <guest_kernel_ver>%s</guest_kernel_ver>\n" \
                            "            <guest_ver>%s</guest_ver>\n" \
+                           "            <virtio_win_ver>%s</virtio_win_ver>\n" \
                            "            <cmd>%s</cmd>\n" \
                            "            <updated_time>%s</updated_time>\n" \
                            "        </point>\n" %(t,
@@ -118,6 +104,7 @@ def create_datapoints_line(platform_name,test_loop_name, test_host_ver, file_xml
                                                   list.loop_host_ver,
                                                   list.loop_guest_kernel_ver,
                                                   list.loop_guest_ver,
+                                                  list.loop_virtio_win_ver,
                                                   list.loop_cmd,
                                                   list.loop_updated_time
                                                   )
@@ -129,7 +116,6 @@ def create_datapoints_line(platform_name,test_loop_name, test_host_ver, file_xml
     file = open(file_xml, "w")
     file.writelines(context)
     file.close()
-    #print 'List of versions form utils :',versions
     return versions
 
 def create_datapoints_area(platform_name,test_loop_name, host_version, file_xml_name):
@@ -168,21 +154,20 @@ def create_datapoints_area(platform_name,test_loop_name, host_version, file_xml_
     file.close()
 
 def get_all_loop(platform_name):
-    loop_name = []
+    loop_name = set('')
     total_loop = []
     platform = Platform.objects.get(platform_name=platform_name)
 
     testloop_list = TestLoop.objects.filter(platform=platform)
     for testloop in testloop_list:
-        loop_name.append(testloop.loop_name)
+        loop_name.add(testloop.loop_name)
 
-    for list in set(loop_name):
-        total_loop.append(list)
+    total_loop = list(loop_name)
 
     if not total_loop:
         total_loop.append('No loops')
         print '%s no loops' % platform_name
     else:
         print 'total loop of %s: %s' %(platform_name, total_loop)
-    return total_loop
+    return total_loop, testloop_list
 

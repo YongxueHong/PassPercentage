@@ -65,11 +65,12 @@ window.onload = function() {
                 var host_ver = $dataPoint.find("host_ver").text();
                 var guest_kernel_ver = $dataPoint.find("guest_kernel_ver").text();
                 var guest_ver = $dataPoint.find("guest_ver").text();
+                var virtio_win_ver = $dataPoint.find("virtio_win_ver").text();
                 var cmd = $dataPoint.find("cmd").text();
                 var updated_time = $dataPoint.find("updated_time").text();
 				//document.write(x+ ':'+y +'%' + '<br/>' + pass_num +'<br>' + total_num + '<br>');
                 pass_num_list.push(pass_num);
-                dataPoints.push({label: x, y: parseFloat(y), pass_num: pass_num, total_num, total_num, feature_owner, qemu_ver, host_kernel_ver, host_ver, guest_kernel_ver, guest_ver, cmd, updated_time});
+                dataPoints.push({label: x, y: parseFloat(y), pass_num: pass_num, total_num, total_num, feature_owner, qemu_ver, host_kernel_ver, host_ver, guest_kernel_ver, guest_ver, virtio_win_ver, cmd, updated_time});
             });
             data_dict = {
                 type: "spline",
@@ -79,7 +80,8 @@ window.onload = function() {
                 showInLegend: true,
                 legendMarkerType: "square",
                 //markerSize: 0,
-                name:versions[i].replace('_', '.'),
+                //name:versions[i].replaceall('_', '.').replace('_', '.').replace('_', '.'),
+                name:versions[i].replace(/_/g, '.'),
                 dataPoints: dataPoints
             }
             data_list.push(data_dict)
@@ -110,7 +112,7 @@ window.onload = function() {
                                     content += "host version :" + e.entries[i].dataPoint.host_ver  + "<br/>"
                                     content += "guest kernel version :" + e.entries[i].dataPoint.guest_kernel_ver  + "<br/>"
                                     content += "guest version :" + e.entries[i].dataPoint.guest_ver  + "<br/>"
-                                    //content += "command line :" + e.entries[i].dataPoint.cmd  + "<br/>"
+                                    content += "virtio_win version :" + e.entries[i].dataPoint.virtio_win_ver  + "<br/>"
                                     content += "updated time :" + e.entries[i].dataPoint.updated_time  + "<br/>"
                                     //content += "<a href=\"http://www.radhat.com\">RedHat</a>" + "<br/>"
                                     content += "<br/>";
@@ -131,7 +133,7 @@ window.onload = function() {
         });
         chart.render();
         function show_detail_area(e) {
-            var host_ver = e.dataSeries.name.replace('.', '_')
+            var host_ver = e.dataSeries.name.replace(/\./g, '_')
             //areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaWin");
             areaWin = window.location.assign("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaWin");
             //window.location.href = "/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/";
@@ -147,9 +149,7 @@ window.onload = function() {
         }*/
 
         function onClick(e) {
-            var host_ver = e.dataSeries.name.replace('.', '_')
-            //alert(  e.dataSeries.name +" dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
-            //var host_ver = e.dataSeries.name.replace('.', '_')
+            var host_ver = e.dataSeries.name.replace(/\./g, '_')
             //commentWin = window.open("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "commentWin");
            commentWin = window.location.assign("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "commentWin");
             //window.location.href = "/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/"；
