@@ -100,45 +100,64 @@
         color: black;
     }
 {% endblock %}
+{% block script_block %}
+window.onload = function(){
+    var obj_select = document.getElementById("test_select");
+    var obj_div = document.getElementById("test");
+    obj_select.onchange = function(){
+        obj_div.style.display = this.value==1? "block" : "none";
+    }
+}
+{% endblock %}
 
 {% block body_block %}
+
 <div>
-<h1>Comment here</h1>
-<!--</div>
-<div><h2>Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</h2>
-</div>-->
+    <h1>Comment here</h1>
+    <!--</div>
+    <div><h2>Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</h2>
+    </div>-->
+</div>
 <div>
-<form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point %}"
-      enctype="multipart/form-data">
-    <p id="point_info">@ Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
-    {% csrf_token %}
-    <label for="user "><strong>User:</strong></label>
-    {{ comment_form.comment_user }}
-    <p><label for="email "><strong>Email:</strong></label>
-        {{ comment_form.comment_email }}
-    </p>
-    {{ comment_form.comment_context }}
-    <p><button type="submit">Comment</button></p>
-</form>
-    </div>
+    <h2>Details</h2>
+    <select id="test_select">
+    <option value="1">Open</option>
+    <option value="2">Closed</option>
+    </select>
+    <div id="test">{{ fail_err_info|linebreaks }}</div>
+</div>
+<div>
+    <form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point updated_time %}"
+          enctype="multipart/form-data">
+        <p id="point_info">@ Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
+        {% csrf_token %}
+        <label for="user "><strong>User:</strong></label>
+        {{ comment_form.comment_user }}
+        <p><label for="email "><strong>Email:</strong></label>
+            {{ comment_form.comment_email }}
+        </p>
+        {{ comment_form.comment_context }}
+        <p><button type="submit">Comment</button></p>
+    </form>
+</div>
 <div id="history_comment">
     <h2 style="color : red">History Comments</h2>
-{% for comment in comments %}
+    {% for comment in comments %}
 
-    {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline and comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
-    <div id="each_comment">
-        <!--<p>Version : {{comment.comment_version}}</p>
-        <p>Platform : {{comment.comment_platform}}</p>
-        <p>loop : {{comment.comment_testloop}}</p>
-        <p>Piont : {{comment.comment_point}}</p>
-        <p>Title : {{comment.comment_title}}</p>
-        <p>Index : {{comment.comment_index}}</p>-->
-        <p>{{comment.comment_context}}</p>
-        <hr/>
-        <p>From: {{comment.comment_user}} ; Email: <a href="mailto:{{comment.comment_email}}"> {{comment.comment_email}} </a>; Update time: {{comment.comment_updated_time}}</p>
-        </div>
-    {% endif %}
+        {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline and comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
+        <div id="each_comment">
+            <!--<p>Version : {{comment.comment_version}}</p>
+            <p>Platform : {{comment.comment_platform}}</p>
+            <p>loop : {{comment.comment_testloop}}</p>
+            <p>Piont : {{comment.comment_point}}</p>
+            <p>Title : {{comment.comment_title}}</p>
+            <p>Index : {{comment.comment_index}}</p>-->
+            <p>{{comment.comment_context}}</p>
+            <hr/>
+            <p>From: {{comment.comment_user}} ; Email: <a href="mailto:{{comment.comment_email}}"> {{comment.comment_email}} </a>; Update time: {{comment.comment_updated_time}}</p>
+            </div>
+        {% endif %}
 
-{% endfor %}
-    </div>
+    {% endfor %}
+</div>
 {% endblock %}

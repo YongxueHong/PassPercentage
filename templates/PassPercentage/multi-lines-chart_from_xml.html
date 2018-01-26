@@ -50,6 +50,7 @@ window.onload = function() {
 	var data_dict = {}
     var versions = ('{{test_host_ver}}').split(",")
     var pass_num_list = []
+    var x_map_time = {}
 
     $.get("{% static dir_xml %}",function(data) {
         for(i=0;i<versions.length;i++){
@@ -116,6 +117,7 @@ window.onload = function() {
                                     content += "updated time :" + e.entries[i].dataPoint.updated_time  + "<br/>"
                                     //content += "<a href=\"http://www.radhat.com\">RedHat</a>" + "<br/>"
                                     content += "<br/>";
+                                    x_map_time[e.entries[i].dataPoint.x] = e.entries[i].dataPoint.updated_time
                                 }
                                 return content;
                             }
@@ -150,8 +152,10 @@ window.onload = function() {
 
         function onClick(e) {
             var host_ver = e.dataSeries.name.replace(/\./g, '_')
+            var updated_time_nospace = x_map_time[e.dataPoint.x].replace(/\s+/g, '_').replace(/\:/g, '-').replace(/\./g, '_').replace(/\+/g, '_')
             //commentWin = window.open("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "commentWin");
-           commentWin = window.location.assign("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "commentWin");
+            //commentWin = window.location.assign("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/", "commentWin");
+            commentWin = window.location.assign("/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/" + updated_time_nospace + "/", "commentWin");
             //window.location.href = "/PassPercentage/comments/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/" +e.dataPoint.x + "/"；
         }
     });

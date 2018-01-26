@@ -7,9 +7,9 @@ pip install -U django==1.9.10
 pip install pillow
 
 python manage.py migrate
-python manage.py createsuperuser
 python manage.py makemigrations PassPercentage
 python manage.py migrate
+python manage.py createsuperuser
 
 
 python manage.py runserver 10.66.10.20:8000

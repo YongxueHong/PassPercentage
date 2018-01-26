@@ -1,8 +1,9 @@
 import sys,os,re
-from PassPercentage.models import Platform, TestLoop
+from PassPercentage.models import Platform, TestLoop, TestsID, CaseDetail
 from django.db.models import Count
 import datetime
 from django.utils import timezone
+import json
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
@@ -171,3 +172,39 @@ def get_all_loop(platform_name):
         print 'total loop of %s: %s' %(platform_name, total_loop)
     return total_loop, testloop_list
 
+def display_meta(request):
+    values = request.META.items()
+    values.sort()
+    for key, val in values:
+        print ('key: %s, val: %s' % (key, val))
+
+def display_test_details(platform, loopname, updated_time, failed_error=False, verbose=True):
+    testloop = TestLoop.objects.filter(platform=platform).filter(loop_name=loopname)\
+        .filter(loop_updated_time=updated_time)
+    fail_err_dict = {}
+    fail_err_info = ''
+    testid = TestsID.objects.filter(tests_id=updated_time)
+    print 'test id : ', testid
+    cases = CaseDetail.objects.filter(test_id=testid)
+    if verbose == True:
+        for case in cases:
+            print '============================================='
+            print 'status:', case.case_status
+            print 'fail_reason:', case.case_fail_reason
+            print 'url:', case.case_url
+            print 'whiteboard:', case.case_whiteboard
+            print 'start:', case.case_start
+            print 'logdir:', case.case_logdir
+            print 'time:', case.case_time
+            print 'test:', case.case_test
+            print 'end:', case.case_end
+            print 'logfile:', case.case_logfile
+            print 'id:', case.case_id
+    if failed_error == True:
+        for case in cases:
+            if not re.findall(r'PASS', case.case_status):
+                fail_err_info +='Case ID:' +  case.case_id + '.\n' + 'Fail reason: ' + case.case_fail_reason + '.\n' + '\n'
+    return cases, fail_err_info
+
+def check_attr_value(atrr):
+    pass
