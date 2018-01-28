@@ -5,7 +5,6 @@ import sys
 def post(ip, file):
     with open(file) as json_data:
         pp_dict = json.load(json_data)
-    print type(pp_dict)
     url = "http://%s:8000/PassPercentage/server_api/" %ip
     r = requests.post(url, json=pp_dict)
     for (key, val) in pp_dict.items():

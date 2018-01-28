@@ -14,7 +14,7 @@ print STATIC_DIR
 print XML_DIR
 
 
-def query_latest_loop(platform_name):
+def query_latest_loop(platform_name, verbose=True):
     test_loop = TestLoop.objects.filter(platform=platform_name)
     names = set('')
     loop_list = []
@@ -25,9 +25,10 @@ def query_latest_loop(platform_name):
 
     for list in names:
         loop = TestLoop.objects.filter(loop_name=list).order_by("-loop_updated_time")[0]
-        print 'Latest %s loop column info : [update time : %s, case pass nums : %s, case total nums : %s , pass percentage: %.2f]'\
-              %(loop, loop.loop_updated_time, loop.loop_case_pass_num, loop.loop_case_total_num,
-                float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num)
+        if verbose == True:
+            print 'Latest %s loop column info : [update time : %s, case pass nums : %s, case total nums : %s , pass percent: %.2f]'\
+                  %(loop, loop.loop_updated_time, loop.loop_case_pass_num, loop.loop_case_total_num,
+                    float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num)
         #print 'Test details: %s' % (str(loop.loop_test_details))
         loop_list.append(loop)
         latest_dict[loop.loop_name] = float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num
@@ -39,14 +40,14 @@ def create_datapoints_column(platform_name, file_xml_name):
     print 'Platform : %s' % (platform.platform_name)
     dict = {}
     test_loop = []
-    dict, test_loop = query_latest_loop(platform)
+    dict, test_loop = query_latest_loop(platform_name=platform, verbose=True)
     context = ""
     context += "<data>\n"
-    for (name, percentage) in dict.items():
+    for (name, percent) in dict.items():
         context += "    <point>\n" \
                    "        <x>%s</x>\n" \
                    "        <y>%.2f</y>\n" \
-                   "    </point>\n" %(name, percentage)
+                   "    </point>\n" %(name, percent)
     context += "</data>"
 
     file_xml = os.path.join(XML_DIR, file_xml_name)
@@ -56,7 +57,7 @@ def create_datapoints_column(platform_name, file_xml_name):
 
     return platform, test_loop
 
-def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xml_name):
+def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xml_name, verbose=True):
     context_dict = {}
     platform = Platform.objects.get(platform_slug=platform_name)
     context_dict['platforms'] = platform
@@ -71,16 +72,19 @@ def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xm
             "loop_updated_time")[:]
         if loop:
             for list in loop:
-                print 'Total %s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , ' \
-                      'pass percentage : %.2f, version: %s]' \
-                      % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
-                         list.loop_case_total_num, (float(list.loop_case_pass_num * 100) / list.loop_case_total_num),
-                         list.loop_host_ver)
+                if verbose == True:
+                    print 'Total %s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , ' \
+                          'pass percent : %.2f, version: %s]' \
+                          % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
+                             list.loop_case_total_num, (float(list.loop_case_pass_num * 100) / list.loop_case_total_num),
+                             list.loop_host_ver)
                 #print 'Test details <%s>: %s' % (type(str(list.loop_test_details)), str(list.loop_test_details))
             context += "    <%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
             versions += list.loop_host_ver.replace('.', '_').replace('-', '_') + ','
             t = 0
             for list in loop:
+                # Need to shit the loop_updated_time(stored in db with UTC timezone) to local time.
+                #list.loop_updated_time_local = list.loop_updated_time + datetime.timedelta(hours=8)
                 context += "        <point>\n" \
                            "            <x>T%d</x>\n" \
                            "            <y>%.2f</y>\n" \
@@ -119,7 +123,7 @@ def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xm
     file.close()
     return versions
 
-def create_datapoints_area(platform_name,test_loop_name, host_version, file_xml_name):
+def create_datapoints_area(platform_name, test_loop_name, host_version, file_xml_name):
     context_dict = {}
     platform = Platform.objects.get(platform_slug=platform_name)
     context_dict['platforms'] = platform
@@ -135,6 +139,7 @@ def create_datapoints_area(platform_name,test_loop_name, host_version, file_xml_
     context += "<data>\n"
     context += "    <pass>\n"
     for list in loop:
+        #list.loop_updated_time_local = list.loop_updated_time + datetime.timedelta(hours=8)
         context += "        <point>\n" \
                    "            <x>%s</x>\n" \
                    "            <y>%s</y>\n" \
@@ -178,11 +183,58 @@ def display_meta(request):
     for key, val in values:
         print ('key: %s, val: %s' % (key, val))
 
+
+def create_datapoints_pie(file_xml_name, dict):
+    context = ""
+    context += "<data>\n"
+    for (name, percent) in dict.items():
+        print 'Pie member ==> %s, %s' %(name, percent)
+        context += "    <point>\n" \
+                   "        <x>%s</x>\n" \
+                   "        <y>%s</y>\n" \
+                   "    </point>\n" %(name, percent)
+    context += "</data>"
+
+    file_xml = os.path.join(XML_DIR, file_xml_name)
+    file = open(file_xml, "w")
+    file.writelines(context)
+    file.close()
+
 def display_test_details(platform, loopname, updated_time, failed_error=False, verbose=True):
     testloop = TestLoop.objects.filter(platform=platform).filter(loop_name=loopname)\
         .filter(loop_updated_time=updated_time)
-    fail_err_dict = {}
-    fail_err_info = ''
+
+    fail_dict = {}
+    fail_dict['fail'] = {}
+    fail_dict['error'] = {}
+    fail_dict['cancel'] = {}
+    fail_dict['skip'] = {}
+    fail_dict['all'] = {}
+    fail_dict['pass'] = {}
+
+    fail_dict['fail']['fail_info'] = {}
+    fail_dict['fail']['fail_cont'] = {}
+    fail_dict['fail']['fail_percnet'] = {}
+
+    fail_dict['error']['error_info'] = {}
+    fail_dict['error']['error_cont'] = {}
+    fail_dict['error']['error_percent'] = {}
+
+    fail_dict['cancel']['cancel_info'] = {}
+    fail_dict['cancel']['cancel_cont'] = {}
+    fail_dict['cancel']['cancel_percent'] = {}
+
+    fail_dict['skip']['skip_info'] = {}
+    fail_dict['skip']['skip_cont'] = {}
+    fail_dict['skip']['skip_percent'] = {}
+
+    fail_dict['all']['all_info'] = {}
+    fail_dict['all']['all_cont'] = {}
+
+    fail_info_dict = {}
+    fail_cont_dict = {}
+    fail_percent_dict = {}
+
     testid = TestsID.objects.filter(tests_id=updated_time)
     print 'test id : ', testid
     cases = CaseDetail.objects.filter(test_id=testid)
@@ -200,11 +252,87 @@ def display_test_details(platform, loopname, updated_time, failed_error=False, v
             print 'end:', case.case_end
             print 'logfile:', case.case_logfile
             print 'id:', case.case_id
+    fail_info = ''
+    fail_cont = 0
+    error_info = ''
+    error_cont = 0
+    cancel_info = ''
+    cancel_cont = 0
+    skip_info = ''
+    skip_cont = 0
+    all_info = ''
+    all_cont = 0
+
     if failed_error == True:
         for case in cases:
-            if not re.findall(r'PASS', case.case_status):
-                fail_err_info +='Case ID:' +  case.case_id + '.\n' + 'Fail reason: ' + case.case_fail_reason + '.\n' + '\n'
-    return cases, fail_err_info
+            #if not re.findall(r'PASS', case.case_status):
+            #if re.findall(r'FAIL', case.case_status) or re.findall(r'ERROR', case.case_status):
+            if re.findall(r'FAIL', case.case_status):
+                fail_cont = fail_cont + 1
+                fail_info +='Case ID:' +  case.case_id + '.\n' + 'Fail reason: ' + case.case_fail_reason + '.\n' + '\n'
 
-def check_attr_value(atrr):
-    pass
+            if re.findall(r'ERROR', case.case_status):
+                error_cont = error_cont + 1
+                error_info +='Case ID:' +  case.case_id + '.\n' + 'Error reason: ' + case.case_fail_reason + '.\n' + '\n'
+
+            if re.findall(r'CANCEL', case.case_status):
+                cancel_cont = cancel_cont + 1
+                cancel_info +='Case ID:' +  case.case_id + '.\n' + 'Cancel reason: ' + case.case_fail_reason + '.\n' + '\n'
+
+            if re.findall(r'SKIP', case.case_status):
+                skip_cont = skip_cont + 1
+                skip_info +='Case ID:' +  case.case_id + '.\n' + 'Skip reason: ' + case.case_fail_reason + '.\n' + '\n'
+
+    fail_info_dict['fail_info'] = fail_info
+    fail_cont_dict['fail_cont'] = fail_cont
+    fail_percent_dict['FAIL'] = float(fail_cont * 100) / testloop[0].loop_case_total_num
+    fail_info_dict['error_info'] = error_info
+    fail_cont_dict['error_cont'] = error_cont
+    fail_percent_dict['ERROR'] = float(error_cont * 100) / testloop[0].loop_case_total_num
+    fail_info_dict['cancel_info'] = cancel_info
+    fail_cont_dict['cancel_cont'] = cancel_cont
+    fail_percent_dict['CANCEL'] = float(cancel_cont * 100) / testloop[0].loop_case_total_num
+    fail_info_dict['skip_info'] = skip_info
+    fail_cont_dict['skip_cont'] = skip_cont
+    fail_percent_dict['SKIP'] = float(skip_cont * 100) / testloop[0].loop_case_total_num
+    #pass_count = total_case_num - fail_cont - error_cont - cancel_cont - skip_cont
+    fail_percent_dict['PASS'] = float(testloop[0].loop_case_pass_num * 100) / testloop[0].loop_case_total_num
+
+    fail_info_dict['all_info'] = fail_info + error_info + cancel_info + skip_info
+    fail_cont_dict['all_cont'] = fail_cont + error_cont + cancel_cont + skip_cont
+
+    if not fail_info_dict['fail_info']:
+        fail_info_dict['fail_info'] = 'No such cases.'
+    if not fail_info_dict['error_info']:
+        fail_info_dict['error_info'] = 'No such cases.'
+    if not fail_info_dict['cancel_info']:
+        fail_info_dict['cancel_info'] = 'No such cases.'
+    if not fail_info_dict['skip_info']:
+        fail_info_dict['skip_info'] = 'No such cases.'
+    if not fail_info_dict['all_info']:
+        fail_info_dict['all_info'] = 'All cases passed.'
+
+    fail_dict['fail']['fail_info'] = fail_info_dict['fail_info']
+    fail_dict['fail']['fail_cont'] = fail_cont_dict['fail_cont']
+    fail_dict['fail']['fail_percnet'] = fail_percent_dict['FAIL']
+
+    fail_dict['error']['error_info'] = fail_info_dict['error_info']
+    fail_dict['error']['error_cont'] = fail_cont_dict['error_cont']
+    fail_dict['error']['error_percent'] = fail_percent_dict['ERROR']
+
+    fail_dict['cancel']['cancel_info'] = fail_info_dict['cancel_info']
+    fail_dict['cancel']['cancel_cont'] = fail_cont_dict['cancel_cont']
+    fail_dict['cancel']['cancel_percent'] = fail_percent_dict['CANCEL']
+
+    fail_dict['skip']['skip_info'] = fail_info_dict['skip_info']
+    fail_dict['skip']['skip_cont'] = fail_cont_dict['skip_cont']
+    fail_dict['skip']['skip_percent'] = fail_percent_dict['SKIP']
+
+    fail_dict['all']['all_info'] = fail_info_dict['all_info']
+    fail_dict['all']['all_cont'] = fail_cont_dict['all_cont']
+
+    fail_dict['pass']['pass_percent'] = fail_percent_dict['PASS']
+
+    #print fail_dict
+
+    return cases, fail_dict, fail_percent_dict

@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from PassPercentage.models import Platform, TestLoop, Name, Comment, CaseDetail, TestsID
 from PassPercentage.forms import PlatformForm, TestLoopForm, LoopSelectForm, CommentForm, UserForm, UserProfileForm
 from django.http import HttpResponse, HttpResponseRedirect
-from utils import create_datapoints_column,create_datapoints_area, create_datapoints_line, query_latest_loop, get_all_loop, display_test_details
+from utils import create_datapoints_column,create_datapoints_area, create_datapoints_line, \
+    query_latest_loop, get_all_loop, display_test_details, create_datapoints_pie
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 from PassPercentage import populate_data
@@ -43,11 +44,13 @@ def show_testloops(request, platform_slug_name):
     context_dict = {}
     context_dict['platforms'] = platform
     context_dict['test_loops'] = test_loop
-    for list in test_loop:
-        print '%s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
-              % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
-                 list.loop_case_total_num,
-                 list.loop_host_ver)
+    verbose = True
+    if verbose == True:
+        for list in test_loop:
+            print '%s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
+                  % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
+                     list.loop_case_total_num,
+                     list.loop_host_ver)
 
     return render(request, 'PassPercentage/testloop.html', context_dict)
 
@@ -81,81 +84,81 @@ def display_lines_charts_from_column(request, platform_slug_name, loop_select_na
     context_dict['loop_select_name_nospace'] = loop_select_name_underline
     #versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
     versions = create_datapoints_line(platform.platform_name, loop_select_name_underline, total_host_ver,
-                                      context_dict['xml_name'])
+                                      context_dict['xml_name'], False)
 
     context_dict['test_host_ver'] = versions
     print 'List of host version :', context_dict['test_host_ver']
 
     return render(request, 'PassPercentage/multi-lines-chart_from_xml.html',  context_dict)
 
-def show_line_charts(request, platform_slug_name):
-    platform = Platform.objects.get(platform_slug=platform_slug_name)
-    context_dict = {}
-    context_dict['platforms'] = platform
-    context_dict['xml_name'] = 'multi_linepoints.xml'
-    context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
+# def show_line_charts(request, platform_slug_name):
+#     platform = Platform.objects.get(platform_slug=platform_slug_name)
+#     context_dict = {}
+#     context_dict['platforms'] = platform
+#     context_dict['xml_name'] = 'multi_linepoints.xml'
+#     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
+#
+#     host_ver = ['RHEL7.5', 'RHEL7.4']
+#     test_loop_name = 'acceptance'
+#     platform_name = 'ppc'
+#
+#     context_dict['test_loop_name'] = test_loop_name
+#     versions = create_datapoints_line(platform_name, test_loop_name, host_ver, context_dict['xml_name'])
+#     test_loop = TestLoop.objects.filter(loop_name=test_loop_name)
+#     context_dict['test_loops'] = test_loop
+#     context_dict['test_host_ver'] = versions
+#
+#     return render(request, 'PassPercentage/multi-series-line-chart_from_xml.html', context_dict)
 
-    host_ver = ['RHEL7.5', 'RHEL7.4']
-    test_loop_name = 'acceptance'
-    platform_name = 'ppc'
+# def display_lines_charts(request, platform_slug_name):
+#     context_dict = {}
+#     platform = Platform.objects.get(platform_slug=platform_slug_name)
+#     context_dict['platforms'] = platform
+#     context_dict['xml_name'] = 'multi_linepoints.xml'
+#     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
+#
+#     if request.method == 'POST':
+#         form = LoopSelectForm(request.POST)
+#         if form.is_valid():
+#             loop_select_name = form.cleaned_data['loop_select_name']
+#             print 'Selected loop :', loop_select_name
+#     else:
+#         form = LoopSelectForm()
+#
+#     loop_select_name_nospace = loop_select_name.replace(' ', '_')
+#     print 'loop select name no space :', loop_select_name_nospace
+#
+#     #Need to update by auto get the host version here##
+#     total_host_ver = ['RHEL7.5', 'RHEL7.4', 'RHEL7.3']
+#     #=================================================#
+#     context_dict['loop_select_name'] = loop_select_name
+#     context_dict['loop_select_name_nospace'] = loop_select_name_nospace
+#     versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
+#
+#     context_dict['test_host_ver'] = versions
+#     print 'List of host version :', context_dict['test_host_ver']
+#
+#     return render(request, 'PassPercentage/multi-lines-chart_from_xml.html',  context_dict)
 
-    context_dict['test_loop_name'] = test_loop_name
-    versions = create_datapoints_line(platform_name, test_loop_name, host_ver, context_dict['xml_name'])
-    test_loop = TestLoop.objects.filter(loop_name=test_loop_name)
-    context_dict['test_loops'] = test_loop
-    context_dict['test_host_ver'] = versions
+# def show_area_chart(request, platform_slug_name):
+#     platform = Platform.objects.get(platform_slug=platform_slug_name)
+#     test_loop = TestLoop.objects.filter(platform=platform)
+#     context_dict = {}
+#     context_dict['platforms'] = platform
+#     context_dict['test_loops'] = test_loop
+#     context_dict['xml_name'] = 'multi_areapoints.xml'
+#     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
+#
+#     test_loop_name = 'acceptance'
+#     host_version = 'RHEL7.5'
+#     platform_name = 'x86'
+#     context_dict['host_version'] = host_version
+#     context_dict['test_loop_name'] = test_loop_name
+#     create_datapoints_area(platform_name, test_loop_name, host_version, context_dict['xml_name'])
+#
+#     return render(request, 'PassPercentage/multi-series-area-chart_from_xml.html', context_dict)
 
-    return render(request, 'PassPercentage/multi-series-line-chart_from_xml.html', context_dict)
-
-def display_lines_charts(request, platform_slug_name):
-    context_dict = {}
-    platform = Platform.objects.get(platform_slug=platform_slug_name)
-    context_dict['platforms'] = platform
-    context_dict['xml_name'] = 'multi_linepoints.xml'
-    context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
-
-    if request.method == 'POST':
-        form = LoopSelectForm(request.POST)
-        if form.is_valid():
-            loop_select_name = form.cleaned_data['loop_select_name']
-            print 'Selected loop :', loop_select_name
-    else:
-        form = LoopSelectForm()
-
-    loop_select_name_nospace = loop_select_name.replace(' ', '_')
-    print 'loop select name no space :', loop_select_name_nospace
-
-    #Need to update by auto get the host version here##
-    total_host_ver = ['RHEL7.5', 'RHEL7.4', 'RHEL7.3']
-    #=================================================#
-    context_dict['loop_select_name'] = loop_select_name
-    context_dict['loop_select_name_nospace'] = loop_select_name_nospace
-    versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
-
-    context_dict['test_host_ver'] = versions
-    print 'List of host version :', context_dict['test_host_ver']
-
-    return render(request, 'PassPercentage/multi-lines-chart_from_xml.html',  context_dict)
-
-def show_area_chart(request, platform_slug_name):
-    platform = Platform.objects.get(platform_slug=platform_slug_name)
-    test_loop = TestLoop.objects.filter(platform=platform)
-    context_dict = {}
-    context_dict['platforms'] = platform
-    context_dict['test_loops'] = test_loop
-    context_dict['xml_name'] = 'multi_areapoints.xml'
-    context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
-
-    test_loop_name = 'acceptance'
-    host_version = 'RHEL7.5'
-    platform_name = 'x86'
-    context_dict['host_version'] = host_version
-    context_dict['test_loop_name'] = test_loop_name
-    create_datapoints_area(platform_name, test_loop_name, host_version, context_dict['xml_name'])
-
-    return render(request, 'PassPercentage/multi-series-area-chart_from_xml.html', context_dict)
-
-def display_area_chart(request, platform_slug_name, loop_select_name, host_ver):
+def display_area_chart(request, platform_slug_name, loop_select_name_underline, host_ver):
     platform = Platform.objects.get(platform_slug=platform_slug_name)
     #test_loop = TestLoop.objects.filter(platform=platform)
     context_dict = {}
@@ -165,14 +168,15 @@ def display_area_chart(request, platform_slug_name, loop_select_name, host_ver):
     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
 
     print platform_slug_name
-    print loop_select_name
+    print loop_select_name_underline
     host_ver = host_ver.replace('_', '.')
     print host_ver
-    loop_select_name = loop_select_name.replace('_', ' ')
+    loop_select_name = loop_select_name_underline.replace('_', ' ')
     print 'loop_select_name', loop_select_name
     context_dict['host_version'] = host_ver
     context_dict['test_loop_name'] = loop_select_name
-    create_datapoints_area(platform.platform_name, loop_select_name, host_ver, context_dict['xml_name'])
+    create_datapoints_area(platform_name=platform.platform_name, test_loop_name=loop_select_name_underline,
+                           host_version=host_ver, file_xml_name=context_dict['xml_name'])
 
     return render(request, 'PassPercentage/multi-series-area-chart_from_xml.html', context_dict)
 
@@ -188,19 +192,26 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     fail_err_info = ''
     context_dict = {}
     context_dict['platforms'] = platform
+
     context_dict['loop_name_no_underline'] = loop_select_name.replace('_',' ')
     context_dict['loop_select_name'] = loop_select_name
     context_dict['host_ver'] = host_ver
     context_dict['host_version'] = host_ver.replace('_','.')
     context_dict['x_point'] = x_point
     context_dict['updated_time'] = updated_time
-    cases, fail_err_info = display_test_details(platform=platform, loopname=loop_select_name,
-                                 failed_error=True, verbose=True, updated_time=updated_time_orgin)
-    #print cases
-    #print type(cases)
-    print fail_err_info
-    context_dict['fail_err_info'] = fail_err_info
+    cases, fail, fail_percent = display_test_details(platform=platform, loopname=loop_select_name,
+                                       failed_error=True, verbose=False, updated_time=updated_time_orgin)
+    #print fail
+    context_dict['fail'] = fail
+    # context_dict['fail_info'] = fail_info
+    # context_dict['fail_cont'] = fail_cont
+    context_dict['fail_percent'] = fail_percent
     context_dict['cases'] = cases
+    context_dict['xml_name'] = 'pie_points.xml'
+    context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
+
+    create_datapoints_pie(file_xml_name=context_dict['xml_name'], dict=context_dict['fail_percent'])
+
     if request.method == 'POST':
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
@@ -229,11 +240,13 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     comment = Comment.objects.all().order_by("-comment_updated_time")[:]
     context_dict['comments'] = comment
     #print  comment
-    for list in comment:
-        print 'comment user: %s; context: %s; updated time: %s' \
-              'version: %s; platform: %s; testloop: %s; point: %s' \
-              %(list.comment_user, list.comment_context, list.comment_updated_time,
-                list.comment_version, list.comment_platform, list.comment_testloop, list.comment_point)
+    verbose = False
+    if verbose == True:
+        for list in comment:
+            print 'comment user: %s; context: %s; updated time: %s' \
+                  'version: %s; platform: %s; testloop: %s; point: %s' \
+                  %(list.comment_user, list.comment_context, list.comment_updated_time,
+                    list.comment_version, list.comment_platform, list.comment_testloop, list.comment_point)
 
     return render(request, 'PassPercentage/comments.html', context_dict)
 
@@ -254,10 +267,7 @@ def server_api(request):
     cmd = 'unknown'
 
     context_dict = {}
-    #datas = request.POST
-    #print request.body
     datas = json.loads(request.body)
-    #print type(datas), datas
     recv_time = time.ctime()
     print 'Beijing %s : Received data from client.' % (recv_time)
     for key, val in datas.items():

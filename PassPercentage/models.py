@@ -35,8 +35,13 @@ class TestLoop(models.Model):
     loop_virtio_win_ver = models.CharField(max_length=200, blank=True)
     loop_case_total_num = models.IntegerField(default=0, blank=True)
     loop_case_pass_num = models.IntegerField(default=0, blank=True)
+    # loop_case_fail_num = models.IntegerField(default=0, blank=True)
+    # loop_case_error_num = models.IntegerField(default=0, blank=True)
+    # loop_case_cancel_num = models.IntegerField(default=0, blank=True)
+    # loop_case_skip_num = models.IntegerField(default=0, blank=True)
     loop_cmd = models.CharField(max_length=200, blank=True)
     loop_updated_time = models.DateTimeField('Data published', auto_now=True)
+    #loop_updated_time = models.DateField('Data published', auto_now=True)
     loop_slug = models.SlugField()
 
     def save(self, *args, **kwargs):
@@ -120,5 +125,6 @@ class Comment(models.Model):
 
     def __str__(self):
         info = self.comment_platform + ':' + self.comment_testloop + ':' \
-               + self.comment_updated_time.strftime('%y-%m-%d %H:%M:%S %f %z') + ':' + self.comment_user
+                + self.comment_updated_time.strftime('%y-%m-%d %H:%M:%S %f %z') + ':' + self.comment_user
+        #info = self.comment_platform + ':' + self.comment_testloop + ':' + self.comment_user
         return info
