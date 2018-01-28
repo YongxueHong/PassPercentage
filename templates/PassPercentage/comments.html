@@ -83,6 +83,56 @@
         font-size: 50px;
         color: white;
     }
+
+    #details {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        margin-top: 1.3em;
+        font-size: 30px;
+        color: white;
+    }
+
+    #show_select {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: grey;
+        background-size: 40px 50px;
+        padding-top:0.2em;
+        padding-bottom:0.2em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        margin:4px 20px;
+        font-size: 20px;
+        color: white;
+    }
+
+    .show_content {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: grey;
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        font-size: 20px;
+        color: white;
+    }
+
     #point_info
     {
         //border-width:medium;
@@ -99,46 +149,131 @@
         font-size: 25px;
         color: black;
     }
+
+    #chartContainer {
+        //border-width:medium;
+        //border-style:outset;
+        //border-color:black;
+        //border-radius: 10px;
+        //background-color: rgb(136,0,0);
+        background-size: 5px 10px;
+        padding-top:0.1em;
+        padding-bottom:0.5em;
+        padding-right:0.8em;
+        padding-left:0.1em;
+        margin-top:1em;
+        //font-size: 50px;
+        color: white;
+    }
+
+{% endblock %}
+{% block script_block %}
+window.onload = function(){
+    var obj_select = document.getElementById("show_select");
+    var obj_fail_div = document.getElementById("show_fail_content");
+    var obj_error_div = document.getElementById("show_error_content");
+    var obj_cancel_div = document.getElementById("show_cancel_content");
+    var obj_skip_div = document.getElementById("show_skip_content");
+    var obj_all_div = document.getElementById("show_all_content");
+    obj_select.onchange = function(){
+        obj_fail_div.style.display = this.value==1? "block" : "none";
+        obj_error_div.style.display = this.value==2? "block" : "none";
+        obj_cancel_div.style.display = this.value==3? "block" : "none";
+        obj_skip_div.style.display = this.value==4? "block" : "none";
+        obj_all_div.style.display = this.value==5? "block" : "none";
+    }
+
+
+	var dataPoints = [];
+	$.get("{% static dir_xml %}", function(data) {
+		$(data).find("point").each(function () {
+			var $dataPoint = $(this);
+			var x = $dataPoint.find("x").text();
+			var y = $dataPoint.find("y").text();
+            dataPoints.push({label: x, y: parseFloat(y)});
+		});
+		var chart = new CanvasJS.Chart("chartContainer", {
+			animationEnabled: true,
+			exportEnabled: true,
+			theme: "theme",
+			title: {
+				//text: "Latest Pass Percentage : {{ platforms.platform_name }} ",
+			},
+			data: [{
+                type: "pie",
+                showInLegend: true,
+                legendText: "{label}",
+                toolTipContent: "{label}: <strong>{y}</strong>",
+                startAngle: 240,
+                yValueFormatString: "##0.00\"%\"",
+                indexLabel: "{label} : {y}",
+				dataPoints: dataPoints,
+			  }]
+		});
+    chart.render();
+    });
+}
+
 {% endblock %}
 
 {% block body_block %}
+
 <div>
-<h1>Comment here</h1>
-<!--</div>
-<div><h2>Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</h2>
-</div>-->
+    <h1>Comment here</h1>
+</div>
+
+<div id="chartContainer" style="height: 300px; width: 35%;"></div>
+<script src="{% static "js/canvasjs.min.js" %}"></script>
+<script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
+
+<div id="details">
+    Show details :
+    <select id="show_select">
+        <option value="0" selected>DISABLE</option>
+        <option value="1">FAIL {{fail.fail.fail_cont}}</option>
+        <option value="2" >ERROR {{fail.error.error_cont}}</option>
+        <option value="3" >CANCEL {{fail.cancel.cancel_cont}}</option>
+        <option value="4" >SKIP {{fail.skip.skip_cont}}</option>
+        <option value="5" >ALL {{fail.all.all_cont}}</option>
+    </select>
+    <div class="show_content" id="show_fail_content" hidden="hidden">{{ fail.fail.fail_info|linebreaks }}</div>
+    <div class="show_content" id="show_error_content" hidden="hidden">{{ fail.error.error_info|linebreaks }}</div>
+    <div class="show_content" id="show_cancel_content" hidden="hidden">{{ fail.cancel.cancel_info|linebreaks }}</div>
+    <div class="show_content" id="show_skip_content" hidden="hidden">{{ fail.skip.skip_info|linebreaks }}</div>
+    <div class="show_content" id="show_all_content" hidden="hidden">{{ fail.all.all_info|linebreaks }}</div>
+</div>
 <div>
-<form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point %}"
-      enctype="multipart/form-data">
-    <p id="point_info">@ Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
-    {% csrf_token %}
-    <label for="user "><strong>User:</strong></label>
-    {{ comment_form.comment_user }}
-    <p><label for="email "><strong>Email:</strong></label>
-        {{ comment_form.comment_email }}
-    </p>
-    {{ comment_form.comment_context }}
-    <p><button type="submit">Comment</button></p>
-</form>
-    </div>
+    <form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point updated_time %}"
+          enctype="multipart/form-data">
+        <p id="point_info">@ Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
+        {% csrf_token %}
+        <label for="user "><strong>User:</strong></label>
+        {{ comment_form.comment_user }}
+        <p><label for="email "><strong>Email:</strong></label>
+            {{ comment_form.comment_email }}
+        </p>
+        {{ comment_form.comment_context }}
+        <p><button type="submit">Comment</button></p>
+    </form>
+</div>
 <div id="history_comment">
     <h2 style="color : red">History Comments</h2>
-{% for comment in comments %}
+    {% for comment in comments %}
 
-    {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline and comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
-    <div id="each_comment">
-        <!--<p>Version : {{comment.comment_version}}</p>
-        <p>Platform : {{comment.comment_platform}}</p>
-        <p>loop : {{comment.comment_testloop}}</p>
-        <p>Piont : {{comment.comment_point}}</p>
-        <p>Title : {{comment.comment_title}}</p>
-        <p>Index : {{comment.comment_index}}</p>-->
-        <p>{{comment.comment_context}}</p>
-        <hr/>
-        <p>From: {{comment.comment_user}} ; Email: <a href="mailto:{{comment.comment_email}}"> {{comment.comment_email}} </a>; Update time: {{comment.comment_updated_time}}</p>
-        </div>
-    {% endif %}
+        {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline and comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
+        <div id="each_comment">
+            <!--<p>Version : {{comment.comment_version}}</p>
+            <p>Platform : {{comment.comment_platform}}</p>
+            <p>loop : {{comment.comment_testloop}}</p>
+            <p>Piont : {{comment.comment_point}}</p>
+            <p>Title : {{comment.comment_title}}</p>
+            <p>Index : {{comment.comment_index}}</p>-->
+            <p>{{comment.comment_context}}</p>
+            <hr/>
+            <p>From: {{comment.comment_user}} ; Email: <a href="mailto:{{comment.comment_email}}"> {{comment.comment_email}} </a>; Update time: {{comment.comment_updated_time}}</p>
+            </div>
+        {% endif %}
 
-{% endfor %}
-    </div>
+    {% endfor %}
+</div>
 {% endblock %}

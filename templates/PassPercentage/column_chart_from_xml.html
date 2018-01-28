@@ -93,7 +93,8 @@ window.onload = function() {
 		//alert("{{ platforms.platform_name }}");
 	}*/
     function show_multi_lines(e) {
-        loop_select_name_underline = e.dataPoint.label.replace(' ', '_').replace(' ', '_').replace(' ', '_');
+        //loop_select_name_underline = e.dataPoint.label.replace(' ', '_').replace(' ', '_').replace(' ', '_');
+        loop_select_name_underline = e.dataPoint.label.replace(/\s+/g, '_');
         //alert(  e.dataSeries.type+ ", dataPoint { x:" + e.dataPoint.label + ", y: "+ e.dataPoint.y + " }" );
         //alert(  loop_select_name_nospace+ ", dataPoint { x:" + e.dataPoint.x + ", y: "+ e.dataPoint.y + " }" );
         //var host_ver = e.dataSeries.name.replace('.', '_')

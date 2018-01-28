@@ -51,36 +51,6 @@ window.onload = function() {
 	var data_list = []
 	var data_dict = {}
 	var item = ['total', 'pass', 'red', 'green']
-    /*
-    $.ajax({
-         type:'get',
-         url:'{% static dir_xml %}',
-         async:false,
-         success:function(data){
-            for(i=0;i<2;i++){
-                $(data).find(item[i]).children().each(function () {
-                    var $dataPoint = $(this);
-                    var x = $dataPoint.find("x").text();
-                    var y = $dataPoint.find("y").text();
-                    dataPoints.push({label: x, y: parseFloat(y)});
-                });
-                data_dict = {
-                    type: "area",
-                    //visible: true,
-                    showInLegend: true,
-                    legendMarkerType: "square",
-                    markerSize: 0,
-                    name:item[i],
-                    color: item[i+2],
-                    dataPoints: dataPoints
-                }
-                data_list.push(data_dict)
-                dataPoints = []
-            }
-         },
-         dataType:'xml'
-    });
-    */
     $.get("{% static dir_xml %}",function(data) {
         for(i=0;i<2;i++){
             $(data).find(item[i]).children().each(function () {
