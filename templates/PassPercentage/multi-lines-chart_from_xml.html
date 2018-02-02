@@ -66,15 +66,18 @@ window.onload = function() {
                 var host_ver = $dataPoint.find("host_ver").text();
                 var guest_kernel_ver = $dataPoint.find("guest_kernel_ver").text();
                 var guest_ver = $dataPoint.find("guest_ver").text();
+                var guest_plat = $dataPoint.find("guest_plat").text();
                 var virtio_win_ver = $dataPoint.find("virtio_win_ver").text();
+                var image_backend = $dataPoint.find("image_backend").text();
+                var image_format = $dataPoint.find("image_format").text();
                 var cmd = $dataPoint.find("cmd").text();
                 var updated_time = $dataPoint.find("updated_time").text();
 				//document.write(x+ ':'+y +'%' + '<br/>' + pass_num +'<br>' + total_num + '<br>');
                 pass_num_list.push(pass_num);
-                dataPoints.push({label: x, y: parseFloat(y), pass_num: pass_num, total_num, total_num, feature_owner, qemu_ver, host_kernel_ver, host_ver, guest_kernel_ver, guest_ver, virtio_win_ver, cmd, updated_time});
+                dataPoints.push({label: x, y: parseFloat(y), pass_num: pass_num, total_num, total_num, feature_owner, qemu_ver, host_kernel_ver, host_ver, guest_kernel_ver, guest_ver, guest_plat, virtio_win_ver, image_backend, image_format, cmd, updated_time});
             });
             data_dict = {
-                type: "spline",
+                type: "line",
                 visible: true,
                 click: onClick,
                 //reversed: true
@@ -113,7 +116,12 @@ window.onload = function() {
                                     content += "host version :" + e.entries[i].dataPoint.host_ver  + "<br/>"
                                     content += "guest kernel version :" + e.entries[i].dataPoint.guest_kernel_ver  + "<br/>"
                                     content += "guest version :" + e.entries[i].dataPoint.guest_ver  + "<br/>"
-                                    content += "virtio_win version :" + e.entries[i].dataPoint.virtio_win_ver  + "<br/>"
+                                    content += "guest platform :" + e.entries[i].dataPoint.guest_plat  + "<br/>"
+                                    if (e.entries[i].dataPoint.virtio_win_ver != 'none') {
+                                        content += "virtio_win version :" + e.entries[i].dataPoint.virtio_win_ver  + "<br/>"
+                                    }
+                                    content += "image backend :" + e.entries[i].dataPoint.image_backend  + "<br/>"
+                                    content += "image format :" + e.entries[i].dataPoint.image_format  + "<br/>"
                                     content += "updated time :" + e.entries[i].dataPoint.updated_time  + "<br/>"
                                     //content += "<a href=\"http://www.radhat.com\">RedHat</a>" + "<br/>"
                                     content += "<br/>";
@@ -125,7 +133,8 @@ window.onload = function() {
             legend:{
                 cursor:"pointer",
                 //itemclick : toggleDataSeries,
-                itemclick : show_detail_area,
+                //itemclick : show_detail_area,
+                itemclick: toggleDataSeries
             },
             axisY: {
                 title: "pass",
@@ -134,12 +143,23 @@ window.onload = function() {
             data: data_list
         });
         chart.render();
-        function show_detail_area(e) {
+
+function toggleDataSeries(e){
+	if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+		e.dataSeries.visible = false;
+	}
+	else{
+		e.dataSeries.visible = true;
+	}
+	chart.render();
+}
+
+        /*function show_detail_area(e) {
             var host_ver = e.dataSeries.name.replace(/\./g, '_')
             //areaWin = window.open("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaWin");
             areaWin = window.location.assign("/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/", "_self","areaWin");
             //window.location.href = "/PassPercentage/select_area_charts/{{ platforms.platform_name }}/{{ loop_select_name_nospace }}/" + host_ver + "/";
-        }
+        }*/
         /*
         function toggleDataSeries(e) {
             if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible ){
@@ -166,7 +186,7 @@ window.onload = function() {
 <div id="line_head">
     <h1>Platform:{{ platforms.platform_name }}, Loop: {{ loop_select_name }}</h1>
 </div>
-<div id="chartContainer" style="height: 480px; width: 99%;"></div>
+<div id="chartContainer" style="height: 650px; width: 99%;"></div>
 <script src="{% static "js/canvasjs.min.js" %}"></script>
 <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
 {% endblock %}

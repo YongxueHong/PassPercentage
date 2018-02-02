@@ -68,7 +68,7 @@
         margin-left: 10px;
         //left: 500px;
     }
-    h1 {
+    #line_head {
         //border-width:medium;
         border-style:outset;
         border-color:black;
@@ -79,8 +79,8 @@
         padding-bottom:0.5em;
         //padding-right:0.8em;
         //padding-left:0.6em;
-        //margin:4px 20px;
-        font-size: 50px;
+        margin-top:1px;
+        font-size: 20px;
         color: white;
     }
 
@@ -174,13 +174,17 @@ window.onload = function(){
     var obj_error_div = document.getElementById("show_error_content");
     var obj_cancel_div = document.getElementById("show_cancel_content");
     var obj_skip_div = document.getElementById("show_skip_content");
+    var obj_warn_div = document.getElementById("show_warn_content");
+    var obj_interrupt_div = document.getElementById("show_interrupt_content");
     var obj_all_div = document.getElementById("show_all_content");
     obj_select.onchange = function(){
         obj_fail_div.style.display = this.value==1? "block" : "none";
         obj_error_div.style.display = this.value==2? "block" : "none";
         obj_cancel_div.style.display = this.value==3? "block" : "none";
         obj_skip_div.style.display = this.value==4? "block" : "none";
-        obj_all_div.style.display = this.value==5? "block" : "none";
+        obj_warn_div.style.display = this.value==5? "block" : "none";
+        obj_interrupt_div.style.display = this.value==6? "block" : "none";
+        obj_all_div.style.display = this.value==7? "block" : "none";
     }
 
 
@@ -218,28 +222,32 @@ window.onload = function(){
 
 {% block body_block %}
 
-<div>
+<div id="line_head">
     <h1>Comment here</h1>
 </div>
 
-<div id="chartContainer" style="height: 300px; width: 35%;"></div>
+<div id="chartContainer" style="height: 400px; width: 40%;"></div>
 <script src="{% static "js/canvasjs.min.js" %}"></script>
 <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
 
 <div id="details">
     Show details :
     <select id="show_select">
-        <option value="0" selected>DISABLE</option>
-        <option value="1">FAIL {{fail.fail.fail_cont}}</option>
-        <option value="2" >ERROR {{fail.error.error_cont}}</option>
-        <option value="3" >CANCEL {{fail.cancel.cancel_cont}}</option>
-        <option value="4" >SKIP {{fail.skip.skip_cont}}</option>
-        <option value="5" >ALL {{fail.all.all_cont}}</option>
+        <option value="0" selected>CLOSE</option>
+        <option value="1">FAIL [{{fail.fail.fail_cont}}]</option>
+        <option value="2" >ERROR [{{fail.error.error_cont}}]</option>
+        <option value="3" >CANCEL [{{fail.cancel.cancel_cont}}]</option>
+        <option value="4" >SKIP [{{fail.skip.skip_cont}}]</option>
+        <option value="5" >WARN [{{fail.warn.warn_cont}}]</option>
+        <option value="6" >INTERRUPT [{{fail.interrupt.interrupt_cont}}]</option>
+        <option value="7" >ALL [{{fail.all.all_cont}}]</option>
     </select>
     <div class="show_content" id="show_fail_content" hidden="hidden">{{ fail.fail.fail_info|linebreaks }}</div>
     <div class="show_content" id="show_error_content" hidden="hidden">{{ fail.error.error_info|linebreaks }}</div>
     <div class="show_content" id="show_cancel_content" hidden="hidden">{{ fail.cancel.cancel_info|linebreaks }}</div>
     <div class="show_content" id="show_skip_content" hidden="hidden">{{ fail.skip.skip_info|linebreaks }}</div>
+    <div class="show_content" id="show_warn_content" hidden="hidden">{{ fail.warn.warn_info|linebreaks }}</div>
+    <div class="show_content" id="show_interrupt_content" hidden="hidden">{{ fail.interrupt.interrupt_info|linebreaks }}</div>
     <div class="show_content" id="show_all_content" hidden="hidden">{{ fail.all.all_info|linebreaks }}</div>
 </div>
 <div>

@@ -91,73 +91,6 @@ def display_lines_charts_from_column(request, platform_slug_name, loop_select_na
 
     return render(request, 'PassPercentage/multi-lines-chart_from_xml.html',  context_dict)
 
-# def show_line_charts(request, platform_slug_name):
-#     platform = Platform.objects.get(platform_slug=platform_slug_name)
-#     context_dict = {}
-#     context_dict['platforms'] = platform
-#     context_dict['xml_name'] = 'multi_linepoints.xml'
-#     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
-#
-#     host_ver = ['RHEL7.5', 'RHEL7.4']
-#     test_loop_name = 'acceptance'
-#     platform_name = 'ppc'
-#
-#     context_dict['test_loop_name'] = test_loop_name
-#     versions = create_datapoints_line(platform_name, test_loop_name, host_ver, context_dict['xml_name'])
-#     test_loop = TestLoop.objects.filter(loop_name=test_loop_name)
-#     context_dict['test_loops'] = test_loop
-#     context_dict['test_host_ver'] = versions
-#
-#     return render(request, 'PassPercentage/multi-series-line-chart_from_xml.html', context_dict)
-
-# def display_lines_charts(request, platform_slug_name):
-#     context_dict = {}
-#     platform = Platform.objects.get(platform_slug=platform_slug_name)
-#     context_dict['platforms'] = platform
-#     context_dict['xml_name'] = 'multi_linepoints.xml'
-#     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
-#
-#     if request.method == 'POST':
-#         form = LoopSelectForm(request.POST)
-#         if form.is_valid():
-#             loop_select_name = form.cleaned_data['loop_select_name']
-#             print 'Selected loop :', loop_select_name
-#     else:
-#         form = LoopSelectForm()
-#
-#     loop_select_name_nospace = loop_select_name.replace(' ', '_')
-#     print 'loop select name no space :', loop_select_name_nospace
-#
-#     #Need to update by auto get the host version here##
-#     total_host_ver = ['RHEL7.5', 'RHEL7.4', 'RHEL7.3']
-#     #=================================================#
-#     context_dict['loop_select_name'] = loop_select_name
-#     context_dict['loop_select_name_nospace'] = loop_select_name_nospace
-#     versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
-#
-#     context_dict['test_host_ver'] = versions
-#     print 'List of host version :', context_dict['test_host_ver']
-#
-#     return render(request, 'PassPercentage/multi-lines-chart_from_xml.html',  context_dict)
-
-# def show_area_chart(request, platform_slug_name):
-#     platform = Platform.objects.get(platform_slug=platform_slug_name)
-#     test_loop = TestLoop.objects.filter(platform=platform)
-#     context_dict = {}
-#     context_dict['platforms'] = platform
-#     context_dict['test_loops'] = test_loop
-#     context_dict['xml_name'] = 'multi_areapoints.xml'
-#     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
-#
-#     test_loop_name = 'acceptance'
-#     host_version = 'RHEL7.5'
-#     platform_name = 'x86'
-#     context_dict['host_version'] = host_version
-#     context_dict['test_loop_name'] = test_loop_name
-#     create_datapoints_area(platform_name, test_loop_name, host_version, context_dict['xml_name'])
-#
-#     return render(request, 'PassPercentage/multi-series-area-chart_from_xml.html', context_dict)
-
 def display_area_chart(request, platform_slug_name, loop_select_name_underline, host_ver):
     platform = Platform.objects.get(platform_slug=platform_slug_name)
     #test_loop = TestLoop.objects.filter(platform=platform)
@@ -251,17 +184,20 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     return render(request, 'PassPercentage/comments.html', context_dict)
 
 def server_api(request):
+    verbose = True
     name = 'unknown'
     tests = 'unknown'
     feature_name = 'unknown'
     feature_owner = 'unknown'
     image_backend = 'unknown'
+    image_format = 'unknown'
     qemu_ver = 'unknown'
     host_kernel_ver = 'unknown'
     host_ver = 'unknown'
     guest_kernel_ver = 'unknown'
     guest_ver = 'unknown'
-    virtio_win_ver = 'unknown'
+    guest_plat = 'unknown'
+    #virtio_win_ver = 'unknown'
     case_total_num = 'unknown'
     case_pass_num = 'unknown'
     cmd = 'unknown'
@@ -275,63 +211,78 @@ def server_api(request):
             platform = val
             if not platform:
                 platform = 'unknown'
-            print ('key: %s, val: %s' %(key, platform))
+            #print ('key: %s, val: %s' %(key, platform))
         elif key == 'feature':
             feature_name = val
             if not feature_name:
                 feature_name = 'unknown'
-            print ('key: %s, val: %s' % (key, feature_name))
+            #print ('key: %s, val: %s' % (key, feature_name))
         elif key == 'qemu_version':
             qemu_ver = val
             if not qemu_ver:
                 qemu_ver = 'unknown'
-            print ('key: %s, val: %s' % (key, qemu_ver))
+            #print ('key: %s, val: %s' % (key, qemu_ver))
         elif key == 'owner':
             feature_owner = val
             if not feature_owner:
                 feature_owner = 'unknown'
-            print ('key: %s, val: %s' % (key, feature_owner))
+            #print ('key: %s, val: %s' % (key, feature_owner))
         elif key == 'image_backend':
             image_backend = val
             if not image_backend:
                 image_backend = 'unknown'
-            print ('key: %s, val: %s' % (key, image_backend))
+            #print ('key: %s, val: %s' % (key, image_backend))
+        elif key == 'image_format':
+            image_format = val
+            if not image_format:
+                image_format = 'unknown'
+            #print ('key: %s, val: %s' % (key, image_format))
+        elif key == 'host_kernel_version':
+            host_kernel_ver = val
+            if not host_kernel_ver:
+                host_kernel_ver = 'unknown'
+            #print ('key: %s, val: %s' % (key, host_ver))
         elif key == 'host_version':
             host_ver = val
             if not host_ver:
                 host_ver = 'unknown'
-            print ('key: %s, val: %s' % (key, host_ver))
+            #print ('key: %s, val: %s' % (key, host_ver))
         elif key == 'guest_version':
             guest_ver = val
             if not guest_ver:
                 guest_ver = 'unknown'
-            print ('key: %s, val: %s' % (key, guest_ver))
+            #print ('key: %s, val: %s' % (key, guest_ver))
+        elif key == 'guest_arch':
+            guest_plat = val
+            if not guest_plat:
+                guest_plat = 'unknown'
+            #print ('key: %s, val: %s' % (key, guest_plat))
         elif key == 'virtio_win_version':
             virtio_win_ver = val
             if not virtio_win_ver:
-                virtio_win_ver = 'unknown'
-            print ('key: %s, val: %s' % (key, virtio_win_ver))
+                virtio_win_ver = 'none'
+            #print ('key: %s, val: %s' % (key, virtio_win_ver))
         elif key == 'total':
             case_total_num = val
             if not case_total_num:
                 case_total_num = 'unknown'
-            print ('key: %s, val: %s' % (key, case_total_num))
+            #print ('key: %s, val: %s' % (key, case_total_num))
         elif key == 'pass':
             case_pass_num = val
             if not case_pass_num:
                 case_pass_num = 'unknown'
-            print ('key: %s, val: %s' % (key, case_pass_num))
+            #print ('key: %s, val: %s' % (key, case_pass_num))
         elif key == 'staf_cml':
             cmd = val
             if not cmd:
                 cmd = 'unknown'
-            print ('key: %s, val: %s' % (key, cmd))
+            #print ('key: %s, val: %s' % (key, cmd))
         elif key == 'tests':
             tests = val
-            print type(tests)
+            #print type(tests)
             if not tests:
                 tests = 'unknown'
-            print ('key: %s, val: %s' % (key, tests))
+            #print ('key: %s, val: %s' % (key, tests))
 
     populate_data.add_platform(platform)
     platform = Platform.objects.get(platform_name=platform)
@@ -344,11 +295,13 @@ def server_api(request):
                              feature_name=feature_name,
                              feature_owner=feature_owner,
                              image_backend=image_backend,
+                             image_format=image_format,
                              qemu_ver=qemu_ver,
                              host_kernel_ver=host_kernel_ver,
                              host_ver=host_ver,
                              guest_kernel_ver=guest_kernel_ver,
                              guest_ver=guest_ver,
+                             guest_plat=guest_plat,
                              virtio_win_ver=virtio_win_ver,
                              case_total_num=case_total_num,
                              case_pass_num=case_pass_num,
@@ -392,42 +345,42 @@ def server_api(request):
                 case_whiteboard = val
                 if not case_whiteboard:
                     case_whiteboard = 'unknown'
-                print ('key: %s, val: %s' % (key, case_whiteboard))
+                #print ('key: %s, val: %s' % (key, case_whiteboard))
             elif key == 'start':
                 case_start = val
                 if not case_start:
                     case_start = 'unknown'
-                print ('key: %s, val: %s' % (key, case_start))
+                #print ('key: %s, val: %s' % (key, case_start))
             elif key == 'logdir':
                 case_logdir = val
                 if not case_logdir:
                     case_logdir = 'unknown'
-                print ('key: %s, val: %s' % (key, case_logdir))
+                #print ('key: %s, val: %s' % (key, case_logdir))
             elif key == 'time':
                 case_time = val
                 if not case_time:
                     case_time = 'unknown'
-                print ('key: %s, val: %s' % (key, case_time))
+                #print ('key: %s, val: %s' % (key, case_time))
             elif key == 'test':
                 case_test = val
                 if not case_test:
                     case_test = 'unknown'
-                print ('key: %s, val: %s' % (key, case_test))
+                #print ('key: %s, val: %s' % (key, case_test))
             elif key == 'end':
                 case_end = val
                 if not case_end:
                     case_end = 'unknown'
-                print ('key: %s, val: %s' % (key, case_end))
+                #print ('key: %s, val: %s' % (key, case_end))
             elif key == 'logfile':
                 case_logfile = val
                 if not case_logfile:
                     case_logfile = 'unknown'
-                print ('key: %s, val: %s' % (key, case_logfile))
+                #print ('key: %s, val: %s' % (key, case_logfile))
             elif key == 'id':
                 case_id = val
                 if not case_id:
                     case_id = 'unknown'
-                print ('key: %s, val: %s' % (key, case_logfile))
+                #print ('key: %s, val: %s' % (key, case_logfile))
 
         obj = CaseDetail(test_id=test_id, case_status=case_status, case_fail_reason=case_fail_reason,
                                    case_url=case_url, case_whiteboard=case_whiteboard, case_start=case_start,
@@ -438,9 +391,20 @@ def server_api(request):
     end_time = time.time()
     done_time = time.ctime()
     total_time = end_time - start_time
+
+    if verbose == True:
+        print '======================  Summary  ================================='
+        for key, val in datas.items():
+            if key != 'tests':
+                print ('key: %s, val: %s' % (key, val))
+            #print ('key: %s, val: %s' % (key, val))
+
     print 'Recevice time : %s - Done time : %s ; Total time of finished : %s' %(recv_time, done_time, total_time)
 
     return render(request, 'PassPercentage/homepage.html', context_dict)
+
+def show_fail_pie_chart(request):
+    pass
 
 def register(request):
     registered = False
