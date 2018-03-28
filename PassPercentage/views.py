@@ -148,7 +148,7 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     if request.method == 'POST':
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
-            print 'form is valid'
+            #print 'form is valid'
             comment_form.save(commit=True)
             comment = Comment.objects.order_by("-comment_updated_time")[0]
             print comment.comment_user, comment.comment_context
@@ -198,8 +198,8 @@ def server_api(request):
     guest_ver = 'unknown'
     guest_plat = 'unknown'
     #virtio_win_ver = 'unknown'
-    case_total_num = 'unknown'
-    case_pass_num = 'unknown'
+    case_total_num = 0
+    case_pass_num = 0
     cmd = 'unknown'
 
     context_dict = {}
@@ -265,12 +265,13 @@ def server_api(request):
         elif key == 'total':
             case_total_num = val
             if not case_total_num:
-                case_total_num = 'unknown'
+                case_total_num = 0
             #print ('key: %s, val: %s' % (key, case_total_num))
         elif key == 'pass':
             case_pass_num = val
+            #print val, type(val)
             if not case_pass_num:
-                case_pass_num = 'unknown'
+                case_pass_num = 0
             #print ('key: %s, val: %s' % (key, case_pass_num))
         elif key == 'staf_cml':
             cmd = val

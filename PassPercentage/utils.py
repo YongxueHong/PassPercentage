@@ -377,7 +377,7 @@ def display_test_details(platform, loopname, updated_time, failed_error=False, v
     #     fail_info_dict['all_info'] = 'All cases passed.'
     #
     for k, v in fail_info_dict.items():
-        if not k:
+        if not v:
             if k == 'all_info':
                 fail_info_dict[k] = 'All cases passed.'
             else:
