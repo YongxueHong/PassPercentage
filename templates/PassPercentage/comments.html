@@ -189,7 +189,7 @@ window.onload = function(){
 
 
 	var dataPoints = [];
-	$.get("{% static dir_xml %}", function(data) {
+	$.get("{% static dir_xml %}",{ "_": $.now() }, function(data) {
 		$(data).find("point").each(function () {
 			var $dataPoint = $(this);
 			var x = $dataPoint.find("x").text();
@@ -268,7 +268,7 @@ window.onload = function(){
     <h2 style="color : red">History Comments</h2>
     {% for comment in comments %}
 
-        {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline and comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
+        {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline == comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
         <div id="each_comment">
             <!--<p>Version : {{comment.comment_version}}</p>
             <p>Platform : {{comment.comment_platform}}</p>

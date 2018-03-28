@@ -12,7 +12,7 @@ window.onload = function() {
 	var data_dict = {}
     var versions = ('{{test_host_ver}}').split(",")
 
-    $.get("{% static dir_xml %}",function(data) {
+    $.get("{% static dir_xml %}",{ "_": $.now() },function(data) {
         for(i=0;i<versions.length;i++){
             $(data).find(versions[i]).children().each(function () {
                 var $dataPoint = $(this);

@@ -52,7 +52,7 @@ window.onload = function() {
     var pass_num_list = []
     var x_map_time = {}
 
-    $.get("{% static dir_xml %}",function(data) {
+    $.get("{% static dir_xml %}",{ "_": $.now() },function(data) {
         for(i=0;i<versions.length;i++){
             $(data).find(versions[i]).children().each(function () {
                 var $dataPoint = $(this);
@@ -96,7 +96,7 @@ window.onload = function() {
             exportEnabled: true,
             zoomEnabled: true,
             zoomType: "x",
-            theme: "dark1",
+            theme: "theme",
             title: {
                 //text: "platform:{{ platforms.platform_name }}, loop: {{ loop_select_name }}",
             },
@@ -122,7 +122,8 @@ window.onload = function() {
                                     }
                                     content += "image backend :" + e.entries[i].dataPoint.image_backend  + "<br/>"
                                     content += "image format :" + e.entries[i].dataPoint.image_format  + "<br/>"
-                                    content += "updated time :" + e.entries[i].dataPoint.updated_time  + "<br/>"
+                                    //content += "updated time :" + e.entries[i].dataPoint.updated_time  + "<br/>"
+                                    content += "updated time :" + e.entries[i].dataPoint.updated_time.replace(/\.\w+\+\w+:\w+/g, '')  + "<br/>"
                                     //content += "<a href=\"http://www.radhat.com\">RedHat</a>" + "<br/>"
                                     content += "<br/>";
                                     x_map_time[e.entries[i].dataPoint.x] = e.entries[i].dataPoint.updated_time

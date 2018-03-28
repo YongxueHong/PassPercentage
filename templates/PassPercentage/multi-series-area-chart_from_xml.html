@@ -51,7 +51,7 @@ window.onload = function() {
 	var data_list = []
 	var data_dict = {}
 	var item = ['total', 'pass', 'red', 'green']
-    $.get("{% static dir_xml %}",function(data) {
+    $.get("{% static dir_xml %}",{ "_": $.now() },function(data) {
         for(i=0;i<2;i++){
             $(data).find(item[i]).children().each(function () {
                 var $dataPoint = $(this);
