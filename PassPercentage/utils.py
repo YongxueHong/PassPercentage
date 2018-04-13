@@ -4,6 +4,7 @@ from django.db.models import Count
 import datetime
 from django.utils import timezone
 import json
+import collections
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
@@ -19,6 +20,7 @@ def query_latest_loop(platform_name, verbose=True):
     names = set('')
     loop_list = []
     latest_dict = {}
+    #latest_dict = collections.OrderedDict()
 
     for list in test_loop:
         names.add(list.loop_name)
@@ -32,8 +34,7 @@ def query_latest_loop(platform_name, verbose=True):
         #print 'Test details: %s' % (str(loop.loop_test_details))
         loop_list.append(loop)
         latest_dict[loop.loop_name] = float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num
-
-    return latest_dict, loop_list
+    return collections.OrderedDict(sorted(latest_dict.items())), loop_list
 
 def create_datapoints_column(platform_name, file_xml_name):
     """
@@ -44,7 +45,8 @@ def create_datapoints_column(platform_name, file_xml_name):
     """
     platform = Platform.objects.get(platform_slug=platform_name)
     print 'Platform : %s' % (platform.platform_name)
-    dict = {}
+    #dict = {}
+    dict = collections.OrderedDict()
     test_loop = []
     dict, test_loop = query_latest_loop(platform_name=platform, verbose=True)
     context = ""

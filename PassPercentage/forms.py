@@ -27,8 +27,8 @@ class LoopSelectForm(forms.Form):
     loop_select_name = forms.CharField(label='Select loop name', max_length=100)
 
 class CommentForm(forms.ModelForm):
-    comment_user = forms.CharField(widget=forms.TextInput(attrs={'id':'comment_user','class':'class-comment','size':10, 'maxlength':10, 'required': True}))
-    comment_email = forms.CharField(widget=forms.EmailInput(attrs={'id':'comment_email','class':'class-comment','size':20, 'maxlength':20, 'required': True}))
+    comment_user = forms.CharField(widget=forms.TextInput(attrs={'id':'comment_user','class':'class-comment','size':15, 'maxlength':50, 'required': True}))
+    comment_email = forms.CharField(widget=forms.EmailInput(attrs={'id':'comment_email','class':'class-comment','size':20, 'maxlength':50, 'required': True}))
     #comment_title = forms.CharField(widget=forms.TextInput(attrs={'id':'comment_title','class':'class-comment','size':50, 'maxlength':200, 'required': True}))
     comment_context = forms.CharField(widget=forms.Textarea(attrs={'id':'comment_context','class':'class-comment','cols': 80, 'rows': 5, 'required': True}))
 

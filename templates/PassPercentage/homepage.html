@@ -129,7 +129,7 @@ Welcome to PassPercentage
 </div>
 -->
 <div id="memu">
-    <div id="list"><label id="lable_platform"><strong>Platform :</strong></label><!--<label id="lable_testloop">Test Loop</label></div>-->
+    <div id="list"><label id="lable_platform"><strong>Group :</strong></label><!--<label id="lable_testloop">Test Loop</label></div>-->
     {% if platform_list %}
         {% for platform in platform_list %}
             <a class='class_plafrom', id='platform' href="{% url 'show_column_chart'  platform.platform_slug %}">{{platform.platform_name}}</a>

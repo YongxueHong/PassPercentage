@@ -240,7 +240,7 @@ window.onload = function(){
         <option value="4" >SKIP [{{fail.skip.skip_cont}}]</option>
         <option value="5" >WARN [{{fail.warn.warn_cont}}]</option>
         <option value="6" >INTERRUPT [{{fail.interrupt.interrupt_cont}}]</option>
-        <option value="7" >ALL [{{fail.all.all_cont}}]</option>
+        <!--<option value="7" >ALL [{{fail.all.all_cont}}]</option>-->
     </select>
     <div class="show_content" id="show_fail_content" hidden="hidden">{{ fail.fail.fail_info|linebreaks }}</div>
     <div class="show_content" id="show_error_content" hidden="hidden">{{ fail.error.error_info|linebreaks }}</div>
@@ -248,12 +248,12 @@ window.onload = function(){
     <div class="show_content" id="show_skip_content" hidden="hidden">{{ fail.skip.skip_info|linebreaks }}</div>
     <div class="show_content" id="show_warn_content" hidden="hidden">{{ fail.warn.warn_info|linebreaks }}</div>
     <div class="show_content" id="show_interrupt_content" hidden="hidden">{{ fail.interrupt.interrupt_info|linebreaks }}</div>
-    <div class="show_content" id="show_all_content" hidden="hidden">{{ fail.all.all_info|linebreaks }}</div>
+    <!--<div class="show_content" id="show_all_content" hidden="hidden">{{ fail.all.all_info|linebreaks }}</div>-->
 </div>
 <div>
     <form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point updated_time %}"
           enctype="multipart/form-data">
-        <p id="point_info">@ Platform:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
+        <p id="point_info">@ Group:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
         {% csrf_token %}
         <label for="user "><strong>User:</strong></label>
         {{ comment_form.comment_user }}
