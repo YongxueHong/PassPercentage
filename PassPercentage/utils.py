@@ -302,6 +302,8 @@ def display_test_details(platform, loopname, updated_time, failed_error=False, v
             print 'end:', case.case_end
             print 'logfile:', case.case_logfile
             print 'id:', case.case_id
+    pass_info = ''
+    pass_cont = 0
     fail_info = ''
     fail_cont = 0
     error_info = ''
@@ -319,30 +321,51 @@ def display_test_details(platform, loopname, updated_time, failed_error=False, v
 
     if failed_error == True:
         for case in cases:
+            if re.findall(r'PASS', case.case_status):
+                pass_cont = pass_cont + 1
+                all_cont = all_cont + 1
+                pass_info +='Case ID:' +  case.case_id + '.\n'
+                all_info += 'Case ID:' + case.case_id + '.\n'
+
             if re.findall(r'FAIL', case.case_status):
                 fail_cont = fail_cont + 1
+                all_cont = all_cont + 1
                 fail_info +='Case ID:' +  case.case_id + '.\n' + 'Fail reason: ' + case.case_fail_reason + '.\n' + '\n'
+                all_info += 'Case ID:' + case.case_id + '.\n' + 'Fail reason: ' + case.case_fail_reason + '.\n' + '\n'
 
             if re.findall(r'ERROR', case.case_status):
                 error_cont = error_cont + 1
+                all_cont = all_cont + 1
                 error_info +='Case ID:' +  case.case_id + '.\n' + 'Error reason: ' + case.case_fail_reason + '.\n' + '\n'
+                all_info += 'Case ID:' + case.case_id + '.\n' + 'Error reason: ' + case.case_fail_reason + '.\n' + '\n'
 
             if re.findall(r'CANCEL', case.case_status):
                 cancel_cont = cancel_cont + 1
+                all_cont = all_cont + 1
                 cancel_info +='Case ID:' +  case.case_id + '.\n' + 'Cancel reason: ' + case.case_fail_reason + '.\n' + '\n'
+                all_info += 'Case ID:' + case.case_id + '.\n' + 'Cancel reason: ' + case.case_fail_reason + '.\n' + '\n'
 
             if re.findall(r'SKIP', case.case_status):
                 skip_cont = skip_cont + 1
+                all_cont = all_cont + 1
                 skip_info +='Case ID:' +  case.case_id + '.\n' + 'Skip reason: ' + case.case_fail_reason + '.\n' + '\n'
+                all_info += 'Case ID:' + case.case_id + '.\n' + 'Skip reason: ' + case.case_fail_reason + '.\n' + '\n'
 
             if re.findall(r'WARN', case.case_status):
                 warn_cont = warn_cont + 1
+                all_cont = all_cont + 1
                 warn_info +='Case ID:' +  case.case_id + '.\n' + 'Warn reason: ' + case.case_fail_reason + '.\n' + '\n'
+                all_info += 'Case ID:' + case.case_id + '.\n' + 'Warn reason: ' + case.case_fail_reason + '.\n' + '\n'
 
             if re.findall(r'INTERRUPT', case.case_status):
                 interrupt_cont = interrupt_cont + 1
+                all_cont = all_cont + 1
                 interrupt_info +='Case ID:' +  case.case_id + '.\n' + 'Interrupt reason: ' + case.case_fail_reason + '.\n' + '\n'
+                all_info += 'Case ID:' + case.case_id + '.\n' + 'Interrupt reason: ' + case.case_fail_reason + '.\n' + '\n'
 
+    fail_info_dict['pass_info'] = pass_info
+    fail_cont_dict['pass_cont'] = pass_cont
+    fail_percent_dict['PASS'] = float(pass_cont * 100) / testloop[0].loop_case_total_num
     fail_info_dict['fail_info'] = fail_info
     fail_cont_dict['fail_cont'] = fail_cont
     fail_percent_dict['FAIL'] = float(fail_cont * 100) / testloop[0].loop_case_total_num
@@ -362,10 +385,18 @@ def display_test_details(platform, loopname, updated_time, failed_error=False, v
     fail_cont_dict['interrupt_cont'] = interrupt_cont
     fail_percent_dict['INTERRUPT'] = float(interrupt_cont * 100) / testloop[0].loop_case_total_num
     #pass_count = total_case_num - fail_cont - error_cont - cancel_cont - skip_cont
-    fail_percent_dict['PASS'] = float(testloop[0].loop_case_pass_num * 100) / testloop[0].loop_case_total_num
+    # fail_percent_dict['PASS'] = float(testloop[0].loop_case_pass_num * 100) / testloop[0].loop_case_total_num
 
-    fail_info_dict['all_info'] = fail_info + error_info + cancel_info + skip_info + warn_info + interrupt_info
-    fail_cont_dict['all_cont'] = fail_cont + error_cont + cancel_cont + skip_cont + warn_cont + interrupt_cont
+    #fail_info_dict['all_info'] = pass_info + fail_info + error_info + cancel_info + skip_info + warn_info + interrupt_info
+    fail_info_dict['all_info'] = all_info
+    #fail_cont_dict['all_cont'] = testloop[0].loop_case_total_num
+    fail_cont_dict['all_cont'] = all_cont
+
+    actual_cont = fail_cont + error_cont + cancel_cont + skip_cont + warn_cont + interrupt_cont + pass_cont
+    if testloop[0].loop_case_total_num > actual_cont:
+        unknown_cont = testloop[0].loop_case_total_num - actual_cont
+        fail_percent_dict['UNKNOWN'] = float(unknown_cont * 100) / \
+                                         testloop[0].loop_case_total_num
 
     # if not fail_info_dict['fail_info']:
     #     fail_info_dict['fail_info'] = 'No such cases.'
@@ -378,12 +409,16 @@ def display_test_details(platform, loopname, updated_time, failed_error=False, v
     # if not fail_info_dict['all_info']:
     #     fail_info_dict['all_info'] = 'All cases passed.'
     #
-    for k, v in fail_info_dict.items():
-        if not v:
-            if k == 'all_info':
-                fail_info_dict[k] = 'All cases passed.'
-            else:
-                fail_info_dict[k] = 'No such cases.'
+    # for k, v in fail_info_dict.items():
+    #     if not v:
+    #         if k == 'all_info':
+    #             fail_info_dict[k] = 'All cases passed.'
+    #         else:
+    #             fail_info_dict[k] = 'No such cases.'
+
+    fail_dict['pass']['pass_info'] = fail_info_dict['pass_info']
+    fail_dict['pass']['pass_cont'] = fail_cont_dict['pass_cont']
+    fail_dict['pass']['pass_info_percent'] = fail_percent_dict['PASS']
 
     fail_dict['fail']['fail_info'] = fail_info_dict['fail_info']
     fail_dict['fail']['fail_cont'] = fail_cont_dict['fail_cont']
@@ -412,7 +447,7 @@ def display_test_details(platform, loopname, updated_time, failed_error=False, v
     fail_dict['all']['all_info'] = fail_info_dict['all_info']
     fail_dict['all']['all_cont'] = fail_cont_dict['all_cont']
 
-    fail_dict['pass']['pass_percent'] = fail_percent_dict['PASS']
+    # fail_dict['pass']['pass_percent'] = fail_percent_dict['PASS']
 
     #print fail_dict
 
