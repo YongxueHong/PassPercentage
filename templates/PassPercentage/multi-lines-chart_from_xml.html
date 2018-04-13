@@ -114,9 +114,15 @@ window.onload = function() {
                                     content += "qemu version :" + e.entries[i].dataPoint.qemu_ver  + "<br/>"
                                     content += "host kernel version :" + e.entries[i].dataPoint.host_kernel_ver  + "<br/>"
                                     content += "host version :" + e.entries[i].dataPoint.host_ver  + "<br/>"
-                                    content += "guest kernel version :" + e.entries[i].dataPoint.guest_kernel_ver  + "<br/>"
-                                    content += "guest version :" + e.entries[i].dataPoint.guest_ver  + "<br/>"
-                                    content += "guest platform :" + e.entries[i].dataPoint.guest_plat  + "<br/>"
+                                    if (e.entries[i].dataPoint.guest_kernel_ver != 'unknown') {
+                                        content += "guest kernel version :" + e.entries[i].dataPoint.guest_kernel_ver  + "<br/>"
+                                    }
+                                    if (e.entries[i].dataPoint.guest_ver != 'unknown') {
+                                        content += "guest version :" + e.entries[i].dataPoint.guest_ver  + "<br/>"
+                                    }
+                                    if (e.entries[i].dataPoint.guest_plat != 'unknown') {
+                                        content += "guest platform :" + e.entries[i].dataPoint.guest_plat  + "<br/>"
+                                    }
                                     if (e.entries[i].dataPoint.virtio_win_ver != 'none') {
                                         content += "virtio_win version :" + e.entries[i].dataPoint.virtio_win_ver  + "<br/>"
                                     }
@@ -185,7 +191,7 @@ function toggleDataSeries(e){
 
 {% block body_block %}
 <div id="line_head">
-    <h1>Platform:{{ platforms.platform_name }}, Loop: {{ loop_select_name }}</h1>
+    <h1>Group: {{ platforms.platform_name }}, Loop: {{ loop_select_name }}</h1>
 </div>
 <div id="chartContainer" style="height: 650px; width: 99%;"></div>
 <script src="{% static "js/canvasjs.min.js" %}"></script>
