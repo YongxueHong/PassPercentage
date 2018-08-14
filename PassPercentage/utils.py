@@ -32,8 +32,9 @@ def query_latest_loop(platform_name, verbose=True):
                   %(loop, loop.loop_updated_time, loop.loop_case_pass_num, loop.loop_case_total_num,
                     float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num)
         #print 'Test details: %s' % (str(loop.loop_test_details))
-        loop_list.append(loop)
-        latest_dict[loop.loop_name] = float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num
+        if loop.loop_case_total_num != 0:
+            loop_list.append(loop)
+            latest_dict[loop.loop_name] = float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num
     return collections.OrderedDict(sorted(latest_dict.items())), loop_list
 
 def create_datapoints_column(platform_name, file_xml_name):
@@ -106,41 +107,42 @@ def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xm
             for list in loop:
                 # Need to shit the loop_updated_time(stored in db with UTC timezone) to local time.
                 #list.loop_updated_time_local = list.loop_updated_time + datetime.timedelta(hours=8)
-                context += "        <point>\n" \
-                           "            <x>T%d</x>\n" \
-                           "            <y>%.2f</y>\n" \
-                           "            <pass_num>%d</pass_num>\n" \
-                           "            <total_num>%d</total_num>\n" \
-                           "            <feature_owner>%s</feature_owner>\n" \
-                           "            <qemu_ver>%s</qemu_ver>\n" \
-                           "            <host_kernel_ver>%s</host_kernel_ver>\n" \
-                           "            <host_ver>%s</host_ver>\n" \
-                           "            <guest_kernel_ver>%s</guest_kernel_ver>\n" \
-                           "            <guest_ver>%s</guest_ver>\n" \
-                           "            <guest_plat>%s</guest_plat>\n" \
-                           "            <virtio_win_ver>%s</virtio_win_ver>\n" \
-                           "            <image_backend>%s</image_backend>\n" \
-                           "            <image_format>%s</image_format>\n" \
-                           "            <cmd>%s</cmd>\n" \
-                           "            <updated_time>%s</updated_time>\n" \
-                           "        </point>\n" %(t,
-                                                  (float(list.loop_case_pass_num * 100)/list.loop_case_total_num),
-                                                  list.loop_case_pass_num,
-                                                  list.loop_case_total_num,
-                                                  list.loop_feature_owner,
-                                                  list.loop_qemu_ver,
-                                                  list.loop_host_kernel_ver,
-                                                  list.loop_host_ver,
-                                                  list.loop_guest_kernel_ver,
-                                                  list.loop_guest_ver,
-                                                  list.loop_guest_plat,
-                                                  list.loop_virtio_win_ver,
-                                                  list.loop_image_backend,
-                                                  list.loop_image_format,
-                                                  list.loop_cmd,
-                                                  list.loop_updated_time
-                                                  )
-                t = t + 1
+                if list.loop_case_total_num != 0:
+                    context += "        <point>\n" \
+                               "            <x>T%d</x>\n" \
+                               "            <y>%.2f</y>\n" \
+                               "            <pass_num>%d</pass_num>\n" \
+                               "            <total_num>%d</total_num>\n" \
+                               "            <feature_owner>%s</feature_owner>\n" \
+                               "            <qemu_ver>%s</qemu_ver>\n" \
+                               "            <host_kernel_ver>%s</host_kernel_ver>\n" \
+                               "            <host_ver>%s</host_ver>\n" \
+                               "            <guest_kernel_ver>%s</guest_kernel_ver>\n" \
+                               "            <guest_ver>%s</guest_ver>\n" \
+                               "            <guest_plat>%s</guest_plat>\n" \
+                               "            <virtio_win_ver>%s</virtio_win_ver>\n" \
+                               "            <image_backend>%s</image_backend>\n" \
+                               "            <image_format>%s</image_format>\n" \
+                               "            <cmd>%s</cmd>\n" \
+                               "            <updated_time>%s</updated_time>\n" \
+                               "        </point>\n" %(t,
+                                                      (float(list.loop_case_pass_num * 100)/list.loop_case_total_num),
+                                                      list.loop_case_pass_num,
+                                                      list.loop_case_total_num,
+                                                      list.loop_feature_owner,
+                                                      list.loop_qemu_ver,
+                                                      list.loop_host_kernel_ver,
+                                                      list.loop_host_ver,
+                                                      list.loop_guest_kernel_ver,
+                                                      list.loop_guest_ver,
+                                                      list.loop_guest_plat,
+                                                      list.loop_virtio_win_ver,
+                                                      list.loop_image_backend,
+                                                      list.loop_image_format,
+                                                      list.loop_cmd,
+                                                      list.loop_updated_time
+                                                      )
+                    t = t + 1
             context += "    </%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
     context += "</data>"
 
