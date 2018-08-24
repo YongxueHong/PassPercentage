@@ -7,7 +7,7 @@ class PlatformAdmin(admin.ModelAdmin):
 
 class TestLoopAdmin(admin.ModelAdmin):
     prepopulated_fields = {'loop_slug':('loop_name',)}
-
+    search_fields = ('loop_name', 'loop_feature_name')
 
 admin.site.register(Platform, PlatformAdmin)
 admin.site.register(TestLoop, TestLoopAdmin)
