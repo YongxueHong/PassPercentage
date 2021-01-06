@@ -60,6 +60,8 @@ def create_datapoints_column(platform_name, file_xml_name):
     context += "</data>"
 
     file_xml = os.path.join(XML_DIR, file_xml_name)
+    if not os.path.exists(XML_DIR):
+        os.makedirs(XML_DIR)
     file = open(file_xml, "w")
     file.writelines(context)
     file.close()
@@ -147,6 +149,8 @@ def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xm
     context += "</data>"
 
     file_xml = os.path.join(XML_DIR, file_xml_name)
+    if not os.path.exists(XML_DIR):
+        os.makedirs(XML_DIR)
     file = open(file_xml, "w")
     file.writelines(context)
     file.close()
@@ -192,6 +196,8 @@ def create_datapoints_area(platform_name, test_loop_name, host_version, file_xml
     context += "</data>"
 
     file_xml = os.path.join(XML_DIR, file_xml_name)
+    if not os.path.exists(XML_DIR):
+        os.makedirs(tpm_path)
     file = open(file_xml, "w")
     file.writelines(context)
     file.close()
@@ -234,6 +240,8 @@ def create_datapoints_pie(file_xml_name, dict):
     context += "</data>"
 
     file_xml = os.path.join(XML_DIR, file_xml_name)
+    if not os.path.exists(XML_DIR):
+        os.makedirs(XML_DIR)
     file = open(file_xml, "w")
     file.writelines(context)
     file.close()
