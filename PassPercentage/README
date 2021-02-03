@@ -1,7 +1,0 @@
-scp -r /home/yhong/Project/Web_Project/Dashboard/* 10.66.10.20:/home/yhong/Project/Web_Project/Dashboard/
-
-http://fileshare.englab.nay.redhat.com/pub/logs/pingl/0001-Staf-kvm-support-to-collect-information-of-test-resu_v3.patch
-
-(workspace) [root@ibm-p8-rhevm-11 staf-kvm-devel]# python import2nfs.py -f
-(workspace) [root@ibm-p8-rhevm-14 staf-kvm-devel]# mv /tmp/LOG/imported-logs /tmp/LOG/pp_14
-http://10.8.242.200/pp_14/results.html
