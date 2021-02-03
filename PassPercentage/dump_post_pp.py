@@ -8,7 +8,7 @@ def post(ip, file):
     url = "http://%s:8000/PassPercentage/server_api/" %ip
     r = requests.post(url, json=pp_dict)
     for (key, val) in pp_dict.items():
-        print ('key: %s, val: %s' % (key,val))
+        print('key: %s, val: %s' % (key,val))
     print(r.status_code, r.reason)
 
 if __name__ == '__main__':
