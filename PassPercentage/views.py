@@ -16,12 +16,12 @@ from PassPercentage import populate_data
 import time, datetime
 
 def homepage(request):
-    print 'The host info :',request.get_host()
+    print('The host info :',request.get_host())
     context_dict = {}
     context_dict['homepage_name'] = 'PassPercentage'
     platform = Platform.objects.order_by('-platform_name')[:]
     context_dict['platform_list'] = platform
-    print context_dict['platform_list']
+    print(context_dict['platform_list'])
 
     for plat in platform:
         if plat:
@@ -34,7 +34,7 @@ def about(request):
     version = django.get_version()
     context_dict['version'] = version
     context_dict['author'] = 'yhong'
-    print ('The version of django : %s' % context_dict['version'])
+    print('The version of django : %s' % context_dict['version'])
 
     return render(request, 'PassPercentage/about.html', context_dict)
 
@@ -47,10 +47,10 @@ def show_testloops(request, platform_slug_name):
     verbose = True
     if verbose == True:
         for list in test_loop:
-            print '%s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
+            print('%s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
                   % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
                      list.loop_case_total_num,
-                     list.loop_host_ver)
+                     list.loop_host_ver))
 
     return render(request, 'PassPercentage/testloop.html', context_dict)
 
@@ -78,7 +78,7 @@ def display_lines_charts_from_column(request, platform_slug_name, loop_select_na
         total_host_ver.add(loop.loop_host_ver)
 
     total_host_ver = list(total_host_ver)
-    print 'the set of total_host_ver : ', total_host_ver
+    print('the set of total_host_ver : ', total_host_ver)
 
     context_dict['loop_select_name'] = loop_select_name_underline.replace('_', ' ')
     context_dict['loop_select_name_nospace'] = loop_select_name_underline
@@ -87,7 +87,7 @@ def display_lines_charts_from_column(request, platform_slug_name, loop_select_na
                                       context_dict['xml_name'], False)
 
     context_dict['test_host_ver'] = versions
-    print 'List of host version :', context_dict['test_host_ver']
+    print('List of host version :', context_dict['test_host_ver'])
 
     return render(request, 'PassPercentage/multi-lines-chart_from_xml.html',  context_dict)
 
@@ -100,12 +100,12 @@ def display_area_chart(request, platform_slug_name, loop_select_name_underline, 
     context_dict['xml_name'] = 'multi_areapoints.xml'
     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
 
-    print platform_slug_name
-    print loop_select_name_underline
+    print(platform_slug_name)
+    print(loop_select_name_underline)
     host_ver = host_ver.replace('_', '.')
-    print host_ver
+    print(host_ver)
     loop_select_name = loop_select_name_underline.replace('_', ' ')
-    print 'loop_select_name', loop_select_name
+    print('loop_select_name', loop_select_name)
     context_dict['host_version'] = host_ver
     context_dict['test_loop_name'] = loop_select_name
     create_datapoints_area(platform_name=platform.platform_name, test_loop_name=loop_select_name_underline,
@@ -118,10 +118,10 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     updated_time_list = re.split(r'_', updated_time)
     updated_time_list[1] = re.sub(r'-', ':', updated_time_list[1])
     updated_time_list[3] = re.sub(r'-', ':', updated_time_list[3])
-    print updated_time_list
+    print(updated_time_list)
     updated_time_orgin = updated_time_list[0] + ' ' + updated_time_list[1] + \
                    '.' + updated_time_list[2] + '+' + updated_time_list[3]
-    print  updated_time_orgin
+    print(updated_time_orgin)
     fail_err_info = ''
     context_dict = {}
     context_dict['platforms'] = platform
@@ -151,7 +151,7 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
             #print 'form is valid'
             comment_form.save(commit=True)
             comment = Comment.objects.order_by("-comment_updated_time")[0]
-            print comment.comment_user, comment.comment_context
+            print(comment.comment_user, comment.comment_context)
             comment.comment_version = host_ver.replace('_','.')
             comment.comment_platform = platform.platform_name
             comment.comment_point = x_point
@@ -176,10 +176,10 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     verbose = False
     if verbose == True:
         for list in comment:
-            print 'comment user: %s; context: %s; updated time: %s' \
+            print('comment user: %s; context: %s; updated time: %s' \
                   'version: %s; platform: %s; testloop: %s; point: %s' \
                   %(list.comment_user, list.comment_context, list.comment_updated_time,
-                    list.comment_version, list.comment_platform, list.comment_testloop, list.comment_point)
+                    list.comment_version, list.comment_platform, list.comment_testloop, list.comment_point))
 
     return render(request, 'PassPercentage/comments.html', context_dict)
 
@@ -205,7 +205,7 @@ def server_api(request):
     context_dict = {}
     datas = json.loads(request.body)
     recv_time = time.ctime()
-    print 'Beijing %s : Received data from client.' % (recv_time)
+    print('Beijing %s : Received data from client.' % (recv_time))
     for key, val in datas.items():
         if key == 'host_arch':
             platform = val
@@ -324,24 +324,24 @@ def server_api(request):
     start_time = time.time()
     test_id = populate_data.add_testid(loop=loop, id=loop.loop_updated_time)
     for t in tests:
-        print '--------------------------------------------------------------------------------'
+        print('--------------------------------------------------------------------------------')
         for key, val in t.items():
             #print ('key: %s, val: %s' % (key, val))
             if key == 'status':
                 case_status = val
                 if not case_status:
                     case_status = 'unknown'
-                print ('key: %s, val: %s' % (key, case_status))
+                print('key: %s, val: %s' % (key, case_status))
             elif key == 'fail_reason':
                 case_fail_reason = val
                 if not case_fail_reason:
                     case_fail_reason = 'unknown'
-                print ('key: %s, val: %s' % (key, case_fail_reason))
+                print('key: %s, val: %s' % (key, case_fail_reason))
             elif key == 'url':
                 case_url = val
                 if not case_url:
                     case_url = 'unknown'
-                print ('key: %s, val: %s' % (key, case_url))
+                print('key: %s, val: %s' % (key, case_url))
             elif key == 'whiteboard':
                 case_whiteboard = val
                 if not case_whiteboard:
@@ -394,13 +394,13 @@ def server_api(request):
     total_time = end_time - start_time
 
     if verbose == True:
-        print '======================  Summary  ================================='
+        print('======================  Summary  =================================')
         for key, val in datas.items():
             if key != 'tests':
-                print ('key: %s, val: %s' % (key, val))
+                print('key: %s, val: %s' % (key, val))
             #print ('key: %s, val: %s' % (key, val))
 
-    print 'Recevice time : %s - Done time : %s ; Total time of finished : %s' %(recv_time, done_time, total_time)
+    print('Recevice time : %s - Done time : %s ; Total time of finished : %s' %(recv_time, done_time, total_time))
 
     return render(request, 'PassPercentage/homepage.html', context_dict)
 
@@ -409,7 +409,7 @@ def show_fail_pie_chart(request):
 
 def register(request):
     registered = False
-    print 'method of request :%s' % request.method
+    print('method of request :%s' % request.method)
 
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
@@ -417,7 +417,7 @@ def register(request):
 
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save()
-            print '=== user %s' % user
+            print('=== user %s' % user)
 
             user.set_password(user.password)
             user.save()
@@ -431,11 +431,11 @@ def register(request):
             profile.save()
             registered = True
         else:
-            print (user_form.errors, profile_form.errors)
+            print(user_form.errors, profile_form.errors)
     else:
-        print 'Creating a user form...'
+        print('Creating a user form...')
         user_form = UserForm()
-        print 'Creating a User Profile form...'
+        print('Creating a User Profile form...')
         profile_form = UserProfileForm()
 
     return render(request, 'PassPercentage/register.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
@@ -443,23 +443,23 @@ def register(request):
 def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
-        print '%s' % username
+        print('%s' % username)
         password = request.POST.get('password')
-        print  '%s' % password
+        print('%s' % password)
 
         user = authenticate(username=username, password=password)
 
         if user:
             if user.is_active:
                 login(request, user)
-                print '%s login sucessfully!' % username
+                print('%s login sucessfully!' % username)
                 return HttpResponseRedirect(reverse('homepage'))
             else:
-                print '%s login failed!' % username
+                print('%s login failed!' % username)
                 return HttpResponse("Your Rango account is disabled.")
 
         else:
-            print ("Invaild login details : {0}, {1}".format(username, password))
+            print("Invaild login details : {0}, {1}".format(username, password))
             return HttpResponse('Invaild login details supplied.')
 
     else:

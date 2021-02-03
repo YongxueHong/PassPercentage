@@ -53,9 +53,9 @@ MIDDLEWARE_CLASSES = [
 
 ROOT_URLCONF = 'Dashboard.urls'
 
-print (__file__)
-print (os.path.dirname(__file__))
-print (os.path.dirname(os.path.dirname(__file__)))
+print(__file__)
+print(os.path.dirname(__file__))
+print(os.path.dirname(os.path.dirname(__file__)))
 
 TEMPLATE_DIR = os.path.join(BASE_DIR,'templates')
 

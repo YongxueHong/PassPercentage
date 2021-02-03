@@ -37,8 +37,8 @@ def add_testloop(platform=None,
                                        loop_case_total_num=case_total_num,
                                        loop_case_pass_num=case_pass_num, 
                                        loop_cmd=cmd)
-    print '%s : Created %s test loop object.' % (time.ctime(), name)
-    print "- {0} - {1} - {2}".format(str(platform), str(t), str(t.loop_updated_time))
+    print('%s : Created %s test loop object.' % (time.ctime(), name))
+    print("- {0} - {1} - {2}".format(str(platform), str(t), str(t.loop_updated_time)))
     t.save()
     #for p in Platform.objects.all():
     #    for t in TestLoop.objects.filter(platform=p):
@@ -66,4 +66,4 @@ def add_details(test_id, case_status, case_fail_reason, case_url, case_whiteboar
 
 # Start execution here!
 if __name__ == '__main__':
-    print "Starting PassPercentage population script..."
+    print("Starting PassPercentage population script...")

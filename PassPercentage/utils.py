@@ -10,9 +10,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
 XML_DIR = os.path.join(STATIC_DIR, 'xml')
 
-print BASE_DIR
-print STATIC_DIR
-print XML_DIR
+print(BASE_DIR)
+print(STATIC_DIR)
+print(XML_DIR)
 
 
 def query_latest_loop(platform_name, verbose=True):
@@ -28,9 +28,9 @@ def query_latest_loop(platform_name, verbose=True):
     for list in names:
         loop = TestLoop.objects.filter(platform=platform_name).filter(loop_name=list).order_by("-loop_updated_time")[0]
         if verbose == True:
-            print 'Latest %s loop column info : [update time : %s, case pass nums : %s, case total nums : %s , pass percent: %.2f]'\
+            print('Latest %s loop column info : [update time : %s, case pass nums : %s, case total nums : %s , pass percent: %.2f]'\
                   %(loop, loop.loop_updated_time, loop.loop_case_pass_num, loop.loop_case_total_num,
-                    float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num)
+                    float(loop.loop_case_pass_num * 100) /loop.loop_case_total_num))
         #print 'Test details: %s' % (str(loop.loop_test_details))
         if loop.loop_case_total_num != 0:
             loop_list.append(loop)
@@ -45,7 +45,7 @@ def create_datapoints_column(platform_name, file_xml_name):
     :return:
     """
     platform = Platform.objects.get(platform_slug=platform_name)
-    print 'Platform : %s' % (platform.platform_name)
+    print('Platform : %s' % (platform.platform_name))
     #dict = {}
     dict = collections.OrderedDict()
     test_loop = []
@@ -80,7 +80,7 @@ def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xm
     context_dict = {}
     platform = Platform.objects.get(platform_slug=platform_name)
     context_dict['platforms'] = platform
-    print 'Platform : %s' % (platform.platform_name)
+    print('Platform : %s' % (platform.platform_name))
 
     versions = ''
     context = ""
@@ -97,11 +97,11 @@ def create_datapoints_line(platform_name, test_loop_name, test_host_ver, file_xm
         if loop:
             for list in loop:
                 if verbose == True:
-                    print 'Total %s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , ' \
+                    print('Total %s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , ' \
                           'pass percent : %.2f, version: %s]' \
                           % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
                              list.loop_case_total_num, (float(list.loop_case_pass_num * 100) / list.loop_case_total_num),
-                             list.loop_host_ver)
+                             list.loop_host_ver))
                 #print 'Test details <%s>: %s' % (type(str(list.loop_test_details)), str(list.loop_test_details))
             context += "    <%s>\n" % list.loop_host_ver.replace('.', '_').replace('-', '_')
             versions += list.loop_host_ver.replace('.', '_').replace('-', '_') + ','
@@ -168,14 +168,14 @@ def create_datapoints_area(platform_name, test_loop_name, host_version, file_xml
     context_dict = {}
     platform = Platform.objects.get(platform_slug=platform_name)
     context_dict['platforms'] = platform
-    print 'Platform : %s' %(platform.platform_name)
+    print('Platform : %s' %(platform.platform_name))
 
     loop = TestLoop.objects.filter(platform=platform).filter(loop_name=test_loop_name) \
                .filter(loop_host_ver=host_version).order_by("loop_updated_time")[:]
     for list in loop:
-        print '%s loop area info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
+        print('%s loop area info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
               % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
-                 list.loop_case_total_num, list.loop_host_ver)
+                 list.loop_case_total_num, list.loop_host_ver))
     context = ""
     context += "<data>\n"
     context += "    <pass>\n"
@@ -215,22 +215,22 @@ def get_all_loop(platform_name):
 
     if not total_loop:
         total_loop.append('No loops')
-        print '%s no loops' % platform_name
+        print('%s no loops' % platform_name)
     else:
-        print 'total loop of %s: %s' %(platform_name, total_loop)
+        print('total loop of %s: %s' %(platform_name, total_loop))
     return total_loop, testloop_list
 
 def display_meta(request):
     values = request.META.items()
     values.sort()
     for key, val in values:
-        print ('key: %s, val: %s' % (key, val))
+        print('key: %s, val: %s' % (key, val))
 
 
 def create_datapoints_pie(file_xml_name, dict):
     context = ""
     context += "<data>\n"
-    print dict
+    print(dict)
     for (name, percent) in dict.items():
         #print 'Pie member ==> %s, %s' %(name, percent)
         context += "    <point>\n" \
@@ -296,22 +296,22 @@ def display_test_details(platform, loopname, updated_time, failed_error=False, v
     fail_percent_dict = {}
 
     testid = TestsID.objects.filter(tests_id=updated_time)
-    print 'test id : ', testid
+    print('test id : ', testid)
     cases = CaseDetail.objects.filter(test_id=testid)
     if verbose == True:
         for case in cases:
-            print '============================================='
-            print 'status:', case.case_status
-            print 'fail_reason:', case.case_fail_reason
-            print 'url:', case.case_url
-            print 'whiteboard:', case.case_whiteboard
-            print 'start:', case.case_start
-            print 'logdir:', case.case_logdir
-            print 'time:', case.case_time
-            print 'test:', case.case_test
-            print 'end:', case.case_end
-            print 'logfile:', case.case_logfile
-            print 'id:', case.case_id
+            print('=============================================')
+            print('status:', case.case_status)
+            print('fail_reason:', case.case_fail_reason)
+            print('url:', case.case_url)
+            print('whiteboard:', case.case_whiteboard)
+            print('start:', case.case_start)
+            print('logdir:', case.case_logdir)
+            print('time:', case.case_time)
+            print('test:', case.case_test)
+            print('end:', case.case_end)
+            print('logfile:', case.case_logfile)
+            print('id:', case.case_id)
     pass_info = ''
     pass_cont = 0
     fail_info = ''
