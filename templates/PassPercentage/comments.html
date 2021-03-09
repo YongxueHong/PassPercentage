@@ -257,22 +257,25 @@ window.onload = function(){
 <div>
     <form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point updated_time %}"
           enctype="multipart/form-data">
-        <p id="point_info">@ Group:{{platforms.platform_name}}, Loop: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
+        <p id="point_info">@ Group:{{platforms.platform_name}}, Feature: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
         {% csrf_token %}
         <label for="user "><strong>User:</strong></label>
         {{ comment_form.comment_user }}
         <p><label for="email "><strong>Email:</strong></label>
             {{ comment_form.comment_email }}
         </p>
-        {{ comment_form.comment_context }}
-        <p><button type="submit">Comment</button></p>
+        <label for="comment "><strong>Comment:</strong></label>
+        <p>
+            {{ comment_form.comment_context }}
+            <input type="submit" value="Submit" />
+        </p>
     </form>
 </div>
 <div id="history_comment">
     <h2 style="color : red">History Comments</h2>
     {% for comment in comments %}
 
-        {% if platforms.platform_name == comment.comment_platform and loop_name_no_underline == comment.comment_testloop and host_version == comment.comment_version and x_point = comment.comment_point %}
+        {% if updated_time == comment.comment_point_real_time %}
         <div id="each_comment">
             <!--<p>Version : {{comment.comment_version}}</p>
             <p>Platform : {{comment.comment_platform}}</p>
@@ -281,9 +284,12 @@ window.onload = function(){
             <p>Title : {{comment.comment_title}}</p>
             <p>Index : {{comment.comment_index}}</p>-->
             <p>{{comment.comment_context}}</p>
-            <hr/>
-            <p>From: {{comment.comment_user}} ; Email: <a href="mailto:{{comment.comment_email}}"> {{comment.comment_email}} </a>; Update time: {{comment.comment_updated_time}}</p>
-            </div>
+            <p>
+                From: {{comment.comment_user}};
+                Email: <a href="mailto:{{comment.comment_email}}"> {{comment.comment_email}}</a>;
+                Update time: {{comment.comment_updated_time}}
+            </p>
+        </div>
         {% endif %}
 
     {% endfor %}

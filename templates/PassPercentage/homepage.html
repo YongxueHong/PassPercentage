@@ -1,5 +1,6 @@
 {% extends 'PassPercentage/base.html' %}
 {% load staticfiles %}
+
 {% block title_block %}
     {{homepage_name}}
 {% endblock %}
@@ -14,6 +15,7 @@
         margin: 10px 0px 10px 0px; //top, right, bottom, left
         font-size : 30px;
     }
+
     a {
         text-decoration:none
     }
@@ -34,6 +36,7 @@
         //padding-left:0.6em;
         //margin:5px 5px;
     }
+
     #welcome {
         //border-width:medium;
         border-style:outset;
@@ -64,6 +67,7 @@
         //margin:4px 20px;
         //width: 80%;
     }
+
     #login {
         //border-width:medium;
         border-style:outset;
@@ -79,9 +83,11 @@
         //padding-left:0.6em;
         //margin:4px 20px;
     }
+
     .class_login {
         color: rgb(255,255,255);
     }
+
     #display {
         border-style:outset;
         border-width:medium;
@@ -93,9 +99,11 @@
         padding-bottom:5px;
         font-size : 25px;
     }
+
     #loop_select_name {
         font-size : 25px;
     }
+
     #list {
         //border-style:outset;
         //border-width:medium;
@@ -107,6 +115,7 @@
         //padding-bottom:5px;
         font-size : 25px;
     }
+
     #lable_testloop {
         padding-left:10em;
         //margin-left:20px;
@@ -115,27 +124,25 @@
 
 {% block body_block %}
 <h1 id="welcome" align="center">
-Welcome to PassPercentage
+    Welcome to PassPercentage
 </h1>
-<!--
-<div id="login">
-    {% if user.is_authenticated %}
-    <h1>Hello {{ user.username }}!</h1>
-        <p><a class='class_login', href="{% url 'logout' %}">Log out</a></p>
-    {% else %}
-        <p><a class='class_login', href="{% url 'login' %}">Log in</a></p>
-        <p><a class='class_login', href="{% url 'register' %}">Sign up</a></p>
-    {% endif %}
-</div>
--->
 <div id="memu">
-    <div id="list"><label id="lable_platform"><strong>Group :</strong></label><!--<label id="lable_testloop">Test Loop</label></div>-->
+    <div id="list">
+        <label id="lable_platform">
+            <strong>
+                Group :
+            </strong>
+        </label>
     {% if platform_list %}
         {% for platform in platform_list %}
-            <a class='class_plafrom', id='platform' href="{% url 'show_column_chart'  platform.platform_slug %}">{{platform.platform_name}}</a>
+            <a class='class_plafrom', id='platform' href="{% url 'show_column_chart'  platform.platform_slug %}">
+                {{platform.platform_name}}
+            </a>
         {% endfor %}
     {% else %}
-        <strong>No available platform</strong>
+        <strong>
+            No available platform
+        </strong>
     {% endif %}
     </div>
 </div>

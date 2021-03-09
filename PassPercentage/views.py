@@ -1,22 +1,42 @@
-from django.shortcuts import render
-import os, sys
 import re
 import json
+import time
+import logging
+
 # Create your views here.
 import django
-from django.contrib.auth.models import User
-from PassPercentage.models import Platform, TestLoop, Name, Comment, CaseDetail, TestsID
-from PassPercentage.forms import PlatformForm, TestLoopForm, LoopSelectForm, CommentForm, UserForm, UserProfileForm
+from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from utils import create_datapoints_column,create_datapoints_area, create_datapoints_line, \
-    query_latest_loop, get_all_loop, display_test_details, create_datapoints_pie
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
+
+
+from PassPercentage.models import Platform
+from PassPercentage.models import TestLoop
+from PassPercentage.models import Comment
+from PassPercentage.models import CaseDetail
+from PassPercentage.models import AvocadoFeatureMapping
+
+from PassPercentage.forms import CommentForm
+from PassPercentage.forms import UserForm
+from PassPercentage.forms import UserProfileForm
+from PassPercentage.forms import AvocadoFeatureMappingForm
 from PassPercentage import populate_data
-import time, datetime
+
+from utils import create_datapoints_column
+from utils import create_datapoints_area
+from utils import create_datapoints_line
+from utils import get_all_loop
+from utils import display_test_details
+from utils import create_datapoints_pie
+from utils import get_avocado_feature_mapping_by_cmd
+
+
+logger = logging.getLogger(__name__)
+
 
 def homepage(request):
-    print('The host info :',request.get_host())
+    print('The host info :', request.get_host())
     context_dict = {}
     context_dict['homepage_name'] = 'PassPercentage'
     platform = Platform.objects.order_by('-platform_name')[:]
@@ -29,6 +49,7 @@ def homepage(request):
 
     return render(request, 'PassPercentage/homepage.html', context_dict)
 
+
 def about(request):
     context_dict = {}
     version = django.get_version()
@@ -38,6 +59,7 @@ def about(request):
 
     return render(request, 'PassPercentage/about.html', context_dict)
 
+
 def show_testloops(request, platform_slug_name):
     platform = Platform.objects.get(platform_slug=platform_slug_name)
     test_loop = TestLoop.objects.filter(platform=platform)
@@ -45,23 +67,25 @@ def show_testloops(request, platform_slug_name):
     context_dict['platforms'] = platform
     context_dict['test_loops'] = test_loop
     verbose = True
-    if verbose == True:
-        for list in test_loop:
-            print('%s loop line info : [update time : %s, case pass nums : %s, case total nums : %s , version: %s]' \
-                  % (list.loop_name, list.loop_updated_time.isoformat(' ').split('.')[0], list.loop_case_pass_num,
-                     list.loop_case_total_num,
-                     list.loop_host_ver))
+    if verbose:
+        for test in test_loop:
+            print('%s loop line info : [update time : %s, case pass nums : %s, '
+                  'case total nums : %s , version: %s]' %
+                  (test.loop_name, test.loop_updated_time.isoformat(' ').split('.')[0],
+                   test.loop_case_pass_num, test.loop_case_total_num, test.loop_host_ver))
 
     return render(request, 'PassPercentage/testloop.html', context_dict)
+
 
 def show_column_chart(request, platform_slug_name):
     context_dict = {}
     context_dict['xml_name'] = 'latest_columnpoints.xml'
     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
-
-    context_dict['platforms'], context_dict['test_loops'] = create_datapoints_column(platform_slug_name, context_dict['xml_name'])
+    platform, test_loops = create_datapoints_column(platform_slug_name, context_dict['xml_name'])
+    context_dict['platforms'], context_dict['test_loops'] = platform, test_loops
 
     return render(request, 'PassPercentage/column_chart_from_xml.html', context_dict)
+
 
 def display_lines_charts_from_column(request, platform_slug_name, loop_select_name_underline):
     context_dict = {}
@@ -70,8 +94,6 @@ def display_lines_charts_from_column(request, platform_slug_name, loop_select_na
     context_dict['platforms'] = platform
     context_dict['xml_name'] = 'multi_linepoints.xml'
     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
-
-    #loop_select_name = loop_select_name_underline.replace('_', ' ')
 
     _, test_loops = get_all_loop(platform.platform_name)
     for loop in test_loops:
@@ -82,8 +104,9 @@ def display_lines_charts_from_column(request, platform_slug_name, loop_select_na
 
     context_dict['loop_select_name'] = loop_select_name_underline.replace('_', ' ')
     context_dict['loop_select_name_nospace'] = loop_select_name_underline
-    #versions = create_datapoints_line(platform.platform_name, loop_select_name, total_host_ver, context_dict['xml_name'])
-    versions = create_datapoints_line(platform.platform_name, loop_select_name_underline, total_host_ver,
+    versions = create_datapoints_line(platform.platform_name,
+                                      loop_select_name_underline,
+                                      total_host_ver,
                                       context_dict['xml_name'], False)
 
     context_dict['test_host_ver'] = versions
@@ -91,9 +114,9 @@ def display_lines_charts_from_column(request, platform_slug_name, loop_select_na
 
     return render(request, 'PassPercentage/multi-lines-chart_from_xml.html',  context_dict)
 
+
 def display_area_chart(request, platform_slug_name, loop_select_name_underline, host_ver):
     platform = Platform.objects.get(platform_slug=platform_slug_name)
-    #test_loop = TestLoop.objects.filter(platform=platform)
     context_dict = {}
     context_dict['platforms'] = platform
 
@@ -113,16 +136,16 @@ def display_area_chart(request, platform_slug_name, loop_select_name_underline, 
 
     return render(request, 'PassPercentage/multi-series-area-chart_from_xml.html', context_dict)
 
+
 def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, updated_time):
     platform = Platform.objects.get(platform_slug=platform_slug_name)
     updated_time_list = re.split(r'_', updated_time)
     updated_time_list[1] = re.sub(r'-', ':', updated_time_list[1])
     updated_time_list[3] = re.sub(r'-', ':', updated_time_list[3])
     print(updated_time_list)
-    updated_time_orgin = updated_time_list[0] + ' ' + updated_time_list[1] + \
-                   '.' + updated_time_list[2] + '+' + updated_time_list[3]
+    updated_time_orgin = (updated_time_list[0] + ' ' + updated_time_list[1] +
+                          '.' + updated_time_list[2] + '+' + updated_time_list[3])
     print(updated_time_orgin)
-    fail_err_info = ''
     context_dict = {}
     context_dict['platforms'] = platform
 
@@ -132,12 +155,12 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     context_dict['host_version'] = host_ver.replace('_','.')
     context_dict['x_point'] = x_point
     context_dict['updated_time'] = updated_time
-    cases, fail, fail_percent = display_test_details(platform=platform, loopname=loop_select_name,
-                                       failed_error=True, verbose=False, updated_time=updated_time_orgin)
-    #print fail
+    cases, fail, fail_percent = display_test_details(platform=platform,
+                                                     loop_feature_name=loop_select_name,
+                                                     failed_error=True,
+                                                     verbose=False,
+                                                     updated_time=updated_time_orgin)
     context_dict['fail'] = fail
-    # context_dict['fail_info'] = fail_info
-    # context_dict['fail_cont'] = fail_cont
     context_dict['fail_percent'] = fail_percent
     context_dict['cases'] = cases
     context_dict['xml_name'] = 'pie_points.xml'
@@ -148,43 +171,36 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     if request.method == 'POST':
         comment_form = CommentForm(data=request.POST)
         if comment_form.is_valid():
-            #print 'form is valid'
             comment_form.save(commit=True)
             comment = Comment.objects.order_by("-comment_updated_time")[0]
             print(comment.comment_user, comment.comment_context)
             comment.comment_version = host_ver.replace('_','.')
             comment.comment_platform = platform.platform_name
             comment.comment_point = x_point
+            comment.comment_point_real_time = updated_time
             comment.comment_testloop = loop_select_name.replace('_',' ')
             comment.save()
-            """
-            comment_user = comment_form.cleaned_data['comment_user']
-            print 'comment_user :', comment_user
-            comment_title = comment_form.cleaned_data['comment_title']
-            print 'comment_title :', comment_title
-            comment_context = comment_form.cleaned_data['comment_context']
-            print 'comment_context :', comment_context
-            """
 
     else:
         comment_form = CommentForm()
 
     context_dict['comment_form'] = comment_form
-    comment = Comment.objects.all().order_by("-comment_updated_time")[:]
-    context_dict['comments'] = comment
-    #print  comment
+    comments = Comment.objects.all().order_by("-comment_updated_time")[:]
+    context_dict['comments'] = comments
     verbose = False
-    if verbose == True:
-        for list in comment:
+    if verbose:
+        for comment in comments:
             print('comment user: %s; context: %s; updated time: %s' \
                   'version: %s; platform: %s; testloop: %s; point: %s' \
-                  %(list.comment_user, list.comment_context, list.comment_updated_time,
-                    list.comment_version, list.comment_platform, list.comment_testloop, list.comment_point))
+                  % (comment.comment_user, comment.comment_context,
+                     comment.comment_updated_time, comment.comment_version,
+                     comment.comment_platform, comment.comment_testloop,
+                     comment.comment_point))
 
     return render(request, 'PassPercentage/comments.html', context_dict)
 
+
 def server_api(request):
-    verbose = True
     name = 'unknown'
     tests = 'unknown'
     feature_name = 'unknown'
@@ -197,215 +213,215 @@ def server_api(request):
     guest_kernel_ver = 'unknown'
     guest_ver = 'unknown'
     guest_plat = 'unknown'
-    #virtio_win_ver = 'unknown'
     case_total_num = 0
     case_pass_num = 0
     cmd = 'unknown'
 
     context_dict = {}
-    datas = json.loads(request.body)
+    recevied_data = json.loads(request.body)
     recv_time = time.ctime()
-    print('Beijing %s : Received data from client.' % (recv_time))
-    for key, val in datas.items():
+    logger.info('Beijing time %s: Received data from client:' % recv_time)
+    for key, val in recevied_data.items():
+        if key != 'tests':
+            logger.info("   %s: %s" % (key, val))
         if key == 'host_arch':
             platform = val
             if not platform:
                 platform = 'unknown'
-            #print ('key: %s, val: %s' %(key, platform))
         elif key == 'feature':
             feature_name = val
             if not feature_name:
                 feature_name = 'unknown'
-            #print ('key: %s, val: %s' % (key, feature_name))
         elif key == 'qemu_version':
             qemu_ver = val
             if not qemu_ver:
                 qemu_ver = 'unknown'
-            #print ('key: %s, val: %s' % (key, qemu_ver))
         elif key == 'owner':
             feature_owner = val
             if not feature_owner:
                 feature_owner = 'unknown'
-            #print ('key: %s, val: %s' % (key, feature_owner))
         elif key == 'image_backend':
             image_backend = val
             if not image_backend:
                 image_backend = 'unknown'
-            #print ('key: %s, val: %s' % (key, image_backend))
         elif key == 'image_format':
             image_format = val
             if not image_format:
                 image_format = 'unknown'
-            #print ('key: %s, val: %s' % (key, image_format))
         elif key == 'host_kernel_version':
             host_kernel_ver = val
             if not host_kernel_ver:
                 host_kernel_ver = 'unknown'
-            #print ('key: %s, val: %s' % (key, host_ver))
         elif key == 'host_version':
             host_ver = val
             if not host_ver:
                 host_ver = 'unknown'
-            #print ('key: %s, val: %s' % (key, host_ver))
         elif key == 'guest_version':
             guest_ver = val
             if not guest_ver:
                 guest_ver = 'unknown'
-            #print ('key: %s, val: %s' % (key, guest_ver))
         elif key == 'guest_arch':
             guest_plat = val
             if not guest_plat:
                 guest_plat = 'unknown'
-            #print ('key: %s, val: %s' % (key, guest_plat))
         elif key == 'virtio_win_version':
             virtio_win_ver = val
             if not virtio_win_ver:
                 virtio_win_ver = 'none'
-            #print ('key: %s, val: %s' % (key, virtio_win_ver))
         elif key == 'total':
             case_total_num = val
             if not case_total_num:
                 case_total_num = 0
-            #print ('key: %s, val: %s' % (key, case_total_num))
         elif key == 'pass':
             case_pass_num = val
-            #print val, type(val)
             if not case_pass_num:
                 case_pass_num = 0
-            #print ('key: %s, val: %s' % (key, case_pass_num))
         elif key == 'staf_cml':
             cmd = val
             if not cmd:
                 cmd = 'unknown'
-            #print ('key: %s, val: %s' % (key, cmd))
         elif key == 'tests':
             tests = val
-            #print type(tests)
             if not tests:
                 tests = 'unknown'
-            #print ('key: %s, val: %s' % (key, tests))
 
-    populate_data.add_platform(platform)
-    platform = Platform.objects.get(platform_name=platform)
-    # Replace the name of loop with loop_feature_name if the attribute of loop_name is 'unknown
-    if name == 'unknown':
-        name = feature_name
+    try:
+        cmd_args = {}
+        for args in cmd.split():
+            if "=" in args:
+                key = args.split('=')[0][2:]
+                val = args.split('=')[-1]
+                cmd_args[key] = val
+                if ',' in val:
+                    cmd_args[key] = set(val.split(','))
 
-    loop = populate_data.add_testloop(platform=platform,
-                             name=name,
-                             feature_name=feature_name,
-                             feature_owner=feature_owner,
-                             image_backend=image_backend,
-                             image_format=image_format,
-                             qemu_ver=qemu_ver,
-                             host_kernel_ver=host_kernel_ver,
-                             host_ver=host_ver,
-                             guest_kernel_ver=guest_kernel_ver,
-                             guest_ver=guest_ver,
-                             guest_plat=guest_plat,
-                             virtio_win_ver=virtio_win_ver,
-                             case_total_num=case_total_num,
-                             case_pass_num=case_pass_num,
-                             cmd=cmd)
+        # Update feature name by model AvocadoFeatureMapping
+        feature = get_avocado_feature_mapping_by_cmd(cmd)
+        if feature:
+            populate_data.add_platform(platform)
+            platform = Platform.objects.get(platform_name=platform)
 
-    case_status = 'unknown'
-    case_fail_reason = 'unknown'
-    case_url = 'unknown'
-    case_whiteboard = 'unknown'
-    case_start = 'unknown'
-    case_logdir = 'unknown'
-    case_time = 'unknown'
-    case_test = 'unknown'
-    case_end = 'unknown'
-    case_logfile = 'unknown'
-    case_id = 'unknown'
+            # Replace the name of loop with loop_feature_name if the
+            # attribute of loop_name is 'unknown'
+            if name == 'unknown':
+                name = cmd_args["category"]
 
-    obj_list = []
-    start_time = time.time()
-    test_id = populate_data.add_testid(loop=loop, id=loop.loop_updated_time)
-    for t in tests:
-        print('--------------------------------------------------------------------------------')
-        for key, val in t.items():
-            #print ('key: %s, val: %s' % (key, val))
-            if key == 'status':
-                case_status = val
-                if not case_status:
-                    case_status = 'unknown'
-                print('key: %s, val: %s' % (key, case_status))
-            elif key == 'fail_reason':
-                case_fail_reason = val
-                if not case_fail_reason:
-                    case_fail_reason = 'unknown'
-                print('key: %s, val: %s' % (key, case_fail_reason))
-            elif key == 'url':
-                case_url = val
-                if not case_url:
-                    case_url = 'unknown'
-                print('key: %s, val: %s' % (key, case_url))
-            elif key == 'whiteboard':
-                case_whiteboard = val
-                if not case_whiteboard:
-                    case_whiteboard = 'unknown'
-                #print ('key: %s, val: %s' % (key, case_whiteboard))
-            elif key == 'start':
-                case_start = val
-                if not case_start:
-                    case_start = 'unknown'
-                #print ('key: %s, val: %s' % (key, case_start))
-            elif key == 'logdir':
-                case_logdir = val
-                if not case_logdir:
-                    case_logdir = 'unknown'
-                #print ('key: %s, val: %s' % (key, case_logdir))
-            elif key == 'time':
-                case_time = val
-                if not case_time:
-                    case_time = 'unknown'
-                #print ('key: %s, val: %s' % (key, case_time))
-            elif key == 'test':
-                case_test = val
-                if not case_test:
-                    case_test = 'unknown'
-                #print ('key: %s, val: %s' % (key, case_test))
-            elif key == 'end':
-                case_end = val
-                if not case_end:
-                    case_end = 'unknown'
-                #print ('key: %s, val: %s' % (key, case_end))
-            elif key == 'logfile':
-                case_logfile = val
-                if not case_logfile:
-                    case_logfile = 'unknown'
-                #print ('key: %s, val: %s' % (key, case_logfile))
-            elif key == 'id':
-                case_id = val
-                if not case_id:
-                    case_id = 'unknown'
-                #print ('key: %s, val: %s' % (key, case_logfile))
+            feature_name = feature.main_feature
+            feature_owner = feature.owner
 
-        obj = CaseDetail(test_id=test_id, case_status=case_status, case_fail_reason=case_fail_reason,
-                                   case_url=case_url, case_whiteboard=case_whiteboard, case_start=case_start,
-                                   case_logdir=case_logdir, case_time=case_time, case_test=case_test,
-                                   case_end=case_end, case_logfile=case_logfile, case_id=case_id)
-        obj_list.append(obj)
-    CaseDetail.objects.bulk_create(obj_list)
-    end_time = time.time()
-    done_time = time.ctime()
-    total_time = end_time - start_time
+            loop = populate_data.add_testloop(platform=platform,
+                                              name=name,
+                                              feature_name=feature_name,
+                                              feature_owner=feature_owner,
+                                              image_backend=image_backend,
+                                              image_format=image_format,
+                                              qemu_ver=qemu_ver,
+                                              host_kernel_ver=host_kernel_ver,
+                                              host_ver=host_ver,
+                                              guest_kernel_ver=guest_kernel_ver,
+                                              guest_ver=guest_ver,
+                                              guest_plat=guest_plat,
+                                              virtio_win_ver=virtio_win_ver,
+                                              case_total_num=case_total_num,
+                                              case_pass_num=case_pass_num,
+                                              cmd=cmd)
 
-    if verbose == True:
-        print('======================  Summary  =================================')
-        for key, val in datas.items():
-            if key != 'tests':
-                print('key: %s, val: %s' % (key, val))
-            #print ('key: %s, val: %s' % (key, val))
+            case_status = 'unknown'
+            case_fail_reason = 'unknown'
+            case_url = 'unknown'
+            case_whiteboard = 'unknown'
+            case_start = 'unknown'
+            case_logdir = 'unknown'
+            case_time = 'unknown'
+            case_test = 'unknown'
+            case_end = 'unknown'
+            case_logfile = 'unknown'
+            case_id = 'unknown'
 
-    print('Recevice time : %s - Done time : %s ; Total time of finished : %s' %(recv_time, done_time, total_time))
+            obj_list = []
+            start_time = time.time()
+            test_id = populate_data.add_testid(loop=loop,
+                                               test_id=loop.loop_updated_time)
+            for test in tests:
+                logger.info("       Case ID: %s" % test['id'])
+                for key, val in test.items():
+                    if key != 'id':
+                        logger.info("           %s: %s" % (key, val))
+                        if key == 'status':
+                            case_status = val
+                            if not case_status:
+                                case_status = 'unknown'
+                        elif key == 'fail_reason':
+                            case_fail_reason = val
+                            if not case_fail_reason:
+                                case_fail_reason = 'unknown'
+                        elif key == 'url':
+                            case_url = val
+                            if not case_url:
+                                case_url = 'unknown'
+                        elif key == 'whiteboard':
+                            case_whiteboard = val
+                            if not case_whiteboard:
+                                case_whiteboard = 'unknown'
+                        elif key == 'start':
+                            case_start = val
+                            if not case_start:
+                                case_start = 'unknown'
+                        elif key == 'logdir':
+                            case_logdir = val
+                            if not case_logdir:
+                                case_logdir = 'unknown'
+                        elif key == 'time':
+                            case_time = val
+                            if not case_time:
+                                case_time = 'unknown'
+                        elif key == 'test':
+                            case_test = val
+                            if not case_test:
+                                case_test = 'unknown'
+                        elif key == 'end':
+                            case_end = val
+                            if not case_end:
+                                case_end = 'unknown'
+                        elif key == 'logfile':
+                            case_logfile = val
+                            if not case_logfile:
+                                case_logfile = 'unknown'
+
+                obj = CaseDetail(test_id=test_id,
+                                 case_status=case_status,
+                                 case_fail_reason=case_fail_reason,
+                                 case_url=case_url,
+                                 case_whiteboard=case_whiteboard,
+                                 case_start=case_start,
+                                 case_logdir=case_logdir,
+                                 case_time=case_time,
+                                 case_test=case_test,
+                                 case_end=case_end,
+                                 case_logfile=case_logfile,
+                                 case_id=case_id)
+                obj_list.append(obj)
+            CaseDetail.objects.bulk_create(obj_list)
+            end_time = time.time()
+            done_time = time.ctime()
+            total_time = end_time - start_time
+            logger.info('Recevice time: %s - Done time: %s ; Total time: %s' %
+                        (recv_time, done_time, total_time))
+        else:
+            logger.error('Loop %s(cmdline: %s) is not registered in '
+                         'feature mapping, please check or register it in '
+                         'http://$server_ip:$port/admin/PassPercentage/avocadofeaturemapping/',
+                         cmd_args["category"], cmd)
+    except Exception as e:
+        logger.error(str(e))
+    logger.info("=" * 50)
 
     return render(request, 'PassPercentage/homepage.html', context_dict)
 
+
 def show_fail_pie_chart(request):
     pass
+
 
 def register(request):
     registered = False
@@ -438,7 +454,10 @@ def register(request):
         print('Creating a User Profile form...')
         profile_form = UserProfileForm()
 
-    return render(request, 'PassPercentage/register.html', {'user_form': user_form, 'profile_form': profile_form, 'registered': registered})
+    return render(request, 'PassPercentage/register.html', {'user_form': user_form,
+                                                            'profile_form': profile_form,
+                                                            'registered': registered})
+
 
 def user_login(request):
     if request.method == 'POST':
@@ -465,6 +484,33 @@ def user_login(request):
     else:
         return render(request, 'PassPercentage/login.html', {})
 
+
 def user_logout(request):
     logout(request)
     return HttpResponseRedirect(reverse('homepage'))
+
+
+def settings(request):
+    return render(request, 'PassPercentage/settings.html', {})
+
+
+def set_avocado_feature_info_mapping(request):
+    context_dict = {}
+
+    feature_mappings = AvocadoFeatureMapping.objects.all()
+    context_dict['feature_mappings'] = feature_mappings
+    for feature_mapping in feature_mappings:
+        print(feature_mapping.__dict__)
+
+    if request.method == 'POST':
+        feature_form = AvocadoFeatureMappingForm(data=request.POST)
+        if feature_form.is_valid():
+            feature_form.save(commit=True)
+            feature_form.save()
+    else:
+        feature_form = AvocadoFeatureMappingForm()
+
+    context_dict['feature_form'] = feature_form
+
+    template_name = 'PassPercentage/set_avocado_feature_info_mapping.html'
+    return render(request, template_name, context_dict)

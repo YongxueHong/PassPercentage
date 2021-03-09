@@ -1,0 +1,206 @@
+{% extends 'PassPercentage/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    set avocado feature info mapping
+{% endblock %}
+
+{% block style_block %}
+    * {
+        border: thin black none;
+        padding: 4px;
+        //background-color: lightgray;
+        //background-image: url();
+        //color: rgb(255,255,255);
+        margin: 10px 0px 10px 0px; //top, right, bottom, left
+        //font-size : 30px;
+    }
+    a {
+        text-decoration:none
+    }
+    #comment_form {
+        border: medium black ridge;
+        padding: 4px;
+    }
+    #feature_info {
+        border: 2px black dashed;
+        border-radius: 10px;
+        padding: 4px;
+    }
+
+    #each_feature {
+        background-color: rgb(240,240,240);
+        border-color:red;
+        border-radius: 10px;
+        border: 2px black ridge;
+        padding: 4px;
+    }
+    form {
+        border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: lightgray;
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.4em;
+    }
+    button {
+        border-width:3px;
+        border-style:outset;
+        border-color: rgb(128,0,0);
+        border-radius: 10px;
+        //background-color: yellow;
+        //outline: medium solid red
+        //box-shadow: 2px 2px 2px 2px red;
+        padding: 5px;
+        margin-left: 600px;
+        //left: 500px;
+        font-size: 16px;
+    }
+
+    label {
+        margin-left: 10px;
+        //left: 500px;
+    }
+
+    .class-comment {
+        margin-left: 10px;
+        //left: 500px;
+    }
+    #line_head {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        margin-top:1px;
+        font-size: 20px;
+        color: white;
+    }
+
+    #details {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: rgb(136,0,0);
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        margin-top: 1.3em;
+        font-size: 30px;
+        color: white;
+    }
+
+    #show_select {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: grey;
+        background-size: 40px 50px;
+        padding-top:0.2em;
+        padding-bottom:0.2em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        margin:4px 20px;
+        font-size: 20px;
+        color: white;
+    }
+
+    .show_content {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: grey;
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        font-size: 20px;
+        color: white;
+    }
+
+    #point_info
+    {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color:  	rgb(248,0,0);
+        background-size: 40px 50px;
+        padding-top:0.5em;
+        padding-bottom:0.5em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        //margin:4px 20px;
+        font-size: 25px;
+        color: black;
+    }
+
+    #chartContainer {
+        //border-width:medium;
+        //border-style:outset;
+        //border-color:black;
+        //border-radius: 10px;
+        //background-color: rgb(136,0,0);
+        background-size: 5px 10px;
+        padding-top:0.1em;
+        padding-bottom:0.5em;
+        padding-right:0.8em;
+        padding-left:0.1em;
+        margin-top:1em;
+        //font-size: 50px;
+        color: white;
+    }
+
+{% endblock %}
+
+{% block body_block %}
+<div id="line_head">
+    <h3>Set avocado feature info</h3>
+</div>
+
+<div>
+    <form id="feature_info_form" method="post" action="{% url 'set_avocado_feature_info_mapping' %}"
+          enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="category"><strong>Category:</strong></label>
+            {{ feature_form.category }}
+        <label for="configs"><strong>Configs:</strong></label>
+            {{ feature_form.configs }}
+        <label for="owner"><strong>Owner:</strong></label>
+            {{ feature_form.owner }}
+        <label for="main_feature"><strong>Main Feature:</strong></label>
+            {{ feature_form.main_feature }}
+        <button type="submit">Add</button>
+    </form>
+</div>
+
+<div id="feature_info">
+    <h2 style="color : red">Feature Info</h2>
+    {% for feature_mapping in feature_mappings %}
+    <div id="each_feature">
+        <p>
+            Category: {{feature_mapping.category}};
+            Configs: {{feature_mapping.configs}};
+            Owner: {{feature_mapping.owner}};
+            Main Feature: {{feature_mapping.main_feature}}
+        </p>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
