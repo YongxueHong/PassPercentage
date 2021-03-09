@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title_block %}
-    About
+    Settings
 {% endblock %}
 
 {% block style_block %}
@@ -20,7 +20,7 @@
         text-decoration:none
     }
 
-    #about {
+    #settings {
         //border-width:medium;
         border-style:outset;
         border-color:black;
@@ -50,17 +50,51 @@
         //margin:4px 20px;
         //width: 80%;
     }
+
+    .class_selecter:hover {
+        //border-width:medium;
+        //border-style:outset;
+        //border-color:black;
+        //border-radius: 10px;
+        background-color: rgb(80,0,0);
+        //background-size: 40px 50px;
+        color: white;
+        //font-size: 25px;
+        //width: ;
+        //padding-top:0.5em;
+        //padding-bottom:0.4em;
+        //padding-right:2em;
+        //padding-left:0.6em;
+        //margin:5px 5px;
+    }
+
+    #selecter {
+        //border-style:outset;
+        //border-width:medium;
+        //border-color:rgb(224,0,0);
+        //border-radius: 10px;
+        //background-color: lightgray;
+        //background-size: 100px 50px;
+        //padding-top:5px;
+        //padding-bottom:5px;
+        font-size : 25px;
+    }
+
 {% endblock %}
 
 {% block body_block %}
-<h1 id="about" align="center">
-    About
+<h1 id="settings" align="center">
+    Settings
 </h1>
 
 <div id="memu">
-    <p>Django Version : {{version}}</p>
-    <p>PassPercentage Version: 1.0</p>
-    <p>IRC: yhong</p>
-    <a href="mailto:yhong@redhat.com">Email: yhong@redhat.com</a>
+    <p>
+<!--        <a class='class_selecter', id="selecter" href="{% url 'set_avocado_feature_info_mapping' %}">-->
+<!--            Set avocado feature info mapping-->
+<!--        </a>-->
+        <a class='class_selecter', id="selecter" href="/admin/PassPercentage/avocadofeaturemapping/">
+            Set avocado feature info mapping
+        </a>
+    </p>
 </div>
 {% endblock %}

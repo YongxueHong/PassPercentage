@@ -14,9 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from django.contrib import admin
-from PassPercentage import views
 from django.conf.urls import include
+from django.contrib import admin
 
 urlpatterns = [
     url(r'^PassPercentage/', include('PassPercentage.urls')),

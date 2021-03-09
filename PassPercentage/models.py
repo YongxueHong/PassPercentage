@@ -1,12 +1,14 @@
 from __future__ import unicode_literals
+
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
-import time
+
 
 # Create your models here.
 class Platform(models.Model):
-    platform_name = models.CharField(max_length=200, unique=True, help_text='Here is the platform')
+    platform_name = models.CharField(max_length=200, unique=True,
+                                     help_text='Here is the platform')
     platform_slug = models.SlugField()
 
     class Meta:
@@ -20,10 +22,10 @@ class Platform(models.Model):
     def __str__(self):
         return self.platform_name
 
+
 class TestLoop(models.Model):
     platform = models.ForeignKey(Platform)
     loop_name = models.CharField(max_length=200, blank=True)
-    #loop_test_details = models.CharField(max_length=999999999999999999, blank=True)
     loop_feature_name = models.CharField(max_length=200, blank=True)
     loop_feature_owner = models.CharField(max_length=200, blank=True)
     loop_image_backend = models.CharField(max_length=200, blank=True)
@@ -39,7 +41,6 @@ class TestLoop(models.Model):
     loop_case_pass_num = models.IntegerField(default=0, blank=True)
     loop_cmd = models.CharField(max_length=200, blank=True)
     loop_updated_time = models.DateTimeField('Data published', auto_now=True)
-    #loop_updated_time = models.DateField('Data published', auto_now=True)
     loop_slug = models.SlugField()
 
     def save(self, *args, **kwargs):
@@ -47,9 +48,11 @@ class TestLoop(models.Model):
         super(TestLoop, self).save(*args, **kwargs)
 
     def __str__(self):
-        #info will be show on the django admin web.
-        info = self.platform.platform_name + ':' + self.loop_updated_time.strftime('%y-%m-%d %H:%M:%S %f %z') + ':' + self.loop_name
+        info = ':'.join((self.platform.platform_name, self.loop_name,
+                         self.loop_feature_name, self.loop_feature_owner,
+                         self.loop_cmd, str(self.loop_updated_time)))
         return info
+
 
 class TestsID(models.Model):
     loop = models.ForeignKey(TestLoop)
@@ -61,8 +64,10 @@ class TestsID(models.Model):
         super(TestsID, self).save(*args, **kwargs)
 
     def __str__(self):
-        info = self.loop.platform.platform_name + ':' + self.loop.loop_name + ':' + self.tests_id
+        info = (self.loop.platform.platform_name + ':' +
+                self.loop.loop_name + ':' + self.tests_id)
         return info
+
 
 class CaseDetail(models.Model):
     test_id = models.ForeignKey(TestsID)
@@ -85,9 +90,11 @@ class CaseDetail(models.Model):
         super(CaseDetail, self).save(*args, **kwargs)
 
     def __str__(self):
-        info = self.test_id.loop.platform.platform_name + ':' + self.test_id.loop.loop_name + ':' \
-               + self.test_id.tests_id + ':' + self.case_url
+        info = (self.test_id.loop.platform.platform_name + ':'
+                + self.test_id.loop.loop_name + ':' + self.test_id.tests_id +
+                ':' + self.case_url)
         return info
+
 
 class Name(models.Model):
     your_name = models.CharField(max_length=100, blank=True)
@@ -100,29 +107,52 @@ class Name(models.Model):
     def __str__(self):
         return self.your_name
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    #website = models.URLField(blank=True)
     account_picture = models.ImageField(upload_to='profile_images', blank=True)
 
     def __str__(self):
         return self.user.username
 
+
 class Comment(models.Model):
-    #loop = models.ForeignKey(TestLoop)
-    comment_user = models.CharField(max_length=100,blank=True)
+    comment_user = models.CharField(max_length=100, blank=True)
     comment_email = models.EmailField(blank=True)
-    #comment_title = models.CharField(max_length=10000,blank=True)
-    comment_context = models.CharField(max_length=10000000,blank=True)
+    comment_context = models.CharField(max_length=10000000, blank=True)
     comment_updated_time = models.DateTimeField('Comment published', auto_now=True)
     comment_platform = models.CharField(max_length=200, blank=True)
     comment_testloop = models.CharField(max_length=200, blank=True)
     comment_version = models.CharField(max_length=200, blank=True)
     comment_point = models.CharField(max_length=200, blank=True)
+    comment_point_real_time = models.CharField(max_length=200, blank=True)
     comment_index = models.IntegerField(default=1)
 
     def __str__(self):
-        info = self.comment_platform + ':' + self.comment_testloop + ':' \
-                + self.comment_updated_time.strftime('%y-%m-%d %H:%M:%S %f %z') + ':' + self.comment_user
-        #info = self.comment_platform + ':' + self.comment_testloop + ':' + self.comment_user
+        info = ': '.join((self.comment_platform, self.comment_testloop,
+                          self.comment_email, self.comment_version,
+                          'T%s' % self.comment_point,
+                          str(self.comment_updated_time),
+                          self.comment_context))
+        return info
+
+
+class AvocadoFeatureMapping(models.Model):
+    category = models.CharField(max_length=200, blank=False)
+    configs = models.CharField(max_length=200, blank=True, default='null')
+    owner = models.CharField(max_length=200, blank=False)
+    main_feature = models.CharField(max_length=200, blank=False)
+    sub_feature = models.CharField(max_length=200, blank=True, default='null')
+
+    def save(self, *args, **kwargs):
+        super(AvocadoFeatureMapping, self).save(*args, **kwargs)
+
+    def __str__(self):
+        category_info = "category: %s" % self.category
+        configs_info = "configs: %s" % self.configs
+        owner_info = "owner: %s" % self.owner
+        main_feature_info = "main_feature: %s" % self.main_feature
+        sub_feature_info = "sub_feature: %s" % self.sub_feature
+        info = "; ".join((category_info, configs_info, owner_info,
+                          main_feature_info, sub_feature_info))
         return info
