@@ -2,6 +2,7 @@ import os
 import re
 import collections
 import logging
+import unicodedata
 
 from PassPercentage.models import Platform
 from PassPercentage.models import TestLoop
@@ -21,10 +22,7 @@ print(XML_DIR)
 logger = logging.getLogger(__name__)
 
 
-def get_avocado_feature_mapping_by_cmd(loop_cmd):
-    feature_mappings = AvocadoFeatureMapping.objects.all()
-    features = []
-    matched_feature = None
+def get_avocado_feature_mapping(loop_cmd, cases_id):
     cmd_args = {}
 
     for args in loop_cmd.split():
@@ -35,35 +33,99 @@ def get_avocado_feature_mapping_by_cmd(loop_cmd):
             if ',' in val:
                 cmd_args[key] = set(val.split(','))
 
-    for feature in feature_mappings:
-        if cmd_args['category'] == feature.category:
-            features.append(feature)
+    category = cmd_args['category']
+    target_feature_mappings = AvocadoFeatureMapping.objects.filter(category=category)
 
-    if features:
-        if len(features) == 1:
-            matched_feature = features[0]
-        elif len(features) > 1:
-            for feature in features:
-                config_args = {}
-                for config in feature.configs.split():
+    all_case_configs = []
+    found_info = 'Found loop cmd "%s" feature mapping in AvocadoFeatureMapping(%s)'
+    if target_feature_mappings:
+        for case_id in cases_id:
+            all_case_configs.extend(case_id.split('.'))
+
+        if len(target_feature_mappings) == 1:
+            logger.info(found_info % (loop_cmd, target_feature_mappings[0]))
+            return target_feature_mappings[0]
+        elif len(target_feature_mappings) > 1:
+            candidate_features = []
+            for target_feature_mapping in target_feature_mappings:
+                feature_configs = []
+                for config in target_feature_mapping.configs.split():
                     if "=" in config:
                         key = config.split('=')[0][2:]
                         val = config.split('=')[-1]
-                        config_args[key] = val
                         if ',' in val:
-                            config_args[key] = set(val.split(','))
-                for key, val in config_args.items():
-                    if key not in cmd_args or val != cmd_args[key]:
-                        break
+                            for _ in val.split(','):
+                                feature_configs.append(_)
+                        else:
+                            if 'hostname' == key:
+                                # Add hostname options name to feature_configs
+                                feature_configs.append(key)
+                            elif 'guestname' == key:
+                                # Add guestname options name to feature_configs
+                                feature_configs.append(key)
+                            else:
+                                feature_configs.append(val)
+                if feature_configs:
+                    _matched = True
+                    for feature_config in feature_configs:
+                        if feature_config in ('hostname', 'guestname'):
+                            if feature_config not in loop_cmd:
+                                _matched = False
+                                break
+                        else:
+                            if feature_config not in all_case_configs:
+                                _matched = False
+                    if _matched:
+                        candidate_features.append(target_feature_mapping)
                 else:
-                    matched_feature = feature
-        if matched_feature:
-            return matched_feature
-    return None
+                    candidate_features.append(target_feature_mapping)
+
+            if candidate_features:
+                if len(candidate_features) == 1:
+                    logger.info(found_info % (loop_cmd, candidate_features[0]))
+                    return candidate_features[0]
+                else:
+                    configs_owner_main_feature = set()
+                    for _ in candidate_features:
+                        configs_owner_main_feature.add((_.configs, _.owner, _.main_feature))
+                    if len(configs_owner_main_feature) == 1:
+                        logger.info(found_info % (loop_cmd, candidate_features[0]))
+                        return candidate_features[0]
+                    else:
+                        # workaround: maybe the kar options also as a part of case name
+                        # like: virtio_net.Guest.xx.io-github-autotest-qemu.qemu_option_check.spapr-vlan.
+                        # compare the owner and main feature among candidate_features
+                        owner_main_feature = set()
+                        for _ in configs_owner_main_feature:
+                            owner_main_feature.add((_[1], _[2]))
+                        if len(owner_main_feature) == 1:
+                            # default get the index 0
+                            logger.warn('Get the first feature mapping from '
+                                        'candidate feature mappings: %s for %s,'
+                                        ' since their owner and main feature are'
+                                        'same.'
+                                        % (candidate_features, category))
+                            return candidate_features[0]
+                        logger.warn('No found feature mapping in '
+                                    'AvocadoFeatureMapping for "%s", '
+                                    'candidate feature mappings: %s' %
+                                    (category, candidate_features))
+                        return None
+            else:
+                logger.warn('No found feature mapping configs in '
+                            'AvocadoFeatureMapping for "%s": %s' %
+                            (category, target_feature_mappings))
+                return None
+    else:
+        logger.warn('No found category "%s" in AvocadoFeatureMapping' % category)
+        return None
 
 
 def update_testloop_model_by_avocado_feature_mapping(test_loop):
-    feature = get_avocado_feature_mapping_by_cmd(test_loop.loop_cmd)
+    test_id = TestsID.objects.get(loop=test_loop)
+    case_details = CaseDetail.objects.filter(test_id=test_id)
+    cases_id = [_.case_id for _ in case_details]
+    feature = get_avocado_feature_mapping(test_loop.loop_cmd, cases_id)
     if feature:
         test_loop.loop_feature_name = feature.main_feature
         test_loop.loop_feature_owner = feature.owner
@@ -213,6 +275,12 @@ def create_datapoints_line(platform_name, test_loop_feature_name, test_host_ver,
     if not os.path.exists(XML_DIR):
         os.makedirs(XML_DIR)
     file = open(file_xml, "w")
+    # \xa0 is actually non-breaking space in Latin1 (ISO 8859-1),
+    # also chr(160). When .encode('utf-8'), it will encode the
+    # unicode to utf-8, that means every unicode could be represented
+    # by 1 to 4 bytes. For this case, \xa0 is represented by 2 bytes \xc2\xa0.
+    # refer to https://stackoverflow.com/questions/10993612/how-to-remove-xa0-from-string-in-python
+    context = unicodedata.normalize("NFKD", context)
     file.writelines(context)
     file.close()
     return versions

@@ -15,13 +15,21 @@
         margin: 10px 0px 10px 0px; //top, right, bottom, left
         //font-size : 30px;
     }
+
     a {
         text-decoration:none
     }
+
     #comment_form {
         border: medium black ridge;
         padding: 4px;
     }
+
+    #loop_action_request_form {
+        border: medium black ridge;
+        padding: 4px;
+    }
+
     #history_comment {
         border: 2px black dashed;
         border-radius: 10px;
@@ -117,6 +125,22 @@
         color: white;
     }
 
+    #request_select {
+        //border-width:medium;
+        border-style:outset;
+        border-color:black;
+        border-radius: 10px;
+        background-color: grey;
+        background-size: 40px 50px;
+        padding-top:0.2em;
+        padding-bottom:0.2em;
+        //padding-right:0.8em;
+        //padding-left:0.6em;
+        margin:4px 20px;
+        font-size: 20px;
+        color: white;
+    }
+
     .show_content {
         //border-width:medium;
         border-style:outset;
@@ -133,7 +157,7 @@
         color: white;
     }
 
-    #point_info
+    .point_info
     {
         //border-width:medium;
         border-style:outset;
@@ -225,7 +249,7 @@ window.onload = function(){
 {% block body_block %}
 
 <div id="line_head">
-    <h1>Comment here</h1>
+    <h1>@ Group: {{platforms.platform_name}}, Feature: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</h1>
 </div>
 
 <div id="chartContainer" style="height: 400px; width: 40%;"></div>
@@ -257,18 +281,19 @@ window.onload = function(){
 <div>
     <form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point updated_time %}"
           enctype="multipart/form-data">
-        <p id="point_info">@ Group:{{platforms.platform_name}}, Feature: {{loop_name_no_underline}}, Vesrion: {{ host_version }}, Point: T{{ x_point }}</p>
         {% csrf_token %}
         <label for="user "><strong>User:</strong></label>
-        {{ comment_form.comment_user }}
-        <p><label for="email "><strong>Email:</strong></label>
-            {{ comment_form.comment_email }}
-        </p>
-        <label for="comment "><strong>Comment:</strong></label>
-        <p>
-            {{ comment_form.comment_context }}
-            <input type="submit" value="Submit" />
-        </p>
+        <input id="user" type="text" name="request_user" value="{{ request_user }}" required>
+        <label for="email "><strong>Email:</strong></label>
+        <input id="email" type="email" name="request_email" value="{{ request_email }}" required>
+        <strong>Action:</strong>
+        <select id="request_select" name="request_action" required>
+            <option></option>
+            <option name="action" value="delete">Delete</option>
+            <option name="action" value="comment">Comment</option>
+        </select>
+        <input type="submit" value="Submit">
+        <p><textarea id="message" name="request_message" rows="3" cols="90" required></textarea></p>
     </form>
 </div>
 <div id="history_comment">

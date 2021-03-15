@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'Dashboard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join('/home/yhong/database_mnt', 'db.sqlite3'),
     }
 }
 
@@ -160,3 +160,12 @@ LOGGING = {
         }
     }
 }
+
+# email setting up
+RECIPIENT_LIST = ['user@example.com', ]
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+#EMAIL_HOST = 'smtp.gmail.com'
+#EMAIL_PORT = '587'
+#EMAIL_HOST_USER = 'user@example.com'
+#EMAIL_HOST_PASSWORD = 'password'

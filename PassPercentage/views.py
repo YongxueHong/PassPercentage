@@ -29,7 +29,9 @@ from utils import create_datapoints_line
 from utils import get_all_loop
 from utils import display_test_details
 from utils import create_datapoints_pie
-from utils import get_avocado_feature_mapping_by_cmd
+from utils import get_avocado_feature_mapping
+
+from utils_email import send_email
 
 
 logger = logging.getLogger(__name__)
@@ -166,23 +168,41 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     context_dict['xml_name'] = 'pie_points.xml'
     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
 
-    create_datapoints_pie(file_xml_name=context_dict['xml_name'], dict=context_dict['fail_percent'])
-
+    create_datapoints_pie(file_xml_name=context_dict['xml_name'],
+                          dict=context_dict['fail_percent'])
+    comment_form = CommentForm()
     if request.method == 'POST':
-        comment_form = CommentForm(data=request.POST)
-        if comment_form.is_valid():
-            comment_form.save(commit=True)
-            comment = Comment.objects.order_by("-comment_updated_time")[0]
-            print(comment.comment_user, comment.comment_context)
-            comment.comment_version = host_ver.replace('_','.')
-            comment.comment_platform = platform.platform_name
-            comment.comment_point = x_point
-            comment.comment_point_real_time = updated_time
-            comment.comment_testloop = loop_select_name.replace('_',' ')
-            comment.save()
+        if request.POST.get('request_action') == 'comment':
+            request.POST['comment_user'] = request.POST.get('request_user')
+            request.POST['comment_email'] = request.POST.get('request_email')
+            request.POST['comment_context'] = request.POST.get('request_message')
 
-    else:
-        comment_form = CommentForm()
+            comment_form = CommentForm(data=request.POST)
+            if comment_form.is_valid():
+                comment_form.save(commit=True)
+                comment = Comment.objects.order_by("-comment_updated_time")[0]
+                print(comment.comment_user, comment.comment_context)
+                comment.comment_version = host_ver.replace('_', '.')
+                comment.comment_platform = platform.platform_name
+                comment.comment_point = x_point
+                comment.comment_point_real_time = updated_time
+                comment.comment_testloop = loop_select_name.replace('_', ' ')
+                comment.save()
+
+        if request.POST.get('request_action') == 'delete':
+            user = request.POST.get('request_user')
+            email = request.POST.get('request_email')
+            message = request.POST.get('request_message')
+            message += '\n%s' % ('=' * 80)
+            message += "\nRequest user: %s" % user
+            message += "\nRequest email: %s" % email
+            http_host = request.META.get("HTTP_HOST")
+            url = "http://" + http_host + request.path
+            message += "\nRequest url: %s" % url
+            target = ','.join((platform_slug_name, loop_select_name,
+                              host_ver, x_point, updated_time))
+            subject = ("%s requests to delete test loop@%s" % (user, target))
+            send_email(subject, message)
 
     context_dict['comment_form'] = comment_form
     comments = Comment.objects.all().order_by("-comment_updated_time")[:]
@@ -203,8 +223,6 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
 def server_api(request):
     name = 'unknown'
     tests = 'unknown'
-    feature_name = 'unknown'
-    feature_owner = 'unknown'
     image_backend = 'unknown'
     image_format = 'unknown'
     qemu_ver = 'unknown'
@@ -220,26 +238,33 @@ def server_api(request):
     context_dict = {}
     recevied_data = json.loads(request.body)
     recv_time = time.ctime()
-    logger.info('Beijing time %s: Received data from client:' % recv_time)
+    cases_id = []
+    message = ''
+    logger.info('Beijing time: %s, received data from client:' % recv_time)
+    message += 'Beijing time: %s, received data from client:\n' % recv_time
+    message += '%s\n' % ('=' * 80)
+    logger.info('HTTP Request META:')
+    message += 'HTTP Request META:\n'
+    for key, val in request.META.items():
+        logger.info("    %s: %s" % (key, val))
+        message += "    %s: %s\n" % (key, val)
+
+    logger.info('Test Loop Data:')
+    message += '%s\n' % ('*' * 100)
+    message += 'Test Loop Data:\n'
+    message_cases = []
     for key, val in recevied_data.items():
-        if key != 'tests':
-            logger.info("   %s: %s" % (key, val))
+        if key not in ('tests', 'feature', 'owner'):
+            logger.info("    %s: %s" % (key, val))
+            message += "    %s: %s\n" % (key, val)
         if key == 'host_arch':
             platform = val
             if not platform:
                 platform = 'unknown'
-        elif key == 'feature':
-            feature_name = val
-            if not feature_name:
-                feature_name = 'unknown'
         elif key == 'qemu_version':
             qemu_ver = val
             if not qemu_ver:
                 qemu_ver = 'unknown'
-        elif key == 'owner':
-            feature_owner = val
-            if not feature_owner:
-                feature_owner = 'unknown'
         elif key == 'image_backend':
             image_backend = val
             if not image_backend:
@@ -282,8 +307,17 @@ def server_api(request):
                 cmd = 'unknown'
         elif key == 'tests':
             tests = val
-            if not tests:
-                tests = 'unknown'
+            for test in tests:
+                message_cases.append("        id: %s\n" % test['id'])
+                for k, v in test.items():
+                    if k == 'id':
+                        cases_id.append(v)
+                    else:
+                        message_cases.append("             %s: %s\n" % (k, v))
+    if message_cases:
+        message += "    test_cases:\n"
+        for message_case in message_cases:
+            message += message_case
 
     try:
         cmd_args = {}
@@ -296,7 +330,7 @@ def server_api(request):
                     cmd_args[key] = set(val.split(','))
 
         # Update feature name by model AvocadoFeatureMapping
-        feature = get_avocado_feature_mapping_by_cmd(cmd)
+        feature = get_avocado_feature_mapping(cmd, cases_id)
         if feature:
             populate_data.add_platform(platform)
             platform = Platform.objects.get(platform_name=platform)
@@ -387,6 +421,8 @@ def server_api(request):
                             case_logfile = val
                             if not case_logfile:
                                 case_logfile = 'unknown'
+                    else:
+                        case_id = val
 
                 obj = CaseDetail(test_id=test_id,
                                  case_status=case_status,
@@ -412,6 +448,13 @@ def server_api(request):
                          'feature mapping, please check or register it in '
                          'http://$server_ip:$port/admin/PassPercentage/avocadofeaturemapping/',
                          cmd_args["category"], cmd)
+
+            message += '%s\n' % ('=' * 80)
+            message += ("Failed reason: Loop %s(cmdline: %s) is not registered"
+                        " in feature mapping" % (cmd_args["category"], cmd))
+            subject = ('Failed to upload test loop "%s" '
+                       'results at %s' % (cmd_args["category"], recv_time))
+            send_email(subject, message)
     except Exception as e:
         logger.error(str(e))
     logger.info("=" * 50)
