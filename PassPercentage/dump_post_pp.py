@@ -6,7 +6,7 @@ if len(sys.argv) != 3:
     print("Usage:")
     print(" python dump_post_pp.py $pass_percentage_uri $pass_percentage_json_file")
     print("e.g:")
-    print(" python dump_post_pp.py http://dell-per715-04-vm-passpercentage.lab.eng.pek2.redhat.com:8000/"
+    print(" python dump_post_pp.py http://xxx.xxx.xxx.xxx:8000/"
           "PassPercentage/server_api/ passpercentage.json")
     sys.exit(-1)
 
