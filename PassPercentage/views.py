@@ -444,14 +444,22 @@ def server_api(request):
             logger.info('Recevice time: %s - Done time: %s ; Total time: %s' %
                         (recv_time, done_time, total_time))
         else:
-            logger.error('Loop %s(cmdline: %s) is not registered in '
-                         'feature mapping, please check or register it in '
-                         'http://$server_ip:$port/admin/PassPercentage/avocadofeaturemapping/',
-                         cmd_args["category"], cmd)
+            if cases_id:
+                logger.error('Loop %s(cmdline: %s) is not registered in '
+                             'feature mapping, please check or register it in '
+                             'http://$server_ip:$port/admin/PassPercentage/avocadofeaturemapping/',
+                             cmd_args["category"], cmd)
+            else:
+                logger.error("No found test cases in loop %s(cmdline: %s)" %
+                             (cmd_args["category"], cmd))
 
             message += '%s\n' % ('=' * 80)
-            message += ("Failed reason: Loop %s(cmdline: %s) is not registered"
-                        " in feature mapping" % (cmd_args["category"], cmd))
+            if message_cases:
+                message += ("Failed reason: Loop %s(cmdline: %s) is not registered"
+                            " in feature mapping" % (cmd_args["category"], cmd))
+            else:
+                message += ("Failed reason: No found test cases in loop "
+                            "%s(cmdline: %s)" % (cmd_args["category"], cmd))
             subject = ('Failed to upload test loop "%s" '
                        'results at %s' % (cmd_args["category"], recv_time))
             send_email(subject, message)
