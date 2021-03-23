@@ -332,6 +332,12 @@ def server_api(request):
         # Update feature name by model AvocadoFeatureMapping
         feature = get_avocado_feature_mapping(cmd, cases_id)
         if feature:
+            # move some specialized test loop to virtio-win platform
+            if platform == 'x86_64':
+                if cmd_args["category"] in ('hyper_v_enlightenment',
+                                            'guest_agent', 'virtio_fs'):
+                    platform = 'virtio-win'
+
             populate_data.add_platform(platform)
             platform = Platform.objects.get(platform_name=platform)
 
