@@ -10,6 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 
+from Dashboard.settings import RECIPIENT_LIST
 
 from PassPercentage.models import Platform
 from PassPercentage.models import TestLoop
@@ -202,7 +203,9 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
             target = ','.join((platform_slug_name, loop_select_name,
                               host_ver, x_point, updated_time))
             subject = ("%s requests to delete test loop@%s" % (user, target))
-            send_email(subject, message)
+            recipient_list = [email]
+            recipient_list.extend(RECIPIENT_LIST)
+            send_email(subject, message, recipient_list=recipient_list)
 
     context_dict['comment_form'] = comment_form
     comments = Comment.objects.all().order_by("-comment_updated_time")[:]
