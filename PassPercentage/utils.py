@@ -136,16 +136,16 @@ def update_testloop_model_by_avocado_feature_mapping(test_loop):
 
 def query_latest_loop(platform_name, verbose=True):
     test_loop = TestLoop.objects.filter(platform=platform_name)
-    names = set('')
+    feature_names = set('')
     loop_list = []
     latest_dict = {}
 
     for test in test_loop:
-        names.add(test.loop_name)
+        feature_names.add(test.loop_feature_name)
 
-    for name in names:
+    for feature_name in feature_names:
         loop = TestLoop.objects.filter(platform=platform_name).filter(
-                loop_name=name).order_by("-loop_updated_time")[0]
+                loop_feature_name=feature_name).order_by("-loop_updated_time")[0]
         if verbose:
             print('Latest %s loop column info : [update time : %s, '
                   'case pass nums : %s, case total nums : %s , '
