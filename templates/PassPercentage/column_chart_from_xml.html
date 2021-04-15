@@ -48,29 +48,23 @@
 {% block script_block %}
 window.onload = function() {
 	var dataPoints = [];
+    var fixed_dataPoints = [];
     var datas = [];
     //How to set cache: false in jQuery.get call: $.get(url,{ "_": $.now() }, function(rdata){
 	$.get("{% static dir_xml %}",{ "_": $.now() }, function(data) {
 		$(data).find("point").each(function () {
 			var $dataPoint = $(this);
+            var pass_goal = 95
 			var x = $dataPoint.find("x").text();
 			var y = $dataPoint.find("y").text();
 			//dataPoints.push({label: x, y: parseFloat(y),click: show_multi_lines});
-            dataPoints.push({label: x, y: parseFloat(y)});
-            /*
-            datas.push({type: "column",
-                showInLegend: true,
-                legendText: "{label}",
-                toolTipContent: "{label}: <strong>{y}%</strong>",
-                //indexLabel: "{label}",
-                //legendMarkerType: "square",
-                //indexLabel: "{y}%",
-                //visible: true,
-                click: show_multi_lines,
-                indexLabelPlacement: "auto",
-                indexLabelOrientation: "horizontal",
-				dataPoints: [{label: x, y: parseFloat(y)},]})
-            */
+            if (parseFloat(y) < parseFloat(pass_goal)) {
+                dataPoints.push({label: x, y: parseFloat(y), color: "red" },);
+            }
+            else {
+                dataPoints.push({label: x, y: parseFloat(y), },);
+            }
+            fixed_dataPoints.push({label: x, y: parseFloat(pass_goal), pass_goal: parseFloat(pass_goal)});
 		});
 		var chart = new CanvasJS.Chart("chartContainer", {
 			animationEnabled: true,
@@ -91,6 +85,11 @@ window.onload = function() {
                 //tickLength: 50,
                 interval: 1,
 			},
+
+            legend:{
+                fontSize: 20,
+            },
+
             //dataPointWidth: 10,
 			data: [{
 				type: "column",
@@ -109,7 +108,18 @@ window.onload = function() {
                 //indexLabelPlacement: "auto",
                 //indexLabelOrientation: "horizontal",
 				dataPoints: dataPoints,
-			  }]
+			  },
+            {
+                type: "line",
+                lineColor: "red",
+                lineDashType: "longDash",
+                markerType: "none",
+                toolTipContent: "{label} goal: <strong>{y}%</strong>",
+                showInLegend: true,
+                legendText: "Pass Ratio Goal: {pass_goal}%",
+                dataPoints: fixed_dataPoints
+            }
+]
 
             //data : datas
 		});
