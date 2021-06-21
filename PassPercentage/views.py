@@ -24,15 +24,15 @@ from PassPercentage.forms import UserProfileForm
 from PassPercentage.forms import AvocadoFeatureMappingForm
 from PassPercentage import populate_data
 
-from utils import create_datapoints_column
-from utils import create_datapoints_area
-from utils import create_datapoints_line
-from utils import get_all_loop
-from utils import display_test_details
-from utils import create_datapoints_pie
-from utils import get_avocado_feature_mapping
+from PassPercentage.utils import create_datapoints_column
+from PassPercentage.utils import create_datapoints_area
+from PassPercentage.utils import create_datapoints_line
+from PassPercentage.utils import get_all_loop
+from PassPercentage.utils import display_test_details
+from PassPercentage.utils import create_datapoints_pie
+from PassPercentage.utils import get_avocado_feature_mapping
 
-from utils_email import send_email
+from PassPercentage.utils_email import send_email
 
 
 logger = logging.getLogger(__name__)
@@ -158,19 +158,19 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
     context_dict['host_version'] = host_ver.replace('_','.')
     context_dict['x_point'] = x_point
     context_dict['updated_time'] = updated_time
-    cases, fail, fail_percent = display_test_details(platform=platform,
-                                                     loop_feature_name=loop_select_name,
-                                                     failed_error=True,
-                                                     verbose=False,
-                                                     updated_time=updated_time_orgin)
-    context_dict['fail'] = fail
-    context_dict['fail_percent'] = fail_percent
+    cases, result, result_percent = display_test_details(platform=platform,
+                                                         loop_feature_name=loop_select_name,
+                                                         failed_error=True,
+                                                         verbose=False,
+                                                         updated_time=updated_time_orgin)
+    context_dict['result'] = result
+    context_dict['result_percent'] = result_percent
     context_dict['cases'] = cases
     context_dict['xml_name'] = 'pie_points.xml'
     context_dict['dir_xml'] = 'xml/' + context_dict['xml_name']
 
     create_datapoints_pie(file_xml_name=context_dict['xml_name'],
-                          dict=context_dict['fail_percent'])
+                          dict=context_dict['result_percent'])
     comment_form = CommentForm()
     if request.method == 'POST':
         if request.POST.get('request_action') == 'comment':

@@ -134,6 +134,31 @@ def update_testloop_model_by_avocado_feature_mapping(test_loop):
     return False
 
 
+def get_pass_percent(loop):
+    total_case_denominator = 0
+    test_id = TestsID.objects.get(loop=loop)
+    cases = CaseDetail.objects.filter(test_id=test_id)
+
+    # just involve pass fail error and interrupt as denominator
+    # to caculate pass ratio
+    for case in cases:
+        if re.findall(r'PASS', case.case_status):
+            total_case_denominator = total_case_denominator + 1
+        if re.findall(r'FAIL', case.case_status):
+            total_case_denominator = total_case_denominator + 1
+        if re.findall(r'ERROR', case.case_status):
+            total_case_denominator = total_case_denominator + 1
+        if re.findall(r'INTERRUPT', case.case_status):
+            total_case_denominator = total_case_denominator + 1
+
+    if total_case_denominator == 0:
+        pass_percent = 0.0
+    else:
+        pass_percent = float(
+                loop.loop_case_pass_num * 100) / total_case_denominator
+    return pass_percent
+
+
 def query_latest_loop(platform_name, verbose=True):
     test_loop = TestLoop.objects.filter(platform=platform_name)
     feature_names = set('')
@@ -146,18 +171,17 @@ def query_latest_loop(platform_name, verbose=True):
     for feature_name in feature_names:
         loop = TestLoop.objects.filter(platform=platform_name).filter(
                 loop_feature_name=feature_name).order_by("-loop_updated_time")[0]
+        pass_percent = get_pass_percent(loop)
         if verbose:
             print('Latest %s loop column info : [update time : %s, '
                   'case pass nums : %s, case total nums : %s , '
                   'pass percent: %.2f]' % (loop.loop_feature_name, loop.loop_updated_time,
                                            loop.loop_case_pass_num,
                                            loop.loop_case_total_num,
-                                           (float(loop.loop_case_pass_num * 100)
-                                            / loop.loop_case_total_num)))
+                                           pass_percent))
         if loop.loop_case_total_num != 0:
             loop_list.append(loop)
-            latest_dict[loop.loop_feature_name] = (float(loop.loop_case_pass_num * 100)
-                                           / loop.loop_case_total_num)
+            latest_dict[loop.loop_feature_name] = pass_percent
     return collections.OrderedDict(sorted(latest_dict.items())), loop_list
 
 
@@ -216,6 +240,7 @@ def create_datapoints_line(platform_name, test_loop_feature_name, test_host_ver,
                     loop_host_ver=ver).order_by("loop_updated_time")[:]
         if loops:
             for loop in loops:
+                pass_percent = get_pass_percent(loop)
                 if verbose:
                     print('Total %s loop line info : [update time : %s, '
                           'case pass nums : %s, case total nums : %s , '
@@ -224,12 +249,12 @@ def create_datapoints_line(platform_name, test_loop_feature_name, test_host_ver,
                            loop.loop_updated_time.isoformat(' ').split('.')[0],
                            loop.loop_case_pass_num,
                            loop.loop_case_total_num,
-                           (float(loop.loop_case_pass_num * 100) / loop.loop_case_total_num),
-                           loop.loop_host_ver))
+                           pass_percent, loop.loop_host_ver))
             context += "    <%s>\n" % loop.loop_host_ver.replace('.', '_').replace('-', '_')
             versions += loop.loop_host_ver.replace('.', '_').replace('-', '_') + ','
             t = 0
             for loop in loops:
+                pass_percent = get_pass_percent(loop)
                 # Need to shit the loop_updated_time(stored in db with UTC timezone) to local time.
                 #list.loop_updated_time_local = list.loop_updated_time + datetime.timedelta(hours=8)
                 if loop.loop_case_total_num != 0:
@@ -251,7 +276,7 @@ def create_datapoints_line(platform_name, test_loop_feature_name, test_host_ver,
                                "            <cmd>%s</cmd>\n" \
                                "            <updated_time>%s</updated_time>\n" \
                                "        </point>\n" % (t,
-                                                       (float(loop.loop_case_pass_num * 100)/loop.loop_case_total_num),
+                                                       pass_percent,
                                                        loop.loop_case_pass_num,
                                                        loop.loop_case_total_num,
                                                        loop.loop_feature_owner,
@@ -391,46 +416,46 @@ def display_test_details(platform, loop_feature_name, updated_time,
                 loop_feature_name=loop_feature_name.replace('_', ' ')).filter(
                 loop_updated_time=updated_time)
 
-    fail_dict = {}
-    fail_dict['fail'] = {}
-    fail_dict['error'] = {}
-    fail_dict['cancel'] = {}
-    fail_dict['skip'] = {}
-    fail_dict['warn'] = {}
-    fail_dict['interrupt'] = {}
-    fail_dict['all'] = {}
-    fail_dict['pass'] = {}
+    result = {}
+    result['fail'] = {}
+    result['error'] = {}
+    result['cancel'] = {}
+    result['skip'] = {}
+    result['warn'] = {}
+    result['interrupt'] = {}
+    result['all'] = {}
+    result['pass'] = {}
 
-    fail_dict['fail']['fail_info'] = {}
-    fail_dict['fail']['fail_cont'] = {}
-    fail_dict['fail']['fail_percnet'] = {}
+    result['fail']['fail_info'] = {}
+    result['fail']['fail_cont'] = {}
+    result['fail']['fail_percnet'] = {}
 
-    fail_dict['error']['error_info'] = {}
-    fail_dict['error']['error_cont'] = {}
-    fail_dict['error']['error_percent'] = {}
+    result['error']['error_info'] = {}
+    result['error']['error_cont'] = {}
+    result['error']['error_percent'] = {}
 
-    fail_dict['cancel']['cancel_info'] = {}
-    fail_dict['cancel']['cancel_cont'] = {}
-    fail_dict['cancel']['cancel_percent'] = {}
+    result['cancel']['cancel_info'] = {}
+    result['cancel']['cancel_cont'] = {}
+    result['cancel']['cancel_percent'] = {}
 
-    fail_dict['skip']['skip_info'] = {}
-    fail_dict['skip']['skip_cont'] = {}
-    fail_dict['skip']['skip_percent'] = {}
+    result['skip']['skip_info'] = {}
+    result['skip']['skip_cont'] = {}
+    result['skip']['skip_percent'] = {}
 
-    fail_dict['warn']['warn_info'] = {}
-    fail_dict['warn']['warn_cont'] = {}
-    fail_dict['warn']['warn_percent'] = {}
+    result['warn']['warn_info'] = {}
+    result['warn']['warn_cont'] = {}
+    result['warn']['warn_percent'] = {}
 
-    fail_dict['interrupt']['interrupt_info'] = {}
-    fail_dict['interrupt']['interrupt_cont'] = {}
-    fail_dict['interrupt']['interrupt_percent'] = {}
+    result['interrupt']['interrupt_info'] = {}
+    result['interrupt']['interrupt_cont'] = {}
+    result['interrupt']['interrupt_percent'] = {}
 
-    fail_dict['all']['all_info'] = {}
-    fail_dict['all']['all_cont'] = {}
+    result['all']['all_info'] = {}
+    result['all']['all_cont'] = {}
 
-    fail_info_dict = {}
-    fail_cont_dict = {}
-    fail_percent_dict = {}
+    result_info = {}
+    result_cont = {}
+    result_percent = {}
 
     testid = TestsID.objects.filter(tests_id=updated_time)
     print('test id : ', testid)
@@ -510,65 +535,65 @@ def display_test_details(platform, loop_feature_name, updated_time,
                 interrupt_info +='Case ID:' + case.case_id + '.\n' + 'Interrupt reason: ' + case.case_fail_reason + '.\n' + '\n'
                 all_info += 'Case ID:' + case.case_id + '.\n' + 'Interrupt reason: ' + case.case_fail_reason + '.\n' + '\n'
 
-    fail_info_dict['pass_info'] = pass_info
-    fail_cont_dict['pass_cont'] = pass_cont
-    fail_percent_dict['PASS'] = float(pass_cont * 100) / testloop[0].loop_case_total_num
-    fail_info_dict['fail_info'] = fail_info
-    fail_cont_dict['fail_cont'] = fail_cont
-    fail_percent_dict['FAIL'] = float(fail_cont * 100) / testloop[0].loop_case_total_num
-    fail_info_dict['error_info'] = error_info
-    fail_cont_dict['error_cont'] = error_cont
-    fail_percent_dict['ERROR'] = float(error_cont * 100) / testloop[0].loop_case_total_num
-    fail_info_dict['cancel_info'] = cancel_info
-    fail_cont_dict['cancel_cont'] = cancel_cont
-    fail_percent_dict['CANCEL'] = float(cancel_cont * 100) / testloop[0].loop_case_total_num
-    fail_info_dict['skip_info'] = skip_info
-    fail_cont_dict['skip_cont'] = skip_cont
-    fail_percent_dict['SKIP'] = float(skip_cont * 100) / testloop[0].loop_case_total_num
-    fail_info_dict['warn_info'] = warn_info
-    fail_cont_dict['warn_cont'] = warn_cont
-    fail_percent_dict['WARN'] = float(warn_cont * 100) / testloop[0].loop_case_total_num
-    fail_info_dict['interrupt_info'] = interrupt_info
-    fail_cont_dict['interrupt_cont'] = interrupt_cont
-    fail_percent_dict['INTERRUPT'] = float(interrupt_cont * 100) / testloop[0].loop_case_total_num
-    fail_info_dict['all_info'] = all_info
-    fail_cont_dict['all_cont'] = all_cont
+    result_info['pass_info'] = pass_info
+    result_cont['pass_cont'] = pass_cont
+    result_percent['PASS'] = float(pass_cont * 100) / testloop[0].loop_case_total_num
+    result_info['fail_info'] = fail_info
+    result_cont['fail_cont'] = fail_cont
+    result_percent['FAIL'] = float(fail_cont * 100) / testloop[0].loop_case_total_num
+    result_info['error_info'] = error_info
+    result_cont['error_cont'] = error_cont
+    result_percent['ERROR'] = float(error_cont * 100) / testloop[0].loop_case_total_num
+    result_info['cancel_info'] = cancel_info
+    result_cont['cancel_cont'] = cancel_cont
+    result_percent['CANCEL'] = float(cancel_cont * 100) / testloop[0].loop_case_total_num
+    result_info['skip_info'] = skip_info
+    result_cont['skip_cont'] = skip_cont
+    result_percent['SKIP'] = float(skip_cont * 100) / testloop[0].loop_case_total_num
+    result_info['warn_info'] = warn_info
+    result_cont['warn_cont'] = warn_cont
+    result_percent['WARN'] = float(warn_cont * 100) / testloop[0].loop_case_total_num
+    result_info['interrupt_info'] = interrupt_info
+    result_cont['interrupt_cont'] = interrupt_cont
+    result_percent['INTERRUPT'] = float(interrupt_cont * 100) / testloop[0].loop_case_total_num
+    result_info['all_info'] = all_info
+    result_cont['all_cont'] = all_cont
 
     actual_cont = fail_cont + error_cont + cancel_cont + skip_cont + warn_cont + interrupt_cont + pass_cont
     if testloop[0].loop_case_total_num > actual_cont:
         unknown_cont = testloop[0].loop_case_total_num - actual_cont
-        fail_percent_dict['UNKNOWN'] = (float(unknown_cont * 100) /
-                                        testloop[0].loop_case_total_num)
+        result_percent['UNKNOWN'] = (float(unknown_cont * 100) /
+                                     testloop[0].loop_case_total_num)
 
-    fail_dict['pass']['pass_info'] = fail_info_dict['pass_info']
-    fail_dict['pass']['pass_cont'] = fail_cont_dict['pass_cont']
-    fail_dict['pass']['pass_info_percent'] = fail_percent_dict['PASS']
+    result['pass']['pass_info'] = result_info['pass_info']
+    result['pass']['pass_cont'] = result_cont['pass_cont']
+    result['pass']['pass_info_percent'] = result_percent['PASS']
 
-    fail_dict['fail']['fail_info'] = fail_info_dict['fail_info']
-    fail_dict['fail']['fail_cont'] = fail_cont_dict['fail_cont']
-    fail_dict['fail']['fail_percnet'] = fail_percent_dict['FAIL']
+    result['fail']['fail_info'] = result_info['fail_info']
+    result['fail']['fail_cont'] = result_cont['fail_cont']
+    result['fail']['fail_percnet'] = result_percent['FAIL']
 
-    fail_dict['error']['error_info'] = fail_info_dict['error_info']
-    fail_dict['error']['error_cont'] = fail_cont_dict['error_cont']
-    fail_dict['error']['error_percent'] = fail_percent_dict['ERROR']
+    result['error']['error_info'] = result_info['error_info']
+    result['error']['error_cont'] = result_cont['error_cont']
+    result['error']['error_percent'] = result_percent['ERROR']
 
-    fail_dict['cancel']['cancel_info'] = fail_info_dict['cancel_info']
-    fail_dict['cancel']['cancel_cont'] = fail_cont_dict['cancel_cont']
-    fail_dict['cancel']['cancel_percent'] = fail_percent_dict['CANCEL']
+    result['cancel']['cancel_info'] = result_info['cancel_info']
+    result['cancel']['cancel_cont'] = result_cont['cancel_cont']
+    result['cancel']['cancel_percent'] = result_percent['CANCEL']
 
-    fail_dict['skip']['skip_info'] = fail_info_dict['skip_info']
-    fail_dict['skip']['skip_cont'] = fail_cont_dict['skip_cont']
-    fail_dict['skip']['skip_percent'] = fail_percent_dict['SKIP']
+    result['skip']['skip_info'] = result_info['skip_info']
+    result['skip']['skip_cont'] = result_cont['skip_cont']
+    result['skip']['skip_percent'] = result_percent['SKIP']
 
-    fail_dict['warn']['warn_info'] = fail_info_dict['warn_info']
-    fail_dict['warn']['warn_cont'] = fail_cont_dict['warn_cont']
-    fail_dict['warn']['warn_percent'] = fail_percent_dict['WARN']
+    result['warn']['warn_info'] = result_info['warn_info']
+    result['warn']['warn_cont'] = result_cont['warn_cont']
+    result['warn']['warn_percent'] = result_percent['WARN']
 
-    fail_dict['interrupt']['interrupt_info'] = fail_info_dict['interrupt_info']
-    fail_dict['interrupt']['interrupt_cont'] = fail_cont_dict['interrupt_cont']
-    fail_dict['interrupt']['interrupt_info_percent'] = fail_percent_dict['INTERRUPT']
+    result['interrupt']['interrupt_info'] = result_info['interrupt_info']
+    result['interrupt']['interrupt_cont'] = result_cont['interrupt_cont']
+    result['interrupt']['interrupt_info_percent'] = result_percent['INTERRUPT']
 
-    fail_dict['all']['all_info'] = fail_info_dict['all_info']
-    fail_dict['all']['all_cont'] = fail_cont_dict['all_cont']
+    result['all']['all_info'] = result_info['all_info']
+    result['all']['all_cont'] = result_cont['all_cont']
 
-    return cases, fail_dict, fail_percent_dict
+    return cases, result, result_percent
