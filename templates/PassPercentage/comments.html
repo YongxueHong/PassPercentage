@@ -260,23 +260,23 @@ window.onload = function(){
     Show details :
     <select id="show_select">
         <option value="0" selected>CLOSE</option>
-        <option value="1" >ALL [{{fail.all.all_cont}}]</option>
-        <option value="2">PASS [{{fail.pass.pass_cont}}]</option>
-        <option value="3">FAIL [{{fail.fail.fail_cont}}]</option>
-        <option value="4" >ERROR [{{fail.error.error_cont}}]</option>
-        <option value="5" >CANCEL [{{fail.cancel.cancel_cont}}]</option>
-        <option value="6" >SKIP [{{fail.skip.skip_cont}}]</option>
-        <option value="7" >WARN [{{fail.warn.warn_cont}}]</option>
-        <option value="8" >INTERRUPT [{{fail.interrupt.interrupt_cont}}]</option>
+        <option value="1" >ALL [{{result.all.all_cont}}]</option>
+        <option value="2">PASS [{{result.pass.pass_cont}}]</option>
+        <option value="3">FAIL [{{result.fail.fail_cont}}]</option>
+        <option value="4" >ERROR [{{result.error.error_cont}}]</option>
+        <option value="5" >CANCEL [{{result.cancel.cancel_cont}}]</option>
+        <option value="6" >SKIP [{{result.skip.skip_cont}}]</option>
+        <option value="7" >WARN [{{result.warn.warn_cont}}]</option>
+        <option value="8" >INTERRUPT [{{result.interrupt.interrupt_cont}}]</option>
     </select>
-    <div class="show_content" id="show_pass_content" hidden="hidden">{{ fail.pass.pass_info|linebreaks }}</div>
-    <div class="show_content" id="show_fail_content" hidden="hidden">{{ fail.fail.fail_info|linebreaks }}</div>
-    <div class="show_content" id="show_error_content" hidden="hidden">{{ fail.error.error_info|linebreaks }}</div>
-    <div class="show_content" id="show_cancel_content" hidden="hidden">{{ fail.cancel.cancel_info|linebreaks }}</div>
-    <div class="show_content" id="show_skip_content" hidden="hidden">{{ fail.skip.skip_info|linebreaks }}</div>
-    <div class="show_content" id="show_warn_content" hidden="hidden">{{ fail.warn.warn_info|linebreaks }}</div>
-    <div class="show_content" id="show_interrupt_content" hidden="hidden">{{ fail.interrupt.interrupt_info|linebreaks }}</div>
-    <div class="show_content" id="show_all_content" hidden="hidden">{{ fail.all.all_info|linebreaks }}</div>
+    <div class="show_content" id="show_pass_content" hidden="hidden">{{ result.pass.pass_info|linebreaks }}</div>
+    <div class="show_content" id="show_fail_content" hidden="hidden">{{ result.fail.fail_info|linebreaks }}</div>
+    <div class="show_content" id="show_error_content" hidden="hidden">{{ result.error.error_info|linebreaks }}</div>
+    <div class="show_content" id="show_cancel_content" hidden="hidden">{{ result.cancel.cancel_info|linebreaks }}</div>
+    <div class="show_content" id="show_skip_content" hidden="hidden">{{ result.skip.skip_info|linebreaks }}</div>
+    <div class="show_content" id="show_warn_content" hidden="hidden">{{ result.warn.warn_info|linebreaks }}</div>
+    <div class="show_content" id="show_interrupt_content" hidden="hidden">{{ result.interrupt.interrupt_info|linebreaks }}</div>
+    <div class="show_content" id="show_all_content" hidden="hidden">{{ result.all.all_info|linebreaks }}</div>
 </div>
 <div>
     <form id="comment_form" method="post" action="{% url 'comments' platforms.platform_slug loop_select_name host_ver x_point updated_time %}"
