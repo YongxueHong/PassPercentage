@@ -340,6 +340,8 @@ def server_api(request):
                 if cmd_args["category"] in ('hyper_v_enlightenment',
                                             'guest_agent', 'virtio_fs'):
                     platform = 'virtio-win'
+                if feature.main_feature in ['dump']:
+                    platform = 'virtio-win'
 
             populate_data.add_platform(platform)
             platform = Platform.objects.get(platform_name=platform)
