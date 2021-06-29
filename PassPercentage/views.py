@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 
 from Dashboard.settings import RECIPIENT_LIST
+from Dashboard.settings import MANAGER_EMAIL
 
 from PassPercentage.models import Platform
 from PassPercentage.models import TestLoop
@@ -206,6 +207,22 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
             recipient_list = [email]
             recipient_list.extend(RECIPIENT_LIST)
             send_email(subject, message, recipient_list=recipient_list)
+
+            request.POST['comment_user'] = request.POST.get('request_user')
+            request.POST['comment_email'] = request.POST.get('request_email')
+            request.POST['comment_context'] = request.POST.get('request_message')
+
+            comment_form = CommentForm(data=request.POST)
+            if comment_form.is_valid():
+                comment_form.save(commit=True)
+                comment = Comment.objects.order_by("-comment_updated_time")[0]
+                print(comment.comment_user, comment.comment_context)
+                comment.comment_version = host_ver.replace('_', '.')
+                comment.comment_platform = platform.platform_name
+                comment.comment_point = x_point
+                comment.comment_point_real_time = updated_time
+                comment.comment_testloop = loop_select_name.replace('_', ' ')
+                comment.save()
 
     context_dict['comment_form'] = comment_form
     comments = Comment.objects.all().order_by("-comment_updated_time")[:]
