@@ -6,6 +6,7 @@ from PassPercentage.models import Comment
 from PassPercentage.models import TestsID
 from PassPercentage.models import CaseDetail
 from PassPercentage.models import AvocadoFeatureMapping
+from PassPercentage.models import MemberInfo
 
 
 # Register your models here.
@@ -33,6 +34,12 @@ class CommentAdmin(admin.ModelAdmin):
                      'comment_version', 'comment_point_real_time')
 
 
+class MemberInfoAdmin(admin.ModelAdmin):
+    search_fields = ('member_name', 'kerbose_id',
+                     'member_email', 'leader_email',
+                     'manager_email')
+
+
 admin.site.register(Platform, PlatformAdmin)
 admin.site.register(TestLoop, TestLoopAdmin)
 admin.site.register(Name)
@@ -40,3 +47,4 @@ admin.site.register(Comment, CommentAdmin)
 admin.site.register(TestsID)
 admin.site.register(CaseDetail)
 admin.site.register(AvocadoFeatureMapping, AvocadoFeatureMappingAdmin)
+admin.site.register(MemberInfo, MemberInfoAdmin)

@@ -18,6 +18,7 @@ from PassPercentage.models import TestLoop
 from PassPercentage.models import Comment
 from PassPercentage.models import CaseDetail
 from PassPercentage.models import AvocadoFeatureMapping
+from PassPercentage.models import MemberInfo
 
 from PassPercentage.forms import CommentForm
 from PassPercentage.forms import UserForm
@@ -205,6 +206,15 @@ def comments(request, platform_slug_name, loop_select_name, host_ver, x_point, u
                               host_ver, x_point, updated_time))
             subject = ("%s requests to delete test loop@%s" % (user, target))
             recipient_list = [email]
+
+            try:
+                member_info = MemberInfo.objects.get(member_email=email)
+                manager_email = member_info.manager_email
+            except MemberInfo.DoesNotExist:
+                manager_email = None
+            if manager_email:
+                recipient_list.append(manager_email)
+
             recipient_list.extend(RECIPIENT_LIST)
             send_email(subject, message, recipient_list=recipient_list)
 
