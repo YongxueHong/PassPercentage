@@ -156,3 +156,24 @@ class AvocadoFeatureMapping(models.Model):
         info = "; ".join((category_info, configs_info, owner_info,
                           main_feature_info, sub_feature_info))
         return info
+
+
+class MemberInfo(models.Model):
+    member_name = models.CharField(max_length=200, blank=True)
+    kerbose_id = models.CharField(max_length=200, blank=True)
+    member_email = models.CharField(max_length=200, blank=True)
+    leader_email = models.CharField(max_length=200, blank=True)
+    manager_email = models.CharField(max_length=200, blank=True)
+
+    def save(self, *args, **kwargs):
+        super(MemberInfo, self).save(*args, **kwargs)
+
+    def __str__(self):
+        member_name = "member_name: %s" % self.member_name
+        kerbose_id = "kerbose_id: %s" % self.kerbose_id
+        member_email = "member_email: %s" % self.member_email
+        leader_email = "leader_eamil: %s" % self.leader_email
+        manager_email = "manager_eamil: %s" % self.manager_email
+        info = "; ".join((member_name, kerbose_id, member_email,
+                          leader_email, manager_email))
+        return info
