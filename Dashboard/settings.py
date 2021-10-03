@@ -163,6 +163,7 @@ LOGGING = {
 
 # email setting up
 RECIPIENT_LIST = ["yhong@redhat.com", ]
+RECIPIENT_CC_LIST = ["cc_user@redhat.com", ]
 MANAGER_EMAIL = "yhong@redhat.com"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_USE_TLS = True

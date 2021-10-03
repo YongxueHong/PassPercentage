@@ -11,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.core.urlresolvers import reverse
 
 from Dashboard.settings import RECIPIENT_LIST
+from Dashboard.settings import RECIPIENT_CC_LIST
 from Dashboard.settings import MANAGER_EMAIL
 
 from PassPercentage.models import Platform
@@ -500,7 +501,8 @@ def server_api(request):
                             "%s(cmdline: %s)" % (cmd_args["category"], cmd))
             subject = ('Failed to upload test loop "%s" '
                        'results at %s' % (cmd_args["category"], recv_time))
-            send_email(subject, message)
+            recipient_list = RECIPIENT_LIST + RECIPIENT_CC_LIST
+            send_email(subject, message, recipient_list)
     except Exception as e:
         logger.error(str(e))
     logger.info("=" * 50)
