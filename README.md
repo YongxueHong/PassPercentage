@@ -9,7 +9,7 @@ python version: python2
 
 # HOWTO:
 <p>
-pip install -U django==1.9.10
+pip install -U django==1.9.10 or pip install -U django==1.11.22
 <br>pip install pillow
 <br>python manage.py migrate
 <br>python manage.py makemigrations PassPercentage
