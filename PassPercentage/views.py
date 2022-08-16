@@ -333,8 +333,7 @@ def server_api(request):
             if not case_pass_num:
                 case_pass_num = 0
         elif key == 'staf_cml':
-            # clear the invalid string "\xa0" from the staf_cmd
-            cmd = val.replace("\xa0", "")
+            cmd = val
             if not cmd:
                 cmd = 'unknown'
         elif key == 'tests':
