@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 
 from Dashboard.settings import RECIPIENT_LIST
 from Dashboard.settings import RECIPIENT_CC_LIST
-from Dashboard.settings import MANAGER_EMAIL
+from Dashboard.settings import TEST_LOOP_BLACKLIST
 
 from PassPercentage.models import Platform
 from PassPercentage.models import TestLoop
@@ -502,7 +502,8 @@ def server_api(request):
             subject = ('Failed to upload test loop "%s" '
                        'results at %s' % (cmd_args["category"], recv_time))
             recipient_list = RECIPIENT_LIST + RECIPIENT_CC_LIST
-            send_email(subject, message, recipient_list)
+            if cmd_args["category"] not in TEST_LOOP_BLACKLIST:
+                send_email(subject, message, recipient_list)
     except Exception as e:
         logger.error(str(e))
     logger.info("=" * 50)
