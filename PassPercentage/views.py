@@ -366,7 +366,7 @@ def server_api(request):
             # move some specialized test loop to virtio-win platform
             if platform == 'x86_64':
                 if cmd_args["category"] in ('hyper_v_enlightenment',
-                                            'guest_agent', 'virtio_fs'):
+                                            'guest_agent'):
                     platform = 'virtio-win'
                 if feature.main_feature in ['dump']:
                     platform = 'virtio-win'
