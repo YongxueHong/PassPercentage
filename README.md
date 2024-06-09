@@ -26,3 +26,5 @@ pip install -U django==1.9.10 or pip install -U django==1.11.22
 https://canvasjs.com/
 <br>https://www.tangowithdjango.com/
 </p>
+
+# just for example testing
