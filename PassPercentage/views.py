@@ -483,27 +483,28 @@ def server_api(request):
             logger.info('Recevice time: %s - Done time: %s ; Total time: %s' %
                         (recv_time, done_time, total_time))
         else:
-            if cases_id:
-                logger.error('Loop %s(cmdline: %s) is not registered in '
-                             'feature mapping, please check or register it in '
-                             'http://$server_ip:$port/admin/PassPercentage/avocadofeaturemapping/',
-                             cmd_args["category"], cmd)
-            else:
-                logger.error("No found test cases in loop %s(cmdline: %s)" %
-                             (cmd_args["category"], cmd))
+            if platform not in ("aarch64", ): # skipping to report the error for arm
+                if cases_id:
+                    logger.error('Loop %s(cmdline: %s) is not registered in '
+                                 'feature mapping, please check or register it in '
+                                 'http://$server_ip:$port/admin/PassPercentage/avocadofeaturemapping/',
+                                 cmd_args["category"], cmd)
+                else:
+                    logger.error("No found test cases in loop %s(cmdline: %s)" %
+                                 (cmd_args["category"], cmd))
 
-            message += '%s\n' % ('=' * 80)
-            if message_cases:
-                message += ("Failed reason: Loop %s(cmdline: %s) is not registered"
-                            " in feature mapping" % (cmd_args["category"], cmd))
-            else:
-                message += ("Failed reason: No found test cases in loop "
-                            "%s(cmdline: %s)" % (cmd_args["category"], cmd))
-            subject = ('Failed to upload test loop "%s" '
-                       'results at %s' % (cmd_args["category"], recv_time))
-            recipient_list = RECIPIENT_LIST + RECIPIENT_CC_LIST
-            if cmd_args["category"] not in TEST_LOOP_BLACKLIST:
-                send_email(subject, message, recipient_list)
+                message += '%s\n' % ('=' * 80)
+                if message_cases:
+                    message += ("Failed reason: Loop %s(cmdline: %s) is not registered"
+                                " in feature mapping" % (cmd_args["category"], cmd))
+                else:
+                    message += ("Failed reason: No found test cases in loop "
+                                "%s(cmdline: %s)" % (cmd_args["category"], cmd))
+                subject = ('Failed to upload test loop "%s" '
+                           'results at %s' % (cmd_args["category"], recv_time))
+                recipient_list = RECIPIENT_LIST + RECIPIENT_CC_LIST
+                if cmd_args["category"] not in TEST_LOOP_BLACKLIST:
+                    send_email(subject, message, recipient_list)
     except Exception as e:
         logger.error(str(e))
     logger.info("=" * 50)
